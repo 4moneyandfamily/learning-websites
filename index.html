@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="A directory of self-built learning sites: tutorials and masterclasses.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23df4f2e'/%3E%3Cpath d='M9 8h4v13h9v3H9z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Learning Websites</title>
+<style>
+:root{--bg:#f3f2ee;--surface:#fff;--surface2:#e8ebe6;--ink:#161a18;--muted:#505b55;--line:#c8cfc9;--orange:#df4f2e;--orangeInk:#fff;--green:#087d61}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1210;--surface:#151c18;--surface2:#202923;--ink:#eef4f0;--muted:#adbbb3;--line:#334039;--orange:#ff7350;--orangeInk:#1b0a05;--green:#55c9a6}}
+:root[data-theme="dark"]{--bg:#0d1210;--surface:#151c18;--surface2:#202923;--ink:#eef4f0;--muted:#adbbb3;--line:#334039;--orange:#ff7350;--orangeInk:#1b0a05;--green:#55c9a6}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+@media(min-width:700px){.wrap{padding:0 32px}}
+header{padding:64px 0 28px;border-bottom:1px solid var(--line)}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--orange);font-weight:600}
+h1{font-size:clamp(34px,6vw,58px);line-height:1.02;letter-spacing:-.02em;margin:12px 0 14px;font-weight:800}
+.lede{max-width:600px;color:var(--muted);font-size:17px;margin:0}
+.bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:22px 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:600 13px "IBM Plex Mono",monospace;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip:focus-visible,.search:focus-visible,.card:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.search{font:15px "Archivo",sans-serif;padding:9px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);width:100%;max-width:280px}
+.grid{list-style:none;margin:0 0 64px;padding:0;display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.card{display:flex;flex-direction:column;height:100%;padding:22px 22px 18px;background:var(--surface);border:1px solid var(--line);border-radius:14px;color:inherit;text-decoration:none;transition:transform .15s,border-color .15s}
+.card:hover{transform:translateY(-2px);border-color:var(--orange)}
+.num{font:600 12px "IBM Plex Mono",monospace;color:var(--muted)}
+.topic{font:600 11px "IBM Plex Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--green)}
+.meta{display:flex;justify-content:space-between;gap:8px}
+.card h2{font-size:21px;line-height:1.2;margin:14px 0 8px;font-weight:700}
+.card p{margin:0 0 18px;color:var(--muted);font-size:15px;flex:1}
+.open{font:600 13px "IBM Plex Mono",monospace;color:var(--orange)}
+.empty{color:var(--muted);padding:24px 0 64px}
+footer{border-top:1px solid var(--line);padding:20px 0 40px;color:var(--muted);font:13px "IBM Plex Mono",monospace}
+@media(prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="kicker">Learning library</div>
+  <h1>Learning Websites</h1>
+  <p class="lede">Self-built courses and masterclasses. Pick one to open it.</p>
+</div></header>
+<main class="wrap">
+  <div class="bar">
+    <div class="chips" id="chips" role="group" aria-label="Filter by topic"></div>
+    <input class="search" id="search" type="search" placeholder="Search sites" aria-label="Search sites">
+  </div>
+  <ul class="grid" id="grid"></ul>
+  <p class="empty" id="empty" hidden>No sites match that search.</p>
+</main>
+<footer><div class="wrap" id="count"></div></footer>
+<script src="sites.js"></script>
+<script>
+(function () {
+  var sites = window.SITES || [];
+  var grid = document.getElementById('grid');
+  var chips = document.getElementById('chips');
+  var search = document.getElementById('search');
+  var empty = document.getElementById('empty');
+  var topic = 'All';
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text) n.textContent = text;
+    return n;
+  }
+
+  var topics = ['All'];
+  sites.forEach(function (s) { if (topics.indexOf(s.topic) < 0) topics.push(s.topic); });
+  topics.forEach(function (t) {
+    var b = el('button', 'chip', t);
+    b.type = 'button';
+    b.setAttribute('aria-pressed', t === topic);
+    b.addEventListener('click', function () {
+      topic = t;
+      [].forEach.call(chips.children, function (c) { c.setAttribute('aria-pressed', c === b); });
+      render();
+    });
+    chips.appendChild(b);
+  });
+
+  function render() {
+    var q = search.value.trim().toLowerCase();
+    grid.textContent = '';
+    var shown = 0;
+    sites.forEach(function (s, i) {
+      if (topic !== 'All' && s.topic !== topic) return;
+      if (q && (s.title + ' ' + s.blurb + ' ' + s.topic).toLowerCase().indexOf(q) < 0) return;
+      var li = el('li');
+      var a = el('a', 'card');
+      a.href = encodeURI(s.file);
+      var meta = el('div', 'meta');
+      meta.appendChild(el('span', 'num', String(i + 1).padStart(2, '0')));
+      meta.appendChild(el('span', 'topic', s.topic));
+      a.appendChild(meta);
+      a.appendChild(el('h2', null, s.title));
+      a.appendChild(el('p', null, s.blurb));
+      a.appendChild(el('span', 'open', 'Open →'));
+      li.appendChild(a);
+      grid.appendChild(li);
+      shown++;
+    });
+    empty.hidden = shown > 0;
+  }
+
+  search.addEventListener('input', render);
+  document.getElementById('count').textContent = sites.length + ' sites';
+  render();
+})();
+</script>
+</body>
+</html>

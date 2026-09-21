@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conducting Effective Negotiations: A One-Lecture Masterclass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f2ee; --surface:#fff; --surface2:#e8ebe6; --ink:#161a18; --muted:#505b55;
+  --line:#c8cfc9; --strong:#929e97; --orange:#df4f2e; --green:#087d61; --greenSoft:#d9efe6;
+  --lime:#b7d957; --code:#101613; --codeInk:#ebf3ee; --codeMuted:#9bada3;
+  --success:#19734f; --danger:#a83c32; --shadow:0 14px 38px rgba(18,29,24,.1);
+  --side:#101613; --sideInk:#ebf3ee; --sideDiv:#26302b; --sideMuted:#9bada3;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0d1210; --surface:#151c18; --surface2:#202923; --ink:#eef4f0; --muted:#adbbb3;
+    --line:#334039; --strong:#5c6962; --orange:#ff7350; --green:#55c9a2; --greenSoft:#183b31;
+    --lime:#c5df72; --code:#080c0a; --codeMuted:#9bada3;
+    --success:#68d39f; --danger:#ff9182; --shadow:0 18px 54px rgba(0,0,0,.34);
+  }
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg); color:var(--ink); font-family:Archivo,system-ui,-apple-system,"Segoe UI",sans-serif; line-height:1.65; font-size:17px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+/* ---------- layout ---------- */
+.shell{display:flex; min-height:100vh}
+.sidebar{background:var(--side); color:var(--sideInk); width:300px; flex:0 0 300px; position:sticky; top:0; height:100vh; overflow-y:auto; padding:26px 0 30px; display:flex; flex-direction:column}
+.brand{padding:0 24px 20px; border-bottom:1px solid var(--sideDiv)}
+.brand .kicker{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.14em; color:var(--sideMuted); text-transform:uppercase}
+.brand h1{font-size:20px; font-weight:800; margin-top:6px}
+.brand h1 code{background:rgba(255,255,255,.08); color:#c5df72; padding:1px 7px; border-radius:6px; font-size:18px}
+.chapters{padding:14px 0; flex:1}
+.chapter{display:flex; gap:12px; align-items:flex-start; width:100%; text-align:left; background:none; border:none; border-left:3px solid transparent; color:var(--sideInk); padding:10px 20px 10px 21px; cursor:pointer; font-family:inherit}
+.chapter:hover{background:rgba(255,255,255,.04)}
+.chapter.active{border-left-color:#ff7350; background:rgba(255,255,255,.05)}
+.cnum{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--sideMuted); padding-top:3px; min-width:24px}
+.chapter.active .cnum{color:#ff7350}
+.ctitle{font-size:14px; font-weight:700; line-height:1.35}
+.csub{font-size:12px; color:var(--sideMuted); line-height:1.4; margin-top:2px}
+.tick{margin-left:auto; font-size:14px; color:#68d39f; opacity:0; padding-top:3px}
+.chapter.done .tick{opacity:1}
+.side-foot{padding:18px 24px 0; border-top:1px solid var(--sideDiv); font-size:12px; color:var(--sideMuted); line-height:1.5}
+.main{flex:1; min-width:0}
+.topbar{position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); padding:12px 26px; display:flex; align-items:center; gap:14px}
+.navbtn{background:var(--surface2); color:var(--ink); border:1px solid var(--line); border-radius:10px; padding:8px 16px; font-family:inherit; font-weight:700; font-size:14px; cursor:pointer}
+.navbtn:hover:not(:disabled){border-color:var(--strong)}
+.navbtn:disabled{opacity:.4; cursor:default}
+.pagecount{font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--muted); white-space:nowrap}
+.pbar{flex:1; height:8px; background:var(--surface2); border-radius:99px; overflow:hidden; min-width:60px}
+.pbar i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--green),var(--lime)); border-radius:99px; transition:width .4s ease}
+.content{max-width:860px; margin:0 auto; padding:40px 26px 90px}
+/* ---------- pages ---------- */
+.page{display:none}
+.page.active{display:block; animation:rise .45s ease}
+@keyframes rise{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}}
+@media (prefers-reduced-motion: reduce){.page.active{animation:none} html{scroll-behavior:auto}}
+.pager{display:flex; justify-content:space-between; gap:12px; margin-top:44px; padding-top:26px; border-top:1px solid var(--line)}
+.crumb{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--muted); letter-spacing:.04em; margin-bottom:22px}
+/* ---------- components ---------- */
+.hero{margin:26px 0 8px}
+.hero .kicker{font-family:"IBM Plex Mono",monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--orange); font-weight:600}
+.hero h1{font-size:clamp(38px,6vw,62px); font-weight:800; line-height:1.05; letter-spacing:-.01em; margin:12px 0 16px}
+.hero h1 code{background:var(--code); color:var(--lime); font-family:"IBM Plex Mono",monospace; font-size:.82em; padding:4px 12px; border-radius:10px; font-weight:600}
+.hero .lede{font-size:19px; color:var(--muted); max-width:640px}
+.hero-card{background:var(--code); color:var(--codeInk); border-radius:18px; padding:28px; margin-top:30px; box-shadow:var(--shadow)}
+.hero-card .hc-k{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--lime); font-weight:600}
+.hero-card h2{font-size:22px; margin:8px 0 10px}
+.hero-card p{color:var(--codeMuted); font-size:16px}
+.meta-row{display:flex; flex-wrap:wrap; gap:10px; margin-top:26px}
+.meta-pill{font-family:"IBM Plex Mono",monospace; font-size:12px; background:var(--surface2); border:1px solid var(--line); border-radius:99px; padding:6px 14px; color:var(--muted)}
+.section-head{margin:8px 0 26px}
+.lesson-no{font-family:"IBM Plex Mono",monospace; font-size:13px; font-weight:600; letter-spacing:.14em; color:var(--orange); text-transform:uppercase}
+.section-head h2{font-size:clamp(28px,4vw,40px); font-weight:800; letter-spacing:-.01em; line-height:1.12; margin:10px 0 12px}
+.section-head .intro{color:var(--muted); font-size:18px; max-width:660px}
+h3.sub{font-size:21px; font-weight:800; margin:34px 0 14px}
+p.body{margin:0 0 16px; max-width:700px}
+p.body strong{font-weight:700}
+.callout{background:var(--surface); border:1px solid var(--line); border-left:5px solid var(--green); border-radius:14px; padding:20px 22px 20px 20px; margin:24px 0; box-shadow:var(--shadow); display:flex; gap:16px}
+.callout.warn{border-left-color:var(--danger); background:color-mix(in srgb, var(--danger) 5%, var(--surface))}
+.callout .mark{flex:0 0 34px; width:34px; height:34px; border-radius:50%; background:var(--green); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; font-size:16px}
+.callout.warn .mark{background:var(--danger)}
+.callout .co-body{font-size:16px}
+.callout .co-body strong{display:block; margin-bottom:4px; font-size:16px}
+.steps{margin:22px 0; display:flex; flex-direction:column; gap:12px}
+.step{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:18px 20px; display:flex; gap:16px; align-items:flex-start}
+.step-num{flex:0 0 34px; width:34px; height:34px; border-radius:10px; background:var(--code); color:var(--lime); font-family:"IBM Plex Mono",monospace; font-weight:600; display:flex; align-items:center; justify-content:center; font-size:14px}
+.step .st-body{font-size:16px}
+.step .st-body strong{display:block; margin-bottom:2px}
+.terminal{background:var(--code); color:var(--codeInk); border-radius:14px; margin:22px 0; overflow:hidden; box-shadow:var(--shadow)}
+.terminal-bar{display:flex; align-items:center; gap:8px; padding:12px 16px; border-bottom:1px solid rgba(255,255,255,.08)}
+.dot{width:11px; height:11px; border-radius:50%; background:#3a453f}
+.tlabel{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--codeMuted); margin-left:6px}
+.copy-btn{margin-left:auto; background:rgba(255,255,255,.08); color:var(--codeInk); border:1px solid rgba(255,255,255,.16); border-radius:8px; padding:6px 14px; font-family:"IBM Plex Mono",monospace; font-size:12px; cursor:pointer}
+.copy-btn:hover{background:rgba(255,255,255,.16)}
+.terminal pre{padding:18px 20px; overflow-x:auto; font-family:"IBM Plex Mono",monospace; font-size:14px; line-height:1.7; white-space:pre-wrap}
+.prompt{color:var(--lime)} .comment{color:var(--codeMuted)}
+.matrix{margin:22px 0; border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--surface)}
+.matrix-row{display:grid; grid-template-columns:1.1fr 1fr 1.6fr; gap:0; border-top:1px solid var(--line)}
+.matrix-row.head{background:var(--code); color:var(--codeInk); border-top:none}
+.matrix-row>div{padding:13px 16px; font-size:14.5px}
+.matrix-row.head>div{font-family:"IBM Plex Mono",monospace; font-size:12px; letter-spacing:.08em; text-transform:uppercase; font-weight:600}
+.verdict{display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:600; padding:3px 10px; border-radius:99px; margin-bottom:6px}
+.v-ok{background:var(--greenSoft); color:var(--success)}
+.v-bad{background:color-mix(in srgb, var(--danger) 12%, var(--surface)); color:var(--danger)}
+.v-mid{background:color-mix(in srgb, var(--orange) 14%, var(--surface)); color:var(--orange)}
+.concept-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:22px 0}
+.concept{background:var(--surface); border:1px solid var(--line); border-top:4px solid var(--strong); border-radius:12px; padding:18px}
+.concept:nth-child(3n+2){border-top-color:var(--green)}
+.concept:nth-child(3n+3){border-top-color:var(--orange)}
+.concept .term{font-weight:800; font-size:16px; margin-bottom:6px}
+.concept p{font-size:14.5px; color:var(--muted)}
+.flow{margin:24px 0; display:flex; align-items:stretch; gap:0}
+.node{flex:1; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px; font-size:14px; text-align:center}
+.node strong{display:block; font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--orange); letter-spacing:.08em; margin-bottom:6px}
+.arrow{align-self:center; padding:0 8px; font-size:20px; color:var(--strong); font-weight:800}
+.split{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:22px 0}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px}
+.card.do{border-top:4px solid var(--green)} .card.dont{border-top:4px solid var(--danger)}
+.card h4{font-size:16px; font-weight:800; margin-bottom:10px}
+.card.do h4{color:var(--success)} .card.dont h4{color:var(--danger)}
+.list{list-style:none; font-size:15px}
+.list li{padding:7px 0 7px 26px; position:relative; border-top:1px dashed var(--line)}
+.list li:first-child{border-top:none}
+.list li::before{content:"→"; position:absolute; left:4px; color:var(--strong); font-weight:800}
+details{background:var(--surface); border:1px solid var(--line); border-radius:12px; margin:10px 0; overflow:hidden}
+summary{padding:16px 20px; font-weight:700; cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center; gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+"; font-size:22px; color:var(--orange); font-weight:400}
+details[open] summary::after{content:"–"}
+.details-body{padding:0 20px 18px; font-size:15.5px; color:var(--muted)}
+.quiz{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:26px; margin:24px 0; box-shadow:var(--shadow)}
+.question{padding:18px 0; border-top:1px solid var(--line)}
+.question:first-of-type{border-top:none; padding-top:4px}
+.question p.q{font-weight:700; font-size:16.5px; margin-bottom:12px}
+.opt{display:flex; gap:10px; align-items:flex-start; padding:9px 12px; border:1px solid var(--line); border-radius:10px; margin:8px 0; cursor:pointer; font-size:15px}
+.opt:hover{border-color:var(--strong)}
+.opt input{margin-top:4px; accent-color:var(--green)}
+.result{font-size:14.5px; margin-top:10px; padding:10px 14px; border-radius:10px; display:none}
+.result.show{display:block}
+.result.good{background:var(--greenSoft); color:var(--success)}
+.result.bad{background:color-mix(in srgb, var(--danger) 8%, var(--surface)); color:var(--danger)}
+.quiz-actions{display:flex; gap:10px; margin-top:18px; align-items:center; flex-wrap:wrap}
+.btn{background:var(--green); color:#fff; border:none; border-radius:10px; padding:11px 22px; font-family:inherit; font-weight:700; font-size:15px; cursor:pointer}
+.btn.ghost{background:var(--surface2); color:var(--ink); border:1px solid var(--line)}
+#quizStatus{font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--muted)}
+.sources{margin:24px 0; display:flex; flex-direction:column; gap:10px}
+.source-card{display:block; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:16px 18px; text-decoration:none; color:var(--ink)}
+.source-card:hover{border-color:var(--strong)}
+.source-card strong{font-size:15.5px}
+.source-card .stag{display:block; font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--muted); margin-top:4px}
+.final-box{background:var(--code); color:var(--codeInk); border-radius:18px; padding:32px; margin-top:30px; box-shadow:var(--shadow)}
+.final-box h2{font-size:26px; margin-bottom:12px}
+.final-box p{color:var(--codeMuted); font-size:16px; margin-bottom:14px}
+.final-box .terminal{margin:18px 0 0; box-shadow:none}
+.success-line{margin-top:26px; padding:14px 18px; background:var(--greenSoft); border-radius:12px; font-size:15px; color:var(--success); font-weight:600}
+/* ---------- simulator ---------- */
+.sim{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:24px; margin:24px 0; box-shadow:var(--shadow)}
+.sim h4{font-size:18px; font-weight:800; margin-bottom:4px}
+.sim .sim-sub{font-size:14px; color:var(--muted); margin-bottom:18px}
+.sim-controls{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:18px}
+.ctl label{display:block; font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--muted); margin-bottom:6px; letter-spacing:.04em}
+.ctl output{font-family:"IBM Plex Mono",monospace; font-size:14px; font-weight:600; color:var(--ink)}
+.ctl input[type=range]{width:100%; accent-color:var(--green)}
+.ctl-row{display:flex; align-items:center; gap:10px; padding-top:22px}
+.switch{position:relative; width:46px; height:26px; flex:0 0 46px}
+.switch input{opacity:0; width:100%; height:100%; position:absolute; cursor:pointer; margin:0}
+.track{position:absolute; inset:0; background:var(--surface2); border:1px solid var(--line); border-radius:99px; transition:.2s}
+.track::after{content:""; position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:var(--strong); transition:.2s}
+.switch input:checked + .track{background:var(--greenSoft); border-color:var(--green)}
+.switch input:checked + .track::after{left:22px; background:var(--green)}
+.sim-stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:18px}
+.stat{background:var(--surface2); border-radius:12px; padding:14px 16px}
+.stat .sl{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.stat .sv{font-family:"IBM Plex Mono",monospace; font-size:20px; font-weight:600; margin-top:4px}
+.stat .sv.pos{color:var(--success)} .stat .sv.neg{color:var(--danger)}
+#demonChart{width:100%; height:auto; display:block; background:var(--surface2); border-radius:12px; margin-bottom:12px}
+.legend{display:flex; flex-wrap:wrap; gap:16px; font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--muted); margin-bottom:14px}
+.legend span{display:flex; align-items:center; gap:7px}
+.sw{width:22px; height:4px; border-radius:2px; display:inline-block}
+.sim-note{font-size:13.5px; color:var(--muted)}
+/* ---------- responsive ---------- */
+@media (max-width: 900px){
+  .sidebar{position:sticky; top:0; width:100%; flex:none; height:auto; padding:0; z-index:60; border-bottom:1px solid var(--sideDiv)}
+  .brand, .side-foot{display:none}
+  .chapters{display:flex; overflow-x:auto; padding:8px 10px; gap:8px}
+  .chapter{flex:0 0 auto; border-left:none; border-bottom:3px solid transparent; padding:8px 12px; border-radius:10px; align-items:center}
+  .chapter.active{border-bottom-color:#ff7350; background:rgba(255,255,255,.06)}
+  .chapter .csub, .chapter .tick{display:none}
+  .chapter .cnum{padding-top:0}
+  .chapter .ctitle{font-size:13px; white-space:nowrap}
+  .shell{flex-direction:column}
+  .concept-grid{grid-template-columns:1fr 1fr}
+  .split{grid-template-columns:1fr}
+  .flow{flex-direction:column}
+  .arrow{transform:rotate(90deg); padding:4px 0; align-self:center}
+  .matrix-row{grid-template-columns:1fr}
+  .matrix-row.head{display:none}
+  .matrix-row>div{padding:8px 16px}
+  .matrix-row>div:first-child{padding-top:14px; font-weight:700}
+  .matrix-row>div:last-child{padding-bottom:14px}
+}
+@media (max-width: 560px){ .concept-grid{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="shell">
+<nav class="sidebar" aria-label="Chapters">
+  <div class="brand">
+    <div class="kicker">A one-lecture masterclass</div>
+    <h1>Conducting <code>effective</code> negotiations</h1>
+  </div>
+  <div class="chapters" id="chapters"></div>
+  <div class="side-foot">Progress saves on this device. Finish all 12 pages and the quiz to complete the course.</div>
+</nav>
+<div class="main">
+  <div class="topbar">
+    <button class="navbtn" id="prevBtn">← Prev</button>
+    <span class="pagecount" id="pageCount">Page 1 of 12</span>
+    <div class="pbar"><i id="pbarFill"></i></div>
+    <button class="navbtn" id="nextBtn">Next →</button>
+  </div>
+  <div class="content" id="content">
+
+<!-- ==================== PAGE 0 : COVER ==================== -->
+<article class="page" id="page-cover">
+  <div class="hero">
+    <div class="kicker">A one-lecture masterclass · 12 pages</div>
+    <h1>Conducting <code>effective</code> negotiations</h1>
+    <p class="lede">A 2007 Stanford lecture by Joel Peterson crossed your feed this week: one hour on how to conduct a negotiation. No hacks, no memorized scripts. Just the mechanics of power, price, and people, taught by a man who ran one of the world's largest real estate firms and went on to chair JetBlue. This course turns that hour into a working skill, built around the negotiations already on your calendar.</p>
+    <div class="hero-card">
+      <div class="hc-k">Best first milestone</div>
+      <h2>Your BATNA card for Monday's 11 AM call</h2>
+      <p>On page 03 you will build a one-page BATNA card for a real negotiation: the 11 AM phone intake with Kiana at Express. Your best alternative, your target, your walk-away line. Fifteen minutes of writing, and you walk into that call impossible to push around.</p>
+    </div>
+    <div class="meta-row">
+      <span class="meta-pill">1 lecture</span>
+      <span class="meta-pill">9 lessons</span>
+      <span class="meta-pill">1 prep-card builder</span>
+      <span class="meta-pill">3-question final check</span>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="mark">1</div>
+    <div class="co-body"><strong>How to use this course.</strong> Pages 00 through 02 frame the lecture and the man who gave it. Page 03 is the hands-on build: your BATNA card. Pages 04 and 05 are the mechanics, basic and advanced. Pages 06 through 08 cover automation, cost, and safety. Then the final check and one action for tonight. Claims are labeled as they appear: verified lecture content, Peterson's own framing, and standard negotiation theory.</div>
+  </div>
+  <div class="pager">
+    <button class="navbtn" disabled>← Prev</button>
+    <button class="navbtn" data-goto="1">Next →</button>
+  </div>
+</article>
+
+<!-- ==================== PAGE 1 : 00 CHECKPOINT ==================== -->
+<article class="page" id="page-checkpoint">
+  <div class="crumb">Cover · 00 Checkpoint · 01 Mental model</div>
+  <div class="section-head">
+    <div class="lesson-no">Lesson 00</div>
+    <h2>Checkpoint: is this hour worth it</h2>
+    <p class="intro">Before you spend 68 minutes on a lecture recorded in 2007, know exactly what you are buying and who should skip it.</p>
+  </div>
+  <div class="concept-grid">
+    <div class="concept"><div class="term">What it is (verified)</div>A 68-minute session from Stanford's Executive Education Influence and Negotiation Strategies Program, recorded January 31, 2007. About 1.1 million views on YouTube. Twenty-eight chapters covering BATNA, price discipline, control, language, emotion, intermediaries, and reputation.</div>
+    <div class="concept"><div class="term">What it is not</div>Not scripts. Not manipulation tactics. Not real estate specific. Peterson teaches principles and tells stories from his own deals; he does not hand you lines to recite.</div>
+    <div class="concept"><div class="term">How it found you</div>An X post by shobhanai (@HeyShobhan) on September 20, 2026 called it a lecture that "will teach you more about negotiation and getting what you want than most people learn in years." That is the poster's framing, not a verified claim. The lecture is worth your hour on its own merits, which this page lays out.</div>
+  </div>
+  <div class="callout warn">
+    <div class="mark">!</div>
+    <div class="co-body"><strong>The honest disqualifier.</strong> Peterson teaches from a position of power. He ran Trammell Crow, one of the world's largest real estate firms. Some of his moves assume you have leverage to spend. This course flags where the small-party version differs, because on Monday you are the applicant, not the chairman.</div>
+  </div>
+  <div class="split">
+    <div class="card do"><h3>Strong fit</h3><ul class="list">
+      <li>You negotiate for a living. Debt-settlement phone sales is negotiation all day.</li>
+      <li>Monday has two pay conversations: AppleOne at 10 AM, Express at 11 AM.</li>
+      <li>The October 1 rent call is a live negotiation: month-to-month at $2,480 or a 12-month at $2,420.</li>
+      <li>Emergence Advisors will eventually mean negotiating consulting fees.</li>
+    </ul></div>
+    <div class="card dont"><h3>Weak fit</h3><ul class="list">
+      <li>You want word-for-word scripts to pressure people into yeses.</li>
+      <li>You want tactics for one-shot deals where you never see the person again.</li>
+      <li>You are unwilling to walk away from any deal, ever.</li>
+    </ul></div>
+  </div>
+  <div class="success-line">Success state: you can say in one sentence what the lecture teaches and who should skip it.</div>
+  <div class="pager">
+    <button class="navbtn" data-goto="0">← Prev</button>
+    <button class="navbtn" data-goto="2">Next →</button>
+  </div>
+</article>
+
+<!-- ==================== PAGE 2 : 01 MENTAL MODEL ==================== -->
+<article class="page" id="page-mental">
+  <div class="crumb">00 Checkpoint · 01 Mental model · 02 Setup route</div>
+  <div class="section-head">
+    <div class="lesson-no">Lesson 01</div>
+    <h2>The one big idea: never need the deal</h2>
+    <p class="intro">Peterson was told the original title of his session: "How to Negotiate When You Absolutely Have To Have The Deal." His answer, verified in the transcript: don't get in that position. Everything else in the hour is commentary on that sentence.</p>
+  </div>
+  <div class="callout">
+    <div class="mark">1</div>
+    <div class="co-body"><strong>Power is alternatives.</strong> If you must have this deal, you have already lost the negotiation, because the other side can feel it. The work of negotiating happens before you sit down: building a genuine alternative so that walking away is a real option, not a bluff.</div>
+  </div>
+  <div class="flow">
+    <div class="node"><strong>1. Alternatives first</strong><span>Build your BATNA before the meeting. No alternative, no leverage.</span></div>
+    <div class="arrow">→</div>
+    <div class="node"><strong>2. Learn interests</strong><span>Yours and theirs. Positions are demands; interests are the reasons underneath.</span></div>
+    <div class="arrow">→</div>
+    <div class="node"><strong>3. Solve together</strong><span>Negotiation is a creative problem both sides work, not a fight one side wins.</span></div>
+    <div class="arrow">→</div>
+    <div class="node"><strong>4. Protect the relationship</strong><span>Every deal is serial, not episodic. Reputation compounds.</span></div>
+  </div>
+  <div class="concept-grid">
+    <div class="concept"><div class="term">Vegetables, not dessert</div>Peterson: "Negotiation is the vegetables of your business life." You do not have to love it. You have to eat it, because the deals you avoid negotiating are the deals where you overpay.</div>
+    <div class="concept"><div class="term">Serial, not episodic</div>Peterson's later formulation: solve for fairness instead of winning, because negotiations repeat with the same people. Staffing recruiters talk to each other. Landlords remember. Play the long game.</div>
+    <div class="concept"><div class="term">Grey, not black and white</div>An engineer in the audience said it best: in negotiation nothing is provably right or wrong, so there is room to be creative. Win-win deals are puzzles to assemble, and assembling them is the fun part.</div>
+  </div>
+  <div class="success-line">Success state: explain to someone, in under 30 seconds, why needing the deal is the real problem.</div>
+  <div class="pager">
+    <button class="navbtn" data-goto="1">← Prev</button>
+    <button class="navbtn" data-goto="3">Next →</button>
+  </div>
+</article>
+
+<!-- ==================== PAGE 3 : 02 SETUP ROUTE ==================== -->
+<article class="page" id="page-setup">
+  <div class="crumb">01 Mental model · 02 Setup route · 03 BATNA card</div>
+  <div class="section-head">
+    <div class="lesson-no">Lesson 02</div>
+    <h2>Setup route: watch it right</h2>
+    <p class="intro">The lecture is free and the transcript is free. Pick your route, know the speaker, and mind the date on the anecdotes.</p>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div><strong>Watch the lecture.</strong> <a href="https://www.youtube.com/watch?v=rCmvMDrCWjs">"Conducting Effective Negotiations,"</a> 1 hour 8 minutes, on YouTube. Watch it in two sittings if you like; the first half is mindset and the second half is technique. Keep the 28-chapter list open as your map.</div></div>
+    <div class="step"><div class="step-num">2</div><div><strong>Or read the transcript.</strong> A <a href="https://singjupost.com/conducting-effective-negotiations-by-joel-peterson-at-stanford-full-transcript/">full written transcript</a> exists if you absorb text faster than speech. Skim the opening for Peterson's exact words, then read the chapters on BATNA (23:50) and price (34:05) closely.</div></div>
+    <div class="step"><div class="step-num">3</div><div><strong>Date-check the stories.</strong> Recorded January 2007. The Trump anecdote is from roughly 1987. The principles are timeless; the anecdotes are period pieces. Do not copy the moves, extract the lesson.</div></div>
+    <div class="step"><div class="step-num">4</div><div><strong>Bring your BATNA card.</strong> Build the card on the next page first, then watch chapters 18:00 onward with Monday's calls in mind. A lecture watched against a live negotiation sticks ten times better.</div></div>
+  </div>
+  <h3 class="sub">The speaker, verified</h3>
+  <div class="concept-grid">
+    <div class="concept"><div class="term">Operator</div>Founder of Peterson Partners. Former managing partner of Trammell Crow Company, once among the world's largest real estate development firms.</div>
+    <div class="concept"><div class="term">Boardroom</div>Chairman of JetBlue Airways. Director roles including Franklin Covey. This is a practitioner, not a theorist.</div>
+    <div class="concept"><div class="term">Classroom</div>On the Stanford Graduate School of Business faculty since 1992. MBA from Harvard Business School. Author of The 10 Laws of Trust (2016) and Entrepreneurial Leadership.</div>
+  </div>
+  <div class="callout">
+    <div class="mark">2</div>
+    <div class="co-body"><strong>Why his resume matters to you.</strong> Peterson has sat on every side of the table: buyer, seller, boss, board member, professor. When he says "negotiate with the right party," he has been the wrong party and the right one. Weight the advice accordingly.</div>
+  </div>
+  <div class="success-line">Success state: the video is queued, and you can recite Peterson's three-line resume without notes.</div>
+  <div class="pager">
+    <button class="navbtn" data-goto="2">← Prev</button>
+    <button class="navbtn" data-goto="4">Next →</button>
+  </div>
+</article>
+<!-- ==================== PAGE 4 : 03 FIRST HANDS-ON BUILD ==================== -->
+<article class="page" id="page-batna">
+  <div class="crumb">02 Setup route · 03 BATNA card · 04 Core mechanics</div>
+  <div class="section-head">
+    <div class="lesson-no">Lesson 03</div>
+    <h2>First hands-on build: your BATNA card</h2>
+    <p class="intro">Peterson's first rule was "don't get in that position." This card is how you stay out of it. Build it now for a real negotiation on your calendar, and it saves on this device.</p>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div><strong>Name the negotiation.</strong> Be specific: which conversation, with whom, when. "Express intake, 11 AM Monday with Kiana" beats "the job thing."</div></div>
+    <div class="step"><div class="step-num">2</div><div><strong>Write your best alternative.</strong> If this conversation produces nothing, what do you do Tuesday? Your alternative is your power. Be honest: a real alternative, not a fantasy.</div></div>
+    <div class="step"><div class="step-num">3</div><div><strong>Set target and walk-away.</strong> The target is what you want. The walk-away is the line below which you politely decline. Write the walk-away as a number or a condition, not a feeling.</div></div>
+    <div class="step"><div class="step-num">4</div><div><strong>Write down what they want.</strong> The recruiter wants a reliable placement who shows up. The landlord wants a paying tenant with no drama. Knowing their interests is half the puzzle.</div></div>
+  </div>
+  <style>
+    .bfield{margin:0 0 12px}
+    .bfield label{display:block;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:6px}
+    .bfield input,.bfield textarea{width:100%;box-sizing:border-box;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-family:Archivo,sans-serif;font-size:15px;color:var(--ink)}
+    .bfield textarea{min-height:64px;resize:vertical}
+  </style>
+  <div class="terminal">
+    <div class="terminal-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="tlabel">batna card · builder</span></div>
+    <div style="padding:18px">
+      <div class="bfield"><label for="batnaDeal">The negotiation</label><input id="batnaDeal" type="text" placeholder="Express intake, 11 AM Monday with Kiana"></div>
+      <div class="bfield"><label for="batnaAlt">My best alternative if this fails</label><textarea id="batnaAlt" placeholder="Ten more agencies on my list, plus Lendera income while I keep looking"></textarea></div>
+      <div class="bfield"><label for="batnaTarget">My target outcome</label><input id="batnaTarget" type="text" placeholder="Morning shift placement at my target rate"></div>
+      <div class="bfield"><label for="batnaWalk">My walk-away line</label><input id="batnaWalk" type="text" placeholder="Below $X/hr, or nights-only with no path to days"></div>
+      <div class="bfield"><label for="batnaWants">What they probably want</label><textarea id="batnaWants" placeholder="A reliable fill for the client; someone who shows up and stays"></textarea></div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn" id="batnaSave">Save card</button>
+        <span id="batnaStatus" style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted)">Not saved yet.</span>
+      </div>
+    </div>
+  </div>
+  <div class="terminal" style="margin-top:14px">
+    <div class="terminal-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="tlabel">your card</span><button class="copy-btn" data-copy="batnaCardOut">Copy</button></div>
+    <pre id="batnaCardOut">Your card will appear here after you hit Save card.</pre>
+  </div>
+  <div class="callout">
+    <div class="mark">3</div>
+    <div class="co-body"><strong>Your Monday BATNA is real.</strong> If Express offers below your line, your alternative is not a bluff: ten more agencies on your numbered list, plus current 1099 income. Write that down and the recruiter's leverage over you drops to zero. That is the entire lecture in one card.</div>
+  </div>
+  <div class="success-line">Success state: a saved card with a walk-away line you will actually honor on the call.</div>
+  <div class="pager">
+    <button class="navbtn" data-goto="3">← Prev</button>
+    <button class="navbtn" data-goto="5">Next →</button>
+  </div>
+</article>
+
+<!-- ==================== PAGE 5 : 04 CORE MECHANICS ==================== -->
+<article class="page" id="page-mechanics">
+  <div class="crumb">03 BATNA card · 04 Core mechanics · 05 Advanced moves</div>
+  <div class="section-head">
+    <div class="lesson-no">Lesson 04</div>
+    <h2>Core mechanics: the six moves</h2>
+    <p class="intro">Six techniques, straight from the lecture's chapter list. Each one is a move you can practice on Monday. Timestamps point to the video chapters.</p>
+  </div>
+  <div class="concept-grid">
+    <div class="concept"><div class="term">1. Know your BATNA (23:50)</div>Your best alternative to a negotiated agreement. It sets your walk-away and therefore your power. You built this on the last page. Never enter a negotiation without it written down.</div>
+    <div class="concept"><div class="term">2. Take control (18:00)</div>Control the terrain: the agenda, the pace, the setting. Whoever sets the agenda usually gets the outcome the agenda favors. On a phone intake, taking control can be as simple as asking the first substantive question.</div>
+    <div class="concept"><div class="term">3. Share what you want (25:45)</div>Say your interests out loud. Hiding what you want does not make you strong; it makes agreement impossible to find. "I am looking for morning shifts" is information, not weakness.</div>
+    <div class="concept"><div class="term">4. The right party (31:05)</div>Negotiate only with someone who can say yes. A recruiter who cannot move the pay band can only say no. Ask early: "Who sets the pay range for this role?"</div>
+    <div class="concept"><div class="term">5. Don't move on price (34:05)</div>Hold your number. When they push, trade terms instead of dollars: shift, start date, duties, review timeline. Every dollar you concede on price is gone; every term you trade can come back.</div>
+    <div class="concept"><div class="term">6. Control your language (54:01)</div>Words are moves. Precise language is leverage; sloppy language gives it away. "I need at least X" beats "I was kind of hoping for somewhere around X, if that works."</div>
+  </div>
+  <div class="callout">
+    <div class="mark">4</div>
+    <div class="co-body"><strong>Your Monday application.</strong> On the Express call: open with your interests (morning shifts, target rate), ask who sets the pay band, and if the rate comes back low, do not drop your number. Trade instead: "If the rate is fixed, what does the path to a raise or a shift change look like, and in writing?"</div>
+  </div>
+  <div class="success-line">Success state: name all six mechanics, in order, without looking back at this page.</div>
+  <div class="pager">
+    <button class="navbtn" data-goto="4">← Prev</button>
+    <button class="navbtn" data-goto="6">Next →</button>
+  </div>
+</article>
+
+<!-- ==================== PAGE 6 : 05 ADVANCED CONNECTIONS ==================== -->
+<article class="page" id="page-advanced">
+  <div class="crumb">04 Core mechanics · 05 Advanced moves · 06 Automation</div>
+  <div class="section-head">
+    <div class="lesson-no">Lesson 05</div>
+    <h2>Advanced moves: reputation, emotion, intermediaries</h2>
+    <p class="intro">The second half of the lecture is about the long game and the inner game. This is where beginners become people others want to deal with.</p>
+  </div>
+  <div class="concept-grid">
+    <div class="concept"><div class="term">Win-win vs win-lose</div>Most business deals are not zero-sum. Treating every negotiation as a fight leaves value on the table and enemies behind it. The puzzle framing from Lesson 01: find the arrangement where both sides' interests fit.</div>
+    <div class="concept"><div class="term">Reputation (46:43)</div>Every negotiation is an audition for the next one. Peterson's throughline: high character and kept promises compound into deal flow. Staffing recruiters share notes on candidates. Be the candidate they call first.</div>
+    <div class="concept"><div class="term">Intermediaries (57:07)</div>When emotion or power blocks the principals, a go-between can carry the deal. In your world, the staffing agency itself is an intermediary between you and the employer. Use that: let the recruiter sell you upward.</div>
+    <div class="concept"><div class="term">Inside vs outside (45:22)</div>Negotiating inside your own organization follows different rules than negotiating across the table. Allies, hierarchy, and shared future change the math. Peterson's senior-partner departure case (36:37) lives here: even departures are negotiations.</div>
+    <div class="concept"><div class="term">Getting angry (56:28)</div>Anger displayed on purpose is a tactic. It signals that a line exists. Use it rarely, deliberately, and never as a bluff you cannot back.</div>
+    <div class="concept"><div class="term">Being emotional (59:24)</div>Emotion leaking out is not a tactic; it is information you gave away for free. Peterson gives anger and emotion separate chapters for a reason. One you choose, one chooses you.</div>
+  </div>
+  <h3 class="sub">Stories from the lecture</h3>
+  <details open>
+    <summary>The Washington Generals (transcript-verified)</summary>
+    <div class="details-body">About twenty years before the lecture, Peterson met Donald Trump in his New York office. Trump tried to sell him an interest in the Washington Generals, the exhibition team famous for losing to the Harlem Globetrotters. Peterson uses the story in his section on power and information: when there is a disparity in leverage or knowledge, and the other party will use it, you can walk out of the room feeling abused. The lesson is not about Trump. It is about recognizing when you are the mark, and having the BATNA to stand up and leave.</div>
+  </details>
+  <details>
+    <summary>The daughter negotiation (chapter 39:51)</summary>
+    <div class="details-body">Peterson closes a section with a negotiation with his own daughter. The lecture's chapter title is all we verify here; the principle is the takeaway. Home is the safest dojo: practice the mechanics where the stakes are love, not money, and the reps transfer to the room where it counts.</div>
+  </details>
+  <details>
+    <summary>The vendor negotiation (chapter 48:37)</summary>
+    <div class="details-body">A full chapter on negotiating with vendors. The transferable principle: vendors need your repeat business, which gives you structural leverage most buyers never use. In your life, the landlord on October 1 is the vendor. A reliable tenant who pays on time is worth more than a one-time rent bump, and that is a card you can play.</div>
+  </details>
+  <div class="success-line">Success state: retell the Washington Generals story and name the lesson it carries, in your own words.</div>
+  <div class="pager">
+    <button class="navbtn" data-goto="5">← Prev</button>
+    <button class="navbtn" data-goto="7">Next →</button>
+  </div>
+</article>
+
+<!-- ==================== PAGE 7 : 06 AUTOMATION ==================== -->
+<article class="page" id="page-automation">
+  <div class="crumb">05 Advanced moves · 06 Automation · 07 Cost and reality</div>
+  <div class="section-head">
+    <div class="lesson-no">Lesson 06</div>
+    <h2>Automation: what AI preps, what you do</h2>
+    <p class="intro">Peterson taught in 2007, before any of this existed. The update is simple: automate the preparation, never the negotiation.</p>
+  </div>
+  <div class="split">
+    <div class="card do"><h3>Automate this</h3><ul class="list">
+      <li>Prep checklists: a BATNA card before every significant call, like the builder on page 03.</li>
+      <li>AI role-play: have a model play the recruiter and throw objections at you before Monday.</li>
+      <li>Call notes and follow-up drafts: capture terms discussed so nothing verbal evaporates.</li>
+      <li>A walk-away reminder: one line on a sticky note where you can see it during the call.</li>
+    </ul></div>
+    <div class="card dont"><h3>Never automate this</h3><ul class="list">
+      <li>The negotiation itself. No bot at the table, no scripted pressure sequences.</li>
+      <li>Bluffing. AI cannot back your bluff when someone calls it, and you will be in the room alone.</li>
+      <li>Secret recordings. California requires all-party consent to record a confidential call.</li>
+      <li>Your real numbers in a public model. Redact pay targets before pasting anything anywhere.</li>
+    </ul></div>
+  </div>
+  <div class="terminal">
+    <div class="terminal-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="tlabel">pre-call checklist</span><button class="copy-btn" data-copy="precall">Copy</button></div>
+    <pre id="precall">PRE-CALL CHECKLIST (2 minutes)
+[ ] BATNA card filled: alternative, target, walk-away
+[ ] Their interests written in one line
+[ ] First question ready (take control early)
+[ ] Walk-away number on a sticky note, visible
+[ ] Pen and paper for terms discussed
+[ ] Nothing to sign today: take every offer home</pre>
+  </div>
+  <div class="success-line">Success state: the checklist above is copied and sitting next to your phone before Monday's calls.</div>
+  <div class="pager">
+    <button class="navbtn" data-goto="6">← Prev</button>
+    <button class="navbtn" data-goto="8">Next →</button>
+  </div>
+</article>
+<!-- ==================== PAGE 8 : 07 COST AND AI-TIER REALITY ==================== -->
+<article class="page" id="page-cost">
+  <div class="crumb">06 Automation · 07 Cost and reality · 08 Safety and sharing</div>
+  <div class="section-head">
+    <div class="lesson-no">Lesson 07</div>
+    <h2>Cost and AI-tier reality</h2>
+    <p class="intro">The honest price list. No tiers to upsell you, no software to buy. The most expensive item here is your hour.</p>
+  </div>
+  <div class="matrix">
+    <div class="matrix-row head"><span>Route</span><span>Cost</span><span>Time</span><span>What you get</span></div>
+    <div class="matrix-row"><span data-label="Route">Watch the lecture</span><span data-label="Cost">$0</span><span data-label="Time">68 minutes</span><span data-label="What you get">The full method, Peterson's tone, all the stories</span></div>
+    <div class="matrix-row"><span data-label="Route">Read the transcript</span><span data-label="Cost">$0</span><span data-label="Time">About 30 minutes</span><span data-label="What you get">Searchable text, exact quotes, easy notes</span></div>
+    <div class="matrix-row"><span data-label="Route">The 10 Laws of Trust (book)</span><span data-label="Cost">One book</span><span data-label="Time">Several hours</span><span data-label="What you get">Deeper treatment of reputation and trust, the lecture's throughline</span></div>
+    <div class="matrix-row"><span data-label="Route">Stanford exec program</span><span data-label="Cost">Tuition program</span><span data-label="Time">Days, in person</span><span data-label="What you get">The live version this lecture was recorded for; linked for context, not recommended</span></div>
+  </div>
+  <div class="callout">
+    <div class="mark">5</div>
+    <div class="co-body"><strong>AI-tier reality.</strong> A free model is a sparring partner, not a negotiator. It can role-play Kiana's objections, draft your BATNA card, and tighten your language. It cannot read the pause after you name your number, and it cannot build your reputation with a recruiter. Nothing in this course needs a paid tier. The paid tiers buy speed, not skill.</div>
+  </div>
+  <div class="success-line">Success state: you can state the total cost of this skill ($0 and 68 minutes) and what paid options actually add.</div>
+  <div class="pager">
+    <button class="navbtn" data-goto="7">← Prev</button>
+    <button class="navbtn" data-goto="9">Next →</button>
+  </div>
+</article>
+
+<!-- ==================== PAGE 9 : 08 SAFETY AND SHARING ==================== -->
+<article class="page" id="page-safety">
+  <div class="crumb">07 Cost and reality · 08 Safety and sharing · Final check</div>
+  <div class="section-head">
+    <div class="lesson-no">Lesson 08</div>
+    <h2>Safety and sharing: protect your walk-away</h2>
+    <p class="intro">Negotiation has a safety layer most beginners skip. Your BATNA is confidential information. Treat it that way.</p>
+  </div>
+  <div class="callout warn">
+    <div class="mark">!</div>
+    <div class="co-body"><strong>Never reveal your BATNA.</strong> The moment the other side knows your walk-away, your walk-away becomes their offer. Share interests freely; keep alternatives private. This is the single most expensive leak in amateur negotiation.</div>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div><strong>Keep your number private.</strong> Your target and your walk-away are yours. "What is the least you would take?" is a question you answer with a question: "What is the range for the role?"</div></div>
+    <div class="step"><div class="step-num">2</div><div><strong>Know the salary-history rule.</strong> California law bars employers from seeking your salary history. You do not have to answer "what did you make at Lendera." Your past pay is not their business.</div></div>
+    <div class="step"><div class="step-num">3</div><div><strong>Pay talk is protected.</strong> Federal labor law protects employees discussing wages with each other. A recruiter or boss who says otherwise is wrong.</div></div>
+    <div class="step"><div class="step-num">4</div><div><strong>Take every offer home.</strong> Nothing gets signed on the call. "I need to review this" is a complete sentence, and the pause it creates often improves the offer.</div></div>
+    <div class="step"><div class="step-num">5</div><div><strong>No secret recordings.</strong> California requires all-party consent to record a confidential conversation. If you want a record, ask, or take written notes instead.</div></div>
+  </div>
+  <div class="split">
+    <div class="card do"><h3>Share freely</h3><ul class="list">
+      <li>The method: send this course to anyone negotiating anything.</li>
+      <li>Your interests: telling them what you want helps them solve the puzzle.</li>
+      <li>Your prep card with one trusted person for a sanity check.</li>
+    </ul></div>
+    <div class="card dont"><h3>Never share</h3><ul class="list">
+      <li>Your walk-away number with the other side, ever.</li>
+      <li>Your BATNA details ("I have three other offers" is fine; the names and numbers are not).</li>
+      <li>Real pay targets pasted into a public AI model.</li>
+    </ul></div>
+  </div>
+  <div class="success-line">Success state: list your three non-negotiables for Monday's calls without hesitation.</div>
+  <div class="pager">
+    <button class="navbtn" data-goto="8">← Prev</button>
+    <button class="navbtn" data-goto="10">Next →</button>
+  </div>
+</article>
+
+<!-- ==================== PAGE 10 : FINAL CHECK ==================== -->
+<article class="page" id="page-final">
+  <div class="crumb">08 Safety and sharing · Final check · Complete</div>
+  <div class="section-head">
+    <div class="lesson-no">Final check</div>
+    <h2>Three questions, then sources</h2>
+    <p class="intro">One on the big idea, one on the core tool, one on the most quotable move. Grade yourself honestly.</p>
+  </div>
+  <div class="quiz">
+    <div class="question" data-answer="b" data-explain="Verified in the lecture transcript. Peterson was told the original title, 'How to Negotiate When You Absolutely Have To Have The Deal,' and his answer was: don't get in that position. Build alternatives before you sit down.">
+      <p class="q">1. Peterson was asked how to negotiate "when you absolutely have to have the deal." What was his answer?</p>
+      <label class="opt"><input type="radio" name="q1" value="a"> Bluff like you do not need it, then concede slowly to seem reasonable.</label>
+      <label class="opt"><input type="radio" name="q1" value="b"> Don't get in that position. Build alternatives before you sit down.</label>
+      <label class="opt"><input type="radio" name="q1" value="c"> Take whatever they offer now and renegotiate once you are inside.</label>
+      <div class="result"></div>
+    </div>
+    <div class="question" data-answer="b" data-explain="Chapter 23:50. BATNA is your best alternative to a negotiated agreement, and it is the source of your walk-away power. The concept comes from Fisher and Ury's Getting to Yes; the lecture applies it as standard equipment, it did not invent it.">
+      <p class="q">2. Your BATNA is...</p>
+      <label class="opt"><input type="radio" name="q2" value="a"> Your opening offer: the first number you say out loud.</label>
+      <label class="opt"><input type="radio" name="q2" value="b"> Your best alternative if this negotiation fails; the source of your walk-away power.</label>
+      <label class="opt"><input type="radio" name="q2" value="c"> The other side's budget, which you should discover before naming anything.</label>
+      <div class="result"></div>
+    </div>
+    <div class="question" data-answer="b" data-explain="Chapter 34:05. Hold the price; make your trades on terms, timing, or scope. Conceded dollars are gone forever, while traded terms can come back to you.">
+      <p class="q">3. "Don't move on price" (chapter 34:05) means...</p>
+      <label class="opt"><input type="radio" name="q3" value="a"> Never give the other side anything, on any term, ever.</label>
+      <label class="opt"><input type="radio" name="q3" value="b"> Hold your price and trade on terms, timing, or scope instead of dropping dollars.</label>
+      <label class="opt"><input type="radio" name="q3" value="c"> Always split the difference so both sides feel the deal was fair.</label>
+      <div class="result"></div>
+    </div>
+    <div class="quiz-actions">
+      <button class="btn" id="gradeQuiz">Grade my answers</button>
+      <button class="btn ghost" id="clearQuiz">Clear</button>
+      <span id="quizStatus">Not graded yet.</span>
+    </div>
+  </div>
+  <h3 class="sub">Sources</h3>
+  <div class="sources">
+    <a class="source-card" href="https://www.youtube.com/watch?v=rCmvMDrCWjs"><strong>Conducting Effective Negotiations, full lecture</strong><span class="stag">youtube.com · watch?v=rCmvMDrCWjs · recorded Jan 31, 2007; the verified source for every chapter cited</span></a>
+    <a class="source-card" href="https://singjupost.com/conducting-effective-negotiations-by-joel-peterson-at-stanford-full-transcript/"><strong>Full transcript of the lecture</strong><span class="stag">singjupost.com · the verified source for Peterson's quoted lines and the Trump anecdote</span></a>
+    <a class="source-card" href="http://www.gsb.stanford.edu/exed/insp/"><strong>Stanford Executive Education program page</strong><span class="stag">gsb.stanford.edu · the Influence and Negotiation Strategies Program the lecture was recorded for</span></a>
+    <a class="source-card" href="https://x.com/HeyShobhan/status/2101665395656757257"><strong>@HeyShobhan: the post that started this course</strong><span class="stag">x.com · Sep 20, 2026 · natively uploaded video; the poster's framing is labeled as such in Lesson 00</span></a>
+    <a class="source-card" href="https://podcasts.salesforce.com/public/38/Blazing-Trails-561264f7/ecc44cc3"><strong>Peterson on fairness and serial negotiation</strong><span class="stag">podcasts.salesforce.com · "solve for fairness... negotiations are serial and not episodic"</span></a>
+    <a class="source-card" href="https://www.FASTCOMPANY.COM/user/joel-peterson"><strong>Peterson's bio: operator and professor</strong><span class="stag">fastcompany.com · Peterson Partners, JetBlue chairman, Stanford GSB since 1992</span></a>
+  </div>
+  <div class="success-line">Success state: 3 out of 3, and you can say which claim in the X post was the poster's framing, not the lecture's.</div>
+  <div class="pager">
+    <button class="navbtn" data-goto="9">← Prev</button>
+    <button class="navbtn" data-goto="11">Next →</button>
+  </div>
+</article>
+
+<!-- ==================== PAGE 11 : COMPLETE ==================== -->
+<article class="page" id="page-complete">
+  <div class="crumb">Final check · Complete</div>
+  <div class="final-box">
+    <div class="lesson-no" style="color:#c5df72">Complete</div>
+    <h2>Tonight's one action</h2>
+    <p>Monday is intake day: AppleOne at 10 AM virtual, Express at 11 AM by phone with Kiana. Everything in this course was built for exactly that. So tonight, do one thing.</p>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="tlabel">tonight · one action</span><button class="copy-btn" data-copy="tonight-action">Copy</button></div>
+      <pre id="tonight-action">TONIGHT:
+1. Open page 03 and fill in the BATNA card for the
+   11 AM Express call: alternative, target, walk-away.
+2. Write one line on what Kiana wants: a reliable fill.
+3. Read the walk-away line aloud once, then put the
+   card where you will see it during the call.
+
+The lecture will still be there on Tuesday.
+The intake will not wait.</pre>
+    </div>
+    <p style="margin-top:18px">Never need the deal. That is the whole course in four words.</p>
+  </div>
+  <div class="pager">
+    <button class="navbtn" data-goto="10">← Prev</button>
+    <button class="navbtn" data-goto="0">Back to start →</button>
+  </div>
+</article>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /shell -->
+<script>
+(function(){
+"use strict";
+var PAGE_IDS = ["page-cover","page-checkpoint","page-mental","page-setup","page-batna","page-mechanics","page-advanced","page-automation","page-cost","page-safety","page-final","page-complete"];
+var CHAPTERS = [
+  {n:"00", t:"Cover", s:"One lecture, one skill stack"},
+  {n:"01", t:"01 \u00b7 Checkpoint", s:"Is this hour worth it"},
+  {n:"02", t:"01 \u00b7 Mental model", s:"Never need the deal"},
+  {n:"03", t:"02 \u00b7 Setup route", s:"Watch it right"},
+  {n:"04", t:"03 \u00b7 BATNA card", s:"Your first build"},
+  {n:"05", t:"04 \u00b7 Core mechanics", s:"Control, price, the right party"},
+  {n:"06", t:"05 \u00b7 Advanced moves", s:"Reputation, emotion, intermediaries"},
+  {n:"07", t:"06 \u00b7 Automation", s:"What AI preps, what you do"},
+  {n:"08", t:"07 \u00b7 Cost and reality", s:"The real price is an hour"},
+  {n:"09", t:"08 \u00b7 Safety and sharing", s:"Protect your walk-away"},
+  {n:"10", t:"Final check", s:"Three questions, sources"},
+  {n:"11", t:"Complete", s:"Tonight\u2019s one action"}
+];
+var LS_KEY = "negotiation-mastery-course-v1";
+var chaptersEl = document.getElementById("chapters");
+var pages = PAGE_IDS.map(function(id){ return document.getElementById(id); });
+var prevBtn = document.getElementById("prevBtn");
+var nextBtn = document.getElementById("nextBtn");
+var pageCount = document.getElementById("pageCount");
+var pbarFill = document.getElementById("pbarFill");
+var done = {};
+var current = 0;
+
+CHAPTERS.forEach(function(c, i){
+  var b = document.createElement("button");
+  b.className = "chapter";
+  b.setAttribute("data-i", i);
+  b.innerHTML = '<span class="cnum">'+c.n+'</span><span><span class="ctitle">'+c.t+'</span><br><span class="csub">'+c.s+'</span></span><span class="tick">\u2713</span>';
+  b.addEventListener("click", function(){ show(i); });
+  chaptersEl.appendChild(b);
+});
+var chapterBtns = Array.prototype.slice.call(chaptersEl.children);
+
+function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({page:current, done:Object.keys(done)})); }catch(e){} }
+function load(){ try{ var s = JSON.parse(localStorage.getItem(LS_KEY)||"null"); if(s){ current = Math.max(0, Math.min(11, s.page|0)); (s.done||[]).forEach(function(k){ done[k]=1; }); } }catch(e){} }
+
+function show(i){
+  i = Math.max(0, Math.min(11, i));
+  current = i;
+  pages.forEach(function(p, j){ p.classList.toggle("active", j===i); });
+  chapterBtns.forEach(function(b, j){
+    b.classList.toggle("active", j===i);
+    if(j<=i){ b.classList.add("done"); done[j]=1; } else { b.classList.toggle("done", !!done[j]); }
+  });
+  pageCount.textContent = "Page " + (i+1) + " of 12";
+  pbarFill.style.width = ((i+1)/12*100) + "%";
+  prevBtn.disabled = (i===0);
+  if(i===11){ nextBtn.textContent = "Done \u2713"; } else { nextBtn.textContent = "Next \u2192"; }
+  save();
+  window.scrollTo(0,0);
+}
+prevBtn.addEventListener("click", function(){ if(current>0) show(current-1); });
+nextBtn.addEventListener("click", function(){ if(current<11) show(current+1); });
+document.querySelectorAll("[data-goto]").forEach(function(b){
+  b.addEventListener("click", function(){ show(parseInt(b.getAttribute("data-goto"),10)); });
+});
+document.addEventListener("keydown", function(e){
+  var t = e.target;
+  if(t && (t.tagName==="INPUT" || t.tagName==="TEXTAREA" || t.tagName==="SELECT" || t.isContentEditable)) return;
+  if(e.key==="ArrowRight" && current<11){ show(current+1); }
+  else if(e.key==="ArrowLeft" && current>0){ show(current-1); }
+});
+
+/* copy buttons */
+document.querySelectorAll(".copy-btn").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    var el = document.getElementById(btn.getAttribute("data-copy"));
+    if(!el) return;
+    var text = el.textContent;
+    function ok(){ var old = btn.textContent; btn.textContent = "Copied \u2713"; setTimeout(function(){ btn.textContent = old; }, 1500); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(ok, function(){ fallback(); });
+    } else { fallback(); }
+    function fallback(){
+      var ta = document.createElement("textarea");
+      ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand("copy"); ok(); }catch(e){}
+      document.body.removeChild(ta);
+    }
+  });
+});
+
+/* quiz */
+var gradeBtn = document.getElementById("gradeQuiz");
+var clearBtn = document.getElementById("clearQuiz");
+var quizStatus = document.getElementById("quizStatus");
+gradeBtn.addEventListener("click", function(){
+  var questions = document.querySelectorAll(".question");
+  var score = 0;
+  questions.forEach(function(q, idx){
+    var name = "q" + (idx+1);
+    var checked = q.querySelector('input[name="'+name+'"]:checked');
+    var res = q.querySelector(".result");
+    res.classList.add("show");
+    if(checked && checked.value === q.getAttribute("data-answer")){
+      score++;
+      res.className = "result show good";
+      res.textContent = "Correct. " + q.getAttribute("data-explain");
+    } else {
+      res.className = "result show bad";
+      res.textContent = "Not yet. " + q.getAttribute("data-explain");
+    }
+  });
+  quizStatus.textContent = "Score: " + score + " / " + questions.length + (score===questions.length ? ". Complete." : ". Review the explanations above.");
+  if(score===questions.length){ done[10]=1; chapterBtns[10].classList.add("done"); save(); }
+});
+clearBtn.addEventListener("click", function(){
+  document.querySelectorAll(".question").forEach(function(q){
+    q.querySelectorAll('input[type="radio"]').forEach(function(r){ r.checked = false; });
+    var res = q.querySelector(".result");
+    res.className = "result"; res.textContent = "";
+  });
+  quizStatus.textContent = "Not graded yet.";
+});
+
+/* ---------- BATNA prep-card builder ---------- */
+var batnaKey = "negotiation-mastery-batna-v1";
+function batnaRender(d){
+  var out = document.getElementById("batnaCardOut");
+  if(!out) return;
+  out.textContent =
+    "BATNA CARD\n" +
+    "Negotiation: " + (d.deal || "(unnamed)") + "\n" +
+    "Best alternative: " + (d.alt || "-") + "\n" +
+    "Target: " + (d.target || "-") + "\n" +
+    "Walk-away: " + (d.walk || "-") + "\n" +
+    "What they want: " + (d.wants || "-") + "\n" +
+    "Rule: if the offer is worse than the walk-away, walk.";
+}
+function batnaInit(){
+  var deal = document.getElementById("batnaDeal");
+  var saveBtn = document.getElementById("batnaSave");
+  if(!deal || !saveBtn) return;
+  var alt = document.getElementById("batnaAlt");
+  var target = document.getElementById("batnaTarget");
+  var walk = document.getElementById("batnaWalk");
+  var wants = document.getElementById("batnaWants");
+  var status = document.getElementById("batnaStatus");
+  function collect(){
+    return {
+      deal: deal.value.trim(), alt: alt.value.trim(), target: target.value.trim(),
+      walk: walk.value.trim(), wants: wants.value.trim()
+    };
+  }
+  try{
+    var s = JSON.parse(localStorage.getItem(batnaKey) || "null");
+    if(s){
+      deal.value = s.deal || ""; alt.value = s.alt || ""; target.value = s.target || "";
+      walk.value = s.walk || ""; wants.value = s.wants || "";
+      batnaRender(s);
+      status.textContent = "Restored your saved card.";
+    }
+  }catch(e){}
+  saveBtn.addEventListener("click", function(){
+    var d = collect();
+    try{ localStorage.setItem(batnaKey, JSON.stringify(d)); }catch(e){}
+    batnaRender(d);
+    status.textContent = "Saved on this device.";
+  });
+}
+/* init */
+load();
+show(current);
+batnaInit();
+})();
+</script>
+</body>
+</html>

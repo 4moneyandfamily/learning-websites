@@ -1,0 +1,811 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <link rel="icon" href="data:," />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>Hermes Tutorial</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f2f3ef;
+      --surface: #ffffff;
+      --surface-2: #e8ebe6;
+      --ink: #171b19;
+      --muted: #535c57;
+      --line: #c8cfca;
+      --line-strong: #9ba69f;
+      --accent: #d34b26;
+      --accent-ink: #ffffff;
+      --teal: #087d75;
+      --teal-soft: #d8efeb;
+      --yellow: #f1c75b;
+      --code: #111715;
+      --code-ink: #eaf3ed;
+      --code-muted: #9db0a5;
+      --success: #19744f;
+      --danger: #a8382d;
+      --shadow: 0 12px 36px rgba(18, 29, 24, .10);
+      --sidebar: 250px;
+      --radius-lg: 24px;
+      --radius-md: 14px;
+      --radius-sm: 8px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d1210;
+        --surface: #151c18;
+        --surface-2: #202923;
+        --ink: #eef4f0;
+        --muted: #aebbb3;
+        --line: #334039;
+        --line-strong: #56645c;
+        --accent: #ff7043;
+        --accent-ink: #160a06;
+        --teal: #54c8ba;
+        --teal-soft: #183c36;
+        --yellow: #e9c15b;
+        --code: #080c0a;
+        --code-ink: #eaf3ed;
+        --code-muted: #93a79b;
+        --success: #66d19e;
+        --danger: #ff8f80;
+        --shadow: 0 18px 54px rgba(0, 0, 0, .34);
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+    body {
+      margin: 0;
+      min-width: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Archivo", sans-serif;
+      line-height: 1.62;
+      text-rendering: optimizeLegibility;
+    }
+    button, input, textarea, select { font: inherit; }
+    button { color: inherit; }
+    a { color: inherit; }
+    code, pre, .mono { font-family: "IBM Plex Mono", monospace; }
+    :focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+
+    .layout { display: grid; grid-template-columns: var(--sidebar) minmax(0, 1fr); min-height: 100vh; }
+    .rail {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 28px 22px;
+      border-right: 1px solid var(--line);
+      background: var(--surface);
+      overflow-y: auto;
+    }
+    .rail-label { font: 600 12px/1.2 "IBM Plex Mono", monospace; color: var(--accent); letter-spacing: .05em; text-transform: uppercase; }
+    .rail h2 { margin: 12px 0 6px; font-size: 20px; line-height: 1.2; letter-spacing: -.02em; }
+    .rail p { margin: 0 0 24px; color: var(--muted); font-size: 13px; }
+    .rail nav { display: grid; gap: 4px; }
+    .rail nav a {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      align-items: center;
+      min-height: 42px;
+      padding: 7px 9px;
+      border-radius: var(--radius-sm);
+      color: var(--muted);
+      font-size: 14px;
+      text-decoration: none;
+    }
+    .rail nav a span:first-child { font: 500 11px "IBM Plex Mono", monospace; color: var(--line-strong); }
+    .rail nav a:hover, .rail nav a.active { background: var(--surface-2); color: var(--ink); }
+    .rail nav a.active span:first-child { color: var(--accent); }
+    .rail-foot { margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+    .mobile-nav { display: none; }
+
+    main { min-width: 0; }
+    .wrap { width: min(100% - 64px, 1040px); margin: 0 auto; }
+    .hero { position: relative; padding: 78px 0 54px; overflow: hidden; border-bottom: 1px solid var(--line); }
+    .hero::after {
+      content: ""; position: absolute; inset: auto -8vw -42px auto; width: 330px; height: 330px;
+      border-radius: 50%; border: 56px solid color-mix(in srgb, var(--teal) 22%, transparent); pointer-events: none;
+    }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(260px, .7fr); gap: 52px; align-items: end; }
+    .kicker { display: inline-flex; align-items: center; gap: 9px; margin-bottom: 18px; color: var(--teal); font: 600 13px "IBM Plex Mono", monospace; }
+    .kicker::before { content: ""; width: 34px; height: 2px; background: currentColor; }
+    h1 { margin: 0; max-width: 760px; font-size: clamp(42px, 6.2vw, 78px); line-height: .98; letter-spacing: -.055em; }
+    h1 code { display: inline; color: var(--accent); font: inherit; }
+    .lede { max-width: 700px; margin: 25px 0 0; color: var(--muted); font-size: clamp(17px, 2vw, 21px); line-height: 1.5; }
+    .hero-card { position: relative; z-index: 1; padding: 22px; background: var(--code); color: var(--code-ink); border-radius: 4px 4px 22px 4px; box-shadow: var(--shadow); }
+    .hero-card .label { color: #7bc7b2; font: 500 11px "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .08em; }
+    .hero-card strong { display: block; margin: 10px 0 4px; font-size: 24px; }
+    .hero-card p { margin: 0; color: var(--code-muted); font-size: 14px; }
+    .hero-card .price { display: flex; align-items: baseline; gap: 8px; margin-top: 24px; }
+    .hero-card .price b { font-size: 42px; line-height: 1; color: #fff; }
+    .hero-card .price span { color: var(--code-muted); font-size: 12px; }
+
+    section { padding: 72px 0; border-bottom: 1px solid var(--line); }
+    .section-head { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 24px; margin-bottom: 34px; }
+    .lesson-no { padding-top: 7px; color: var(--accent); font: 600 12px "IBM Plex Mono", monospace; }
+    .section-head h2 { margin: 0; font-size: clamp(30px, 4vw, 48px); line-height: 1.08; letter-spacing: -.035em; }
+    .section-head p { max-width: 760px; margin: 14px 0 0; color: var(--muted); font-size: 17px; }
+    h3 { margin: 0 0 10px; font-size: 21px; line-height: 1.25; letter-spacing: -.015em; }
+    h4 { margin: 0 0 6px; font-size: 15px; }
+    p { margin-top: 0; }
+
+    .callout {
+      display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px;
+      padding: 22px; margin: 24px 0; background: var(--teal-soft); border-radius: var(--radius-md);
+    }
+    .callout .mark { width: 40px; height: 40px; display: grid; place-items: center; border: 2px solid var(--teal); border-radius: 50%; color: var(--teal); font: 700 16px "IBM Plex Mono", monospace; }
+    .callout p { margin: 4px 0 0; color: var(--muted); }
+    .callout.warn { background: color-mix(in srgb, var(--yellow) 24%, var(--surface)); }
+    .callout.warn .mark { color: var(--danger); border-color: var(--danger); }
+
+    .steps { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+    .step { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 16px; padding: 24px; background: var(--surface); }
+    .step-num { width: 40px; height: 40px; display: grid; place-items: center; background: var(--ink); color: var(--bg); font: 600 13px "IBM Plex Mono", monospace; }
+    .step p:last-child { margin-bottom: 0; }
+    .inline-code { padding: 2px 6px; background: var(--surface-2); border-radius: 4px; font-size: .9em; }
+
+    .terminal { margin: 16px 0 6px; background: var(--code); color: var(--code-ink); border: 1px solid color-mix(in srgb, var(--code-ink) 18%, transparent); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
+    .terminal-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 42px; padding: 8px 10px 8px 15px; border-bottom: 1px solid #29332f; color: var(--code-muted); font: 500 11px "IBM Plex Mono", monospace; }
+    .terminal-dots { display: inline-flex; gap: 6px; }
+    .terminal-dots i { width: 8px; height: 8px; display: block; border-radius: 50%; background: #405048; }
+    pre { margin: 0; padding: 19px; overflow-x: auto; color: var(--code-ink); font-size: 13px; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .prompt { color: #80d7b8; }
+    .comment { color: #899b91; }
+    .copy {
+      border: 1px solid #405048; background: #18211d; color: #dce9e1; border-radius: 7px;
+      padding: 6px 9px; cursor: pointer; font: 500 11px "IBM Plex Mono", monospace;
+    }
+    .copy:hover { border-color: #7aa28e; }
+
+    figure { margin: 28px 0 0; }
+    .checkpoint { overflow: hidden; background: #050706; border-radius: 6px; box-shadow: var(--shadow); }
+    .checkpoint img { display: block; width: 100%; height: auto; }
+    figcaption { margin-top: 10px; color: var(--muted); font-size: 13px; }
+
+    .concept-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .concept { padding: 22px; background: var(--surface); border-top: 4px solid var(--line-strong); }
+    .concept:nth-child(2), .concept:nth-child(5) { border-top-color: var(--teal); }
+    .concept:nth-child(3), .concept:nth-child(6) { border-top-color: var(--accent); }
+    .concept .term { display: block; margin-bottom: 8px; font: 600 13px "IBM Plex Mono", monospace; }
+    .concept p { margin: 0; color: var(--muted); font-size: 14px; }
+
+    .split { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+    .card { padding: 26px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); }
+    .card p:last-child { margin-bottom: 0; }
+    .do { border-top: 4px solid var(--success); }
+    .dont { border-top: 4px solid var(--danger); }
+    .list { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 12px; }
+    .list li { position: relative; padding-left: 24px; color: var(--muted); }
+    .list li::before { content: "→"; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+
+    .formula { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin: 28px 0; }
+    .formula > div { min-height: 150px; padding: 18px 14px; background: var(--surface); border: 1px solid var(--line); }
+    .formula b { display: block; color: var(--accent); font: 700 28px "IBM Plex Mono", monospace; }
+    .formula span { display: block; margin: 6px 0; font-weight: 700; font-size: 14px; }
+    .formula p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.45; }
+
+    .use-cases { display: grid; gap: 14px; }
+    details { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+    summary { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 20px 22px; cursor: pointer; font-weight: 700; list-style: none; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; color: var(--accent); font: 500 24px "IBM Plex Mono", monospace; }
+    details[open] summary::after { content: "−"; }
+    details[open] summary { border-bottom: 1px solid var(--line); }
+    .details-body { padding: 22px; }
+    .details-body > p { color: var(--muted); }
+    .tag { display: inline-block; margin-right: 7px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font: 500 11px "IBM Plex Mono", monospace; }
+
+    .lab { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow); }
+    .lab-form { padding: 26px; border-right: 1px solid var(--line); }
+    .field { display: grid; gap: 6px; margin-bottom: 14px; }
+    .field label { font: 600 12px "IBM Plex Mono", monospace; color: var(--muted); }
+    .field input, .field textarea, .field select { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: var(--bg); color: var(--ink); }
+    .field textarea { min-height: 82px; resize: vertical; }
+    .button-row { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 18px; }
+    .primary, .secondary { border: 0; border-radius: 8px; padding: 10px 14px; cursor: pointer; font-weight: 700; }
+    .primary { background: var(--accent); color: var(--accent-ink); }
+    .secondary { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); }
+    .lab-output { min-width: 0; padding: 26px; background: var(--code); color: var(--code-ink); }
+    .lab-output .top { display: flex; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
+    .lab-output label { color: #86bda9; font: 600 12px "IBM Plex Mono", monospace; }
+    #promptOutput { min-height: 350px; margin: 0; padding: 0; overflow: visible; white-space: pre-wrap; color: var(--code-ink); }
+    .status { min-height: 20px; margin-top: 8px; color: var(--teal); font-size: 12px; }
+
+    .matrix { border: 1px solid var(--line); }
+    .matrix-row { display: grid; grid-template-columns: 150px repeat(3, minmax(0, 1fr)); }
+    .matrix-row > div { padding: 15px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--surface); }
+    .matrix-row > div:last-child { border-right: 0; }
+    .matrix-row:last-child > div { border-bottom: 0; }
+    .matrix .head > div { background: var(--ink); color: var(--bg); font-weight: 700; }
+    .matrix .head > div:not(:first-child) { font: 600 12px "IBM Plex Mono", monospace; }
+    .matrix-row > div:first-child { font-weight: 700; }
+    .yes { color: var(--success); font-weight: 700; }
+    .no { color: var(--danger); font-weight: 700; }
+
+    .quiz { display: grid; gap: 16px; }
+    .question { padding: 22px; background: var(--surface); border: 1px solid var(--line); }
+    .question fieldset { border: 0; padding: 0; margin: 0; }
+    .question legend { margin-bottom: 14px; font-weight: 700; }
+    .option { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; color: var(--muted); cursor: pointer; }
+    .option input { margin-top: 5px; accent-color: var(--accent); }
+    .result { display: none; margin-top: 14px; padding: 12px; border-radius: 7px; background: var(--surface-2); }
+    .result.show { display: block; }
+    .result.good { color: var(--success); }
+    .result.bad { color: var(--danger); }
+
+    .roadmap { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+    .roadmap > div { padding: 22px; background: var(--surface); }
+    .roadmap .day { color: var(--accent); font: 600 12px "IBM Plex Mono", monospace; }
+    .roadmap h3 { margin-top: 10px; }
+    .roadmap p { margin-bottom: 0; color: var(--muted); font-size: 14px; }
+
+    .final { padding-bottom: 96px; border-bottom: 0; }
+    .final-box { padding: 38px; background: var(--ink); color: var(--bg); border-radius: 4px 28px 4px 4px; }
+    .final-box h2 { max-width: 760px; margin: 0; font-size: clamp(30px, 4vw, 50px); line-height: 1.08; letter-spacing: -.035em; }
+    .final-box p { max-width: 720px; margin: 16px 0 0; color: color-mix(in srgb, var(--bg) 72%, transparent); }
+    .final-box .terminal { margin-top: 28px; box-shadow: none; }
+
+    @media (max-width: 900px) {
+      .layout { display: block; }
+      .rail { display: none; }
+      .mobile-nav { position: sticky; top: 0; z-index: 10; display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 2px; padding: 7px 8px; background: color-mix(in srgb, var(--surface) 94%, transparent); border-bottom: 1px solid var(--line); backdrop-filter: blur(12px); }
+      .mobile-nav a { min-width: 0; padding: 7px 2px; border-radius: 6px; background: var(--surface-2); color: var(--muted); text-align: center; text-decoration: none; font: 600 10px "IBM Plex Mono", monospace; }
+      .mobile-nav a.active { background: var(--ink); color: var(--bg); }
+      .mobile-nav a { font-size: 0; }
+      .mobile-nav a::first-letter { font-size: 10px; }
+      .mobile-nav a::before { content: attr(href); font-size: 0; }
+      .mobile-nav a:nth-child(1)::after { content: "00"; font-size: 10px; }
+      .mobile-nav a:nth-child(2)::after { content: "01"; font-size: 10px; }
+      .mobile-nav a:nth-child(3)::after { content: "02"; font-size: 10px; }
+      .mobile-nav a:nth-child(4)::after { content: "03"; font-size: 10px; }
+      .mobile-nav a:nth-child(5)::after { content: "04"; font-size: 10px; }
+      .mobile-nav a:nth-child(6)::after { content: "05"; font-size: 10px; }
+      .mobile-nav a:nth-child(7)::after { content: "06"; font-size: 10px; }
+      .mobile-nav a:nth-child(8)::after { content: "07"; font-size: 10px; }
+      .mobile-nav a:nth-child(9)::after { content: "08"; font-size: 10px; }
+      .wrap { width: min(100% - 38px, 760px); }
+      .hero-grid, .section-head { grid-template-columns: 1fr; gap: 22px; }
+      .hero { padding-top: 56px; }
+      .hero-card { max-width: 450px; }
+      .concept-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .formula { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .formula > div:last-child { grid-column: 1 / -1; }
+      .lab { grid-template-columns: 1fr; }
+      .lab-form { border-right: 0; border-bottom: 1px solid var(--line); }
+      .roadmap { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 620px) {
+      html { scroll-padding-top: 64px; }
+      .wrap { width: min(100% - 28px, 560px); }
+      .hero { padding: 42px 0 44px; }
+      .hero-grid { gap: 30px; }
+      h1 { font-size: clamp(38px, 13vw, 58px); }
+      .hero::after { width: 200px; height: 200px; border-width: 34px; }
+      section { padding: 54px 0; }
+      .section-head { margin-bottom: 26px; }
+      .concept-grid, .split, .formula, .roadmap { grid-template-columns: 1fr; }
+      .formula > div:last-child { grid-column: auto; }
+      .step { grid-template-columns: 42px minmax(0, 1fr); padding: 18px 15px; gap: 12px; }
+      .step-num { width: 34px; height: 34px; }
+      .callout { grid-template-columns: 36px minmax(0, 1fr); padding: 17px; gap: 12px; }
+      .callout .mark { width: 34px; height: 34px; }
+      .terminal { margin-left: -4px; margin-right: -4px; }
+      pre { padding: 16px; font-size: 12px; }
+      .matrix { border: 0; display: grid; gap: 12px; }
+      .matrix-row { display: block; border: 1px solid var(--line); }
+      .matrix-row.head { display: none; }
+      .matrix-row > div { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; border-right: 0; padding: 12px; font-size: 13px; }
+      .matrix-row > div::before { content: attr(data-label); color: var(--muted); font: 500 10px "IBM Plex Mono", monospace; text-transform: uppercase; }
+      .matrix-row > div:first-child { grid-template-columns: 1fr; background: var(--surface-2); font-size: 16px; }
+      .matrix-row > div:first-child::before { display: none; }
+      .lab-form, .lab-output { padding: 20px; }
+      .final-box { padding: 26px 20px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="rail" aria-label="Course navigation">
+      <div class="rail-label">Local AI field course</div>
+      <h2>From first run to real work</h2>
+      <p>Eight lessons. Commands, mental models, prompt patterns, and guardrails.</p>
+      <nav>
+        <a href="#checkpoint"><span>00</span><span>Your checkpoint</span></a>
+        <a href="#mental-model"><span>01</span><span>The mental model</span></a>
+        <a href="#first-session"><span>02</span><span>First session</span></a>
+        <a href="#prompting"><span>03</span><span>Prompt like an engineer</span></a>
+        <a href="#use-cases"><span>04</span><span>Your use cases</span></a>
+        <a href="#prompt-lab"><span>05</span><span>Prompt lab</span></a>
+        <a href="#advanced"><span>06</span><span>Advanced setup</span></a>
+        <a href="#judgment"><span>07</span><span>Trust & judgment</span></a>
+        <a href="#quiz"><span>08</span><span>Final check</span></a>
+      </nav>
+      <div class="rail-foot">Software path: $0<br>Paid APIs and cloud hosting: skipped</div>
+    </aside>
+
+    <div class="mobile-nav" aria-label="Course navigation">
+      <a href="#checkpoint">00 Start</a><a href="#mental-model">01 Model</a><a href="#first-session">02 Run</a><a href="#prompting">03 Prompt</a><a href="#use-cases">04 Uses</a><a href="#prompt-lab">05 Lab</a><a href="#advanced">06 Advanced</a><a href="#judgment">07 Trust</a><a href="#quiz">08 Check</a>
+    </div>
+
+    <main>
+      <header class="hero">
+        <div class="wrap hero-grid">
+          <div>
+            <div class="kicker">Beginner → advanced</div>
+            <h1>Turn <code>ollama run</code> into a disciplined local AI workflow.</h1>
+            <p class="lede">A practical course built around Hermes 3 on your Windows 11 machine—from your first conversation to reusable specialist models, local API calls, and evidence-first work.</p>
+          </div>
+          <aside class="hero-card" aria-label="Budget verdict">
+            <div class="label">Budget verdict</div>
+            <strong>Proceed locally.</strong>
+            <p>Ollama and the Hermes 3 model are free. Paid APIs, hosted GPUs, and subscriptions are not part of this path.</p>
+            <div class="price"><b>$0</b><span>software cost<br>electricity aside</span></div>
+          </aside>
+        </div>
+      </header>
+
+      <section id="checkpoint">
+        <div class="wrap">
+          <div class="section-head">
+            <div class="lesson-no">LESSON 00</div>
+            <div><h2>You are already past installation.</h2><p>Your screenshot confirms Ollama 0.34.2 and shows <span class="inline-code">hermes3:8b</span> downloading. The next milestone is not another installer—it is one successful model response.</p></div>
+          </div>
+          <figure>
+            <div class="checkpoint"><img src="data:image/png;base64,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AAAAAAAYIpECAAAAAABgiEQKAAAAAACAIRIpAAAAAAAAhkikAAAAAAAAGCKRAgAAAAAAYIhECgAAAAAAgCESKQAAAAAAAIZIpAAAAAAAABgikQIAAAAAAGCIRAoAAAAAAIAhEikAAAAAAACGSKQAAAAAAAAYIpECAAAAAABgiEQKAAAAAACAIRIpAAAAAAAAhkikAAAAAAAAGCKRAgAAAAAAYIhECgAAAAAAgCESKQAAAAAAAIZIpAAAAAAAABgikQIAAAAAAGCIRAoAAAAAAIAhEikAAAAAAACGSKQAAAAAAAAYIpECAAAAAABgiEQKAAAAAACAIRIpAAAAAAAAhkikAAAAAAAAGCKRAgAAAAAAkFG7RCIFAAAAAADAHIkUAAAAAAAAQyRSAAAAAAAADJFIAQAAAAAAMEQiBQAAAAAAwBCJFAAAAAAAAEMkUgAAAAAAAAyRSAEAAAAAADBEIgUAAAAAAMAQiRQAAAAAAABDJFIAAAAAAAAMkUgBAAAAAAAwRCIFAAAAAADAEIkUAAAAAAAAA+3tJFIAAAAAAACMkUgBAAAAAAAwRCIFAAAAAADAEIkUAAAAAAAAQyRSAAAAAAAADJFIAQAAAAAAMEQiBQAAAAAAwBCJFAAAAAAAAEMkUgAAAAAAAAyRSAEAAAAAADBEIgUAAAAAAMAQiRQAAAAAAABDJFIAAAAAAAAMkUgBAAAAAAAwRCIFAAAAAADAEIkUAAAAAAAAQyRSAAAAAAAADJFIAQAAAAAAMEQiBQAAAAAAwBCJFAAAAAAAAEMkUgAAAAAAAAyRSAEAAAAAADBEIgUAAAAAAMAQiRQAAAAAAABDJFIAAAAAAAAMkUgBAAAAAAAwRCIFAAAAAADAEIkUAAAAAAAAQyRSAAAAAAAADJFIAQAAAAAAMEQiBQAAAAAAwBCJFAAAAAAAAEMkUgAAAAAAAAyRSAEAAAAAADBEIgUAAAAAAMAQiRQAAAAAAABDJFIAAAAAAAAMkUgBAAAAAAAwRCIFAAAAAADAEIkUAAAAAAAAQyRSAAAAAAAADJFIAQAAAAAAMEQiBQAAAAAAwBCJFAAAAAAAAEMkUgAAAAAAAAyRSAEAAAAAADBEIgUAAAAAAMAQiRQAAAAAAABDJFIAAAAAAAAMkUgBAAAAAAAwRCIFAAAAAADAEIkUAAAAAAAAQyRSAAAAAAAADJFIAQAAAAAAMEQiBQAAAAAAwBCJFAAAAAAAAEMkUgAAAAAAAAyRSAEAAAAAADBEIgUAAAAAAMAQiRQAAAAAAABDJFIAAAAAAAAMkUgBAAAAAAAwRCIFAAAAAADAEIkUAAAAAAAAQyRSAAAAAAAADJFIAQAAAAAAMEQiBQAAAAAAwBCJFAAAAAAAAEMkUgAAAAAAAAyRSAEAAAAAADBEIgUAAAAAAMAQiRQAAAAAAABDJFIAAAAAAAAMkUgBAAAAAAAwRCIFAAAAAADAEIkUAAAAAAAAQyRSAAAAAAAADJFIAQAAAAAAMEQiBQAAAAAAwBCJFAAAAAAAAEMkUgAAAAAAAAyRSAEAAAAAADBEIgUAAAAAAMAQiRQAAAAAAABDJFIAAAAAAACMtJNIAQAAAAAAMEUiBQAAAAAAwBCJFAAAAAAAAEMkUgAAAAAAAAyRSAEAAAAAADBEIgUAAAAAAMAQiRQAAAAAAABDJFIAAAAAAAAMkUgBAAAAAAAwRCIFAAAAAADAEIkUAAAAAAAAQyRSAAAAAAAADJFIAQAAAAAAMEQiBQAAAAAAwBCJFAAAAAAAAEMkUgAAAAAAAAyRSAEAAAAAADBEIgUAAAAAAMAQiRQAAAAAAABDJFIAAAAAAAAMkUgBAAAAAAAwRCIFAAAAAADAEIkUAAAAAAAAQyRSAAAAAAAADJFIAQAAAAAAMEQiBQAAAAAAwBCJFAAAAAAAAEMkUgAAAAAAAAyRSAEAAAAAADBEIgUAAAAAAMAQiRQAAAAAAABDJFIAAAAAAAAMkUgBAAAAAAAwRCIFAAAAAADAEIkUAAAAAAAAQyRSAAAAAAAADJFIAQAAAAAAMEQiBQAAAAAAwBCJFAAAAAAAAEMkUgAAAAAAAAyRSAEAAAAAADBEIgUAAAAAAMAQiRQAAAAAAABDJFIAAAAAAAAMkUgBAAAAAAAwRCIFAAAAAADAEIkUAAAAAAAAQyRSAAAAAAAADJFIAQAAAAAAMEQiBQAAAAAAwBCJFAAAAAAAAEMkUgAAAAAAAAyRSAEAAAAAADBEIgUAAAAAAMAQiRQAAAAAAABDJFIAAAAAAAAMkUgBAAAAAAAwRCIFAAAAAADAEIkUAAAAAAAAQyRSAAAAAAAADJFIAQAAAAAAMEQiBQAAAAAAwBCJFAAAAAAAAEMkUgAAAAAAAAz9/yZ8CH/f2EdmAAAAAElFTkSuQmCC" alt="Windows PowerShell showing Ollama version 0.34.2 and the Hermes 3 8B model download at 44 percent" /></div>
+            <figcaption>Your setup checkpoint when this guide was requested: runtime installed, model pull in progress.</figcaption>
+          </figure>
+          <div class="callout">
+            <div class="mark">→</div>
+            <div><h3>When the pull finishes</h3><p>Run the model, give it a tiny test, then exit cleanly. Do not start configuring agents until this basic loop works.</p></div>
+          </div>
+          <div class="terminal">
+            <div class="terminal-bar"><span class="terminal-dots"><i></i><i></i><i></i></span><span>PowerShell · first run</span><button class="copy" data-copy="ollama run hermes3:8b&#10;&#10;Explain in three bullets what you can and cannot know without internet access.&#10;&#10;/bye">Copy</button></div>
+            <pre><span class="prompt">PS C:\Users\joshu&gt;</span> ollama run hermes3:8b
+
+&gt;&gt;&gt; Explain in three bullets what you can and cannot know without internet access.
+
+<span class="comment"># After it answers:</span>
+&gt;&gt;&gt; /bye</pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="mental-model">
+        <div class="wrap">
+          <div class="section-head">
+            <div class="lesson-no">LESSON 01</div>
+            <div><h2>Know what is doing what.</h2><p>Most confusion disappears when you separate the model, the runtime, the interface, and the agent. They are different layers.</p></div>
+          </div>
+          <div class="concept-grid">
+            <article class="concept"><span class="term">MODEL</span><h3>Hermes 3:8B</h3><p>The language model. It predicts useful text from your input and context. It is not automatically connected to your files, the web, or your accounts.</p></article>
+            <article class="concept"><span class="term">RUNTIME</span><h3>Ollama</h3><p>The engine that stores and runs the model on Windows. It also exposes a local API at <span class="inline-code">localhost:11434</span>.</p></article>
+            <article class="concept"><span class="term">INTERFACE</span><h3>PowerShell</h3><p>Your first control surface. Simple and transparent: type a command, see the result, know exactly which model is running.</p></article>
+            <article class="concept"><span class="term">CONTEXT</span><h3>The working packet</h3><p>The instructions and documents supplied in the current conversation. More context is not always better; relevant context is better.</p></article>
+            <article class="concept"><span class="term">AGENT</span><h3>Model + tools + loop</h3><p>An agent can choose actions, use tools, inspect results, and continue. A chat model alone only responds to what you give it.</p></article>
+            <article class="concept"><span class="term">GROUNDING</span><h3>Evidence in, claims out</h3><p>For account facts, current markets, law, health, or citations, supply verified source material and require the model to stay inside it.</p></article>
+          </div>
+          <div class="callout warn">
+            <div class="mark">!</div>
+            <div><h3>Hermes 3 is not “Hermes Agent” by itself.</h3><p>You have downloaded the Hermes 3 model through Ollama. That gives you local chat and a local API. Autonomous tools, browsing, and file actions require a separate agent layer and careful permissions.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="first-session">
+        <div class="wrap">
+          <div class="section-head">
+            <div class="lesson-no">LESSON 02</div>
+            <div><h2>Run, inspect, and benchmark.</h2><p>Treat the first session like a systems check. Confirm the model exists, confirm it answers, then see whether your old Windows machine can run it comfortably.</p></div>
+          </div>
+          <div class="steps">
+            <article class="step"><div class="step-num">01</div><div><h3>Confirm the model is present</h3><p><span class="inline-code">ollama list</span> should show <span class="inline-code">hermes3:8b</span>. If it is absent, the download did not finish.</p><div class="terminal"><div class="terminal-bar"><span>PowerShell</span><button class="copy" data-copy="ollama list">Copy</button></div><pre><span class="prompt">PS&gt;</span> ollama list</pre></div></div></article>
+            <article class="step"><div class="step-num">02</div><div><h3>Use a diagnostic prompt</h3><p>A good test checks instruction-following, structure, and honesty—not trivia.</p><div class="terminal"><div class="terminal-bar"><span>Paste inside Hermes</span><button class="copy" data-copy="You are being tested as a local model. Return exactly:&#10;1. One sentence defining a context window.&#10;2. One fact you cannot verify without a source.&#10;3. One clarifying question you would ask before analyzing a brokerage dispute.&#10;Do not add an introduction.">Copy</button></div><pre>You are being tested as a local model. Return exactly:
+1. One sentence defining a context window.
+2. One fact you cannot verify without a source.
+3. One clarifying question you would ask before analyzing a brokerage dispute.
+Do not add an introduction.</pre></div></div></article>
+            <article class="step"><div class="step-num">03</div><div><h3>Watch the machine, not just the prose</h3><p>Open Task Manager → Performance. Watch memory, CPU, and GPU while it answers. Slow first-token time is normal on CPU; freezing, swapping, or sustained memory pressure means the model is too heavy for the workload.</p></div></article>
+            <article class="step"><div class="step-num">04</div><div><h3>Know the practical hardware tiers</h3><p><strong>8 GB system RAM:</strong> tight for an 8B model; close other apps. <strong>16 GB:</strong> generally workable. <strong>32 GB:</strong> much more comfortable for longer context. GPU memory changes speed; it does not change whether the answer is true.</p></div></article>
+          </div>
+          <div class="split" style="margin-top:22px">
+            <article class="card do"><h3>Healthy first run</h3><ul class="list"><li>The model answers the requested format.</li><li>Windows remains responsive.</li><li>Repeated prompts do not crash Ollama.</li><li><span class="inline-code">ollama ps</span> shows the active model.</li></ul></article>
+            <article class="card dont"><h3>Stop and simplify</h3><ul class="list"><li>The machine swaps heavily or locks up.</li><li>Answers truncate during short prompts.</li><li>Long context makes response time unusable.</li><li>You are tempted to expose port 11434 to the internet.</li></ul></article>
+          </div>
+        </div>
+      </section>
+
+      <section id="prompting">
+        <div class="wrap">
+          <div class="section-head">
+            <div class="lesson-no">LESSON 03</div>
+            <div><h2>Prompt like an engineer, not a magician.</h2><p>The best prompt is a compact specification. Give Hermes a role, a bounded task, the evidence it may use, the output shape, and tests it must pass.</p></div>
+          </div>
+          <div class="formula" aria-label="CRAFT prompt framework">
+            <div><b>C</b><span>Context</span><p>Why this matters, what happened, and what the model needs to know.</p></div>
+            <div><b>R</b><span>Role</span><p>The lens to use: tutor, reviewer, analyst, editor—not a claim of authority.</p></div>
+            <div><b>A</b><span>Assignment</span><p>One specific job with a clear finish line.</p></div>
+            <div><b>F</b><span>Format</span><p>The exact sections, length, tone, or schema you want back.</p></div>
+            <div><b>T</b><span>Tests</span><p>Constraints the answer must satisfy before it is done.</p></div>
+          </div>
+          <div class="terminal">
+            <div class="terminal-bar"><span>Weak → strong</span><button class="copy" data-copy="CONTEXT: I am evaluating a broker dispute from a chronology and account statements I will paste.&#10;ROLE: Act as a skeptical evidence analyst, not my advocate.&#10;ASSIGNMENT: Separate supported facts, disputed claims, and missing proof.&#10;FORMAT: Three sections—Established, Contested, Missing—with bullet points.&#10;TESTS: Cite each conclusion to a date or exhibit label. Do not invent law, damages, or account activity. Write “not established” when the record is insufficient.">Copy</button></div>
+            <pre><span class="comment">Weak:</span>
+Help me win my broker dispute.
+
+<span class="comment">Strong:</span>
+CONTEXT: I am evaluating a broker dispute from a chronology and account statements I will paste.
+ROLE: Act as a skeptical evidence analyst, not my advocate.
+ASSIGNMENT: Separate supported facts, disputed claims, and missing proof.
+FORMAT: Three sections—Established, Contested, Missing—with bullet points.
+TESTS: Cite each conclusion to a date or exhibit label. Do not invent law, damages, or account activity. Write “not established” when the record is insufficient.</pre>
+          </div>
+          <div class="callout">
+            <div class="mark">∴</div>
+            <div><h3>The CS50 rule: isolate the bug.</h3><p>If an answer is wrong, change one variable at a time. Shorten the evidence, tighten the output, lower creativity, or split the task. Do not rewrite everything and then wonder what fixed it.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="use-cases">
+        <div class="wrap">
+          <div class="section-head">
+            <div class="lesson-no">LESSON 04</div>
+            <div><h2>Six useful jobs for your actual life.</h2><p>Each pattern gives Hermes a bounded lane. Open one, copy the prompt, and replace the bracketed fields with a redacted, source-grounded packet.</p></div>
+          </div>
+          <div class="use-cases">
+            <details open><summary><span>Trading thesis red team</span><span class="tag">analysis</span></summary><div class="details-body"><p>Use Hermes to challenge your reasoning—not to supply live quotes, earnings, or valuations it cannot verify.</p><div class="terminal"><div class="terminal-bar"><span>Prompt pattern</span><button class="copy" data-copy="You are a skeptical investment committee member. Analyze only the source packet below. My thesis is: [THESIS].&#10;&#10;Return:&#10;1. Claims directly supported by the packet&#10;2. Claims that rely on assumptions&#10;3. The three strongest bear cases&#10;4. What evidence would falsify the thesis&#10;5. Questions that must be answered before sizing&#10;&#10;Rules: No live-price claims. No invented financial metrics. Flag every missing date and source.&#10;&#10;SOURCE PACKET:&#10;[PASTE VERIFIED FILINGS, NOTES, OR DATA]">Copy</button></div><pre>You are a skeptical investment committee member. Analyze only the source packet below. My thesis is: [THESIS].
+
+Return:
+1. Claims directly supported by the packet
+2. Claims that rely on assumptions
+3. The three strongest bear cases
+4. What evidence would falsify the thesis
+5. Questions that must be answered before sizing
+
+Rules: No live-price claims. No invented financial metrics. Flag every missing date and source.
+
+SOURCE PACKET:
+[PASTE VERIFIED FILINGS, NOTES, OR DATA]</pre></div></div></details>
+
+            <details><summary><span>Dispute chronology audit</span><span class="tag">evidence</span></summary><div class="details-body"><p>Make the model reconcile dates and documents before it writes advocacy.</p><div class="terminal"><div class="terminal-bar"><span>Prompt pattern</span><button class="copy" data-copy="Audit this dispute chronology as if you oppose my position. Build a table with: date, event, source, amount, who made the claim, contradiction, and confidence. Then list: (a) duplicate or inconsistent figures, (b) unsupported legal conclusions, and (c) the five documents that would most strengthen the record. Use only the text I provide. Mask all account numbers except the last four.&#10;&#10;RECORD:&#10;[PASTE CHRONOLOGY AND EXHIBIT EXCERPTS]">Copy</button></div><pre>Audit this dispute chronology as if you oppose my position. Build a table with: date, event, source, amount, who made the claim, contradiction, and confidence. Then list: (a) duplicate or inconsistent figures, (b) unsupported legal conclusions, and (c) the five documents that would most strengthen the record. Use only the text I provide. Mask all account numbers except the last four.
+
+RECORD:
+[PASTE CHRONOLOGY AND EXHIBIT EXCERPTS]</pre></div></div></details>
+
+            <details><summary><span>Debt-settlement call debrief</span><span class="tag">sales</span></summary><div class="details-body"><p>Turn a rough recap into a precise next-action plan. Keep client details anonymized.</p><div class="terminal"><div class="terminal-bar"><span>Prompt pattern</span><button class="copy" data-copy="Turn this anonymized call recap into:&#10;1. A factual CRM note&#10;2. Primary objection&#10;3. Buying signal&#10;4. Next action with a concrete date placeholder&#10;5. A concise follow-up email&#10;&#10;Rules: Do not promise settlement amounts, timelines, credit outcomes, or creditor participation. Preserve uncertainty.&#10;&#10;RECAP:&#10;[PASTE REDACTED NOTES]">Copy</button></div><pre>Turn this anonymized call recap into:
+1. A factual CRM note
+2. Primary objection
+3. Buying signal
+4. Next action with a concrete date placeholder
+5. A concise follow-up email
+
+Rules: Do not promise settlement amounts, timelines, credit outcomes, or creditor participation. Preserve uncertainty.
+
+RECAP:
+[PASTE REDACTED NOTES]</pre></div></div></details>
+
+            <details><summary><span>Coursework Socratic tutor</span><span class="tag">learning</span></summary><div class="details-body"><p>Use the model to expose gaps in your understanding before drafting an answer.</p><div class="terminal"><div class="terminal-bar"><span>Prompt pattern</span><button class="copy" data-copy="Teach me [TOPIC] as a demanding business-school tutor. Start with a compact explanation, then ask one question at a time. Do not reveal the answer until I attempt it. After five questions, grade my reasoning and give me one transfer problem in a new business context. Use only the course material below for citations.&#10;&#10;COURSE MATERIAL:&#10;[PASTE NOTES OR ASSIGNMENT TEXT]">Copy</button></div><pre>Teach me [TOPIC] as a demanding business-school tutor. Start with a compact explanation, then ask one question at a time. Do not reveal the answer until I attempt it. After five questions, grade my reasoning and give me one transfer problem in a new business context. Use only the course material below for citations.
+
+COURSE MATERIAL:
+[PASTE NOTES OR ASSIGNMENT TEXT]</pre></div></div></details>
+
+            <details><summary><span>Routine and health review</span><span class="tag">reflection</span></summary><div class="details-body"><p>Summarize self-tracked patterns without turning a local model into a clinician.</p><div class="terminal"><div class="terminal-bar"><span>Prompt pattern</span><button class="copy" data-copy="Analyze the seven-day routine log below. Identify patterns in bedtime, wake time, steps, exercise, and self-reported energy. Separate observation from hypothesis. Propose one low-risk experiment for next week and define the success measure. Do not diagnose, prescribe, or infer missing health data.&#10;&#10;LOG:&#10;[PASTE A REDACTED WEEKLY SUMMARY]">Copy</button></div><pre>Analyze the seven-day routine log below. Identify patterns in bedtime, wake time, steps, exercise, and self-reported energy. Separate observation from hypothesis. Propose one low-risk experiment for next week and define the success measure. Do not diagnose, prescribe, or infer missing health data.
+
+LOG:
+[PASTE A REDACTED WEEKLY SUMMARY]</pre></div></div></details>
+
+            <details><summary><span>Personal-finance scenario stress test</span><span class="tag">planning</span></summary><div class="details-body"><p>Model scenarios from rounded, redacted numbers. Do not paste account credentials, full identifiers, or statements you do not need.</p><div class="terminal"><div class="terminal-bar"><span>Prompt pattern</span><button class="copy" data-copy="Using only the rounded figures below, compare the base, downside, and severe-downside scenarios. For each, calculate monthly surplus/deficit, months of liquid runway, and the first breached constraint. Show arithmetic. Do not assume investment returns or future income not listed. End with the smallest reversible action that improves the downside case.&#10;&#10;FIGURES AND CONSTRAINTS:&#10;[PASTE ROUNDED VALUES]">Copy</button></div><pre>Using only the rounded figures below, compare the base, downside, and severe-downside scenarios. For each, calculate monthly surplus/deficit, months of liquid runway, and the first breached constraint. Show arithmetic. Do not assume investment returns or future income not listed. End with the smallest reversible action that improves the downside case.
+
+FIGURES AND CONSTRAINTS:
+[PASTE ROUNDED VALUES]</pre></div></div></details>
+          </div>
+        </div>
+      </section>
+
+      <section id="prompt-lab">
+        <div class="wrap">
+          <div class="section-head">
+            <div class="lesson-no">LESSON 05</div>
+            <div><h2>Build a prompt, then inspect the specification.</h2><p>This lab assembles a CRAFT prompt in your browser. Nothing is sent anywhere; copy the result into your local Hermes session.</p></div>
+          </div>
+          <div class="lab">
+            <div class="lab-form">
+              <div class="field"><label for="labRole">ROLE</label><select id="labRole"><option>Skeptical evidence analyst</option><option>CS50-style Socratic tutor</option><option>Investment committee red team</option><option>Precise business editor</option><option>Scenario-planning analyst</option></select></div>
+              <div class="field"><label for="labContext">CONTEXT</label><textarea id="labContext" placeholder="What is happening, and why does the task matter?">I have a source packet and need to understand what it proves before I act.</textarea></div>
+              <div class="field"><label for="labTask">ASSIGNMENT</label><textarea id="labTask" placeholder="What exact job should Hermes finish?">Separate supported facts, assumptions, contradictions, and missing evidence.</textarea></div>
+              <div class="field"><label for="labFormat">FORMAT</label><input id="labFormat" value="Four labeled sections with concise bullets" /></div>
+              <div class="field"><label for="labTests">TESTS</label><textarea id="labTests" placeholder="What must the answer not get wrong?">Use only the supplied packet. Cite dates or labels. Never invent missing facts. Say “not established” when evidence is insufficient.</textarea></div>
+              <div class="button-row"><button class="primary" id="buildPrompt">Build prompt</button><button class="secondary" id="resetPrompt">Reset</button></div>
+            </div>
+            <div class="lab-output">
+              <div class="top"><label>COMPILED PROMPT</label><button class="copy" id="copyPrompt">Copy</button></div>
+              <pre id="promptOutput" aria-live="polite"></pre>
+              <div class="status" id="copyStatus" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="advanced">
+        <div class="wrap">
+          <div class="section-head">
+            <div class="lesson-no">LESSON 06</div>
+            <div><h2>Turn one base model into specialists.</h2><p>Ollama Modelfiles let you package stable instructions and conservative settings. The model weights stay the same; the default behavior changes.</p></div>
+          </div>
+          <div class="steps">
+            <article class="step"><div class="step-num">01</div><div><h3>Create a Modelfile</h3><p>In a new folder, create a plain file named <span class="inline-code">Modelfile</span> with no extension. Start with an 8K context; raise it only if your machine remains responsive.</p><div class="terminal"><div class="terminal-bar"><span>Modelfile</span><button class="copy" data-copy="FROM hermes3:8b&#10;PARAMETER temperature 0.2&#10;PARAMETER num_ctx 8192&#10;&#10;SYSTEM &quot;&quot;&quot;&#10;You are a rigorous evidence analyst.&#10;Separate sourced facts, inference, and unknowns.&#10;Never invent dates, citations, figures, or legal authority.&#10;When evidence is insufficient, write: not established.&#10;Prefer concise, structured answers.&#10;&quot;&quot;&quot;">Copy</button></div><pre>FROM hermes3:8b
+PARAMETER temperature 0.2
+PARAMETER num_ctx 8192
+
+SYSTEM """
+You are a rigorous evidence analyst.
+Separate sourced facts, inference, and unknowns.
+Never invent dates, citations, figures, or legal authority.
+When evidence is insufficient, write: not established.
+Prefer concise, structured answers.
+"""</pre></div></div></article>
+            <article class="step"><div class="step-num">02</div><div><h3>Build and run the specialist</h3><div class="terminal"><div class="terminal-bar"><span>PowerShell · inside that folder</span><button class="copy" data-copy="ollama create evidence-desk -f .\Modelfile&#10;ollama run evidence-desk">Copy</button></div><pre><span class="prompt">PS&gt;</span> ollama create evidence-desk -f .\Modelfile
+<span class="prompt">PS&gt;</span> ollama run evidence-desk</pre></div></div></article>
+            <article class="step"><div class="step-num">03</div><div><h3>Call Hermes from PowerShell</h3><p>The local API lets you automate repeatable work without a paid service. This example sends one prompt and returns one completed response.</p><div class="terminal"><div class="terminal-bar"><span>PowerShell · local API</span><button class="copy" data-copy="$body = @{&#10;  model = 'hermes3:8b'&#10;  prompt = 'Explain the difference between evidence and inference in 100 words.'&#10;  stream = $false&#10;} | ConvertTo-Json&#10;&#10;$result = Invoke-RestMethod `&#10;  -Uri 'http://localhost:11434/api/generate' `&#10;  -Method Post `&#10;  -ContentType 'application/json' `&#10;  -Body $body&#10;&#10;$result.response">Copy</button></div><pre>$body = @{
+  model = 'hermes3:8b'
+  prompt = 'Explain the difference between evidence and inference in 100 words.'
+  stream = $false
+} | ConvertTo-Json
+
+$result = Invoke-RestMethod `
+  -Uri 'http://localhost:11434/api/generate' `
+  -Method Post `
+  -ContentType 'application/json' `
+  -Body $body
+
+$result.response</pre></div></div></article>
+            <article class="step"><div class="step-num">04</div><div><h3>Keep the API local</h3><p><span class="inline-code">localhost</span> means this machine. Do not open Ollama's port to the public internet. If another device needs access later, use a deliberate authenticated network design—not a firewall exception copied from a random tutorial.</p></div></article>
+          </div>
+          <div class="callout warn">
+            <div class="mark">$</div>
+            <div><h3>What this course deliberately skips</h3><p>Cloud GPU rentals, paid model APIs, hosted agent services, and subscriptions. They are unnecessary for this learning path and can exceed your $20 cap. Your Chromebook can access a web interface hosted by the Windows machine later, but it is not the practical machine for running this 8B model locally.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="judgment">
+        <div class="wrap">
+          <div class="section-head">
+            <div class="lesson-no">LESSON 07</div>
+            <div><h2>Local is private-ish, not magically correct.</h2><p>Running on your own machine changes where inference happens. It does not make the model current, factual, authorized, secure against every app, or qualified to make decisions for you.</p></div>
+          </div>
+          <div class="matrix" role="table" aria-label="Which tool should handle which kind of task">
+            <div class="matrix-row head" role="row"><div>Task</div><div>Local Hermes</div><div>Connected AI</div><div>Human/source</div></div>
+            <div class="matrix-row" role="row"><div data-label="Task">Rewrite supplied text</div><div data-label="Local Hermes"><span class="yes">Excellent</span></div><div data-label="Connected AI">Also works</div><div data-label="Human/source">Final tone check</div></div>
+            <div class="matrix-row" role="row"><div data-label="Task">Current stock price</div><div data-label="Local Hermes"><span class="no">Cannot verify</span></div><div data-label="Connected AI">Only with live source</div><div data-label="Human/source">Broker/exchange</div></div>
+            <div class="matrix-row" role="row"><div data-label="Task">Reconcile pasted exhibits</div><div data-label="Local Hermes"><span class="yes">Good fit</span></div><div data-label="Connected AI">Good fit</div><div data-label="Human/source">Verify every figure</div></div>
+            <div class="matrix-row" role="row"><div data-label="Task">Legal authority</div><div data-label="Local Hermes"><span class="no">High hallucination risk</span></div><div data-label="Connected AI">Research aid only</div><div data-label="Human/source">Primary law/counsel</div></div>
+            <div class="matrix-row" role="row"><div data-label="Task">Medical diagnosis</div><div data-label="Local Hermes"><span class="no">Not appropriate</span></div><div data-label="Connected AI">Education only</div><div data-label="Human/source">Clinician</div></div>
+            <div class="matrix-row" role="row"><div data-label="Task">Private brainstorming</div><div data-label="Local Hermes"><span class="yes">Strong fit</span></div><div data-label="Connected AI">Depends on service</div><div data-label="Human/source">Your judgment</div></div>
+          </div>
+          <div class="split" style="margin-top:22px">
+            <article class="card do"><h3>Before you trust an answer</h3><ul class="list"><li>Can every consequential claim be traced to supplied evidence?</li><li>Did the model separate observation from inference?</li><li>Did arithmetic survive a calculator check?</li><li>Did it admit what the packet does not establish?</li></ul></article>
+            <article class="card dont"><h3>Never paste</h3><ul class="list"><li>Passwords, API keys, recovery codes, or private keys.</li><li>Full account, claim, policy, or government ID numbers.</li><li>Unredacted client records you are not authorized to process.</li><li>Anything you would not want copied into a transcript or log.</li></ul></article>
+          </div>
+        </div>
+      </section>
+
+      <section id="quiz">
+        <div class="wrap">
+          <div class="section-head">
+            <div class="lesson-no">LESSON 08</div>
+            <div><h2>Prove you can operate it.</h2><p>Three questions. The goal is not memorization; it is knowing when the model is useful and when it is pretending to know.</p></div>
+          </div>
+          <div class="quiz">
+            <div class="question" data-answer="b"><fieldset><legend>1. You want today's exact NVDA price. What should you do?</legend><label class="option"><input type="radio" name="q1" value="a">Ask Hermes twice and average the answers.</label><label class="option"><input type="radio" name="q1" value="b">Use a live market source, then give the verified snapshot to Hermes for analysis.</label><label class="option"><input type="radio" name="q1" value="c">Raise the context window to 64K.</label></fieldset><div class="result"></div></div>
+            <div class="question" data-answer="c"><fieldset><legend>2. A long evidence prompt returns invented citations. Best first response?</legend><label class="option"><input type="radio" name="q2" value="a">Increase temperature for more careful reasoning.</label><label class="option"><input type="radio" name="q2" value="b">Tell it to be smarter.</label><label class="option"><input type="radio" name="q2" value="c">Narrow the packet, require exhibit labels, and allow “not established.”</label></fieldset><div class="result"></div></div>
+            <div class="question" data-answer="a"><fieldset><legend>3. What turns a local model into an agent?</legend><label class="option"><input type="radio" name="q3" value="a">A tool layer and a loop that can act, inspect results, and continue.</label><label class="option"><input type="radio" name="q3" value="b">A larger monitor.</label><label class="option"><input type="radio" name="q3" value="c">Calling the model “autonomous” in the system prompt.</label></fieldset><div class="result"></div></div>
+          </div>
+          <div class="button-row"><button class="primary" id="gradeQuiz">Grade the check</button><button class="secondary" id="clearQuiz">Clear answers</button></div>
+          <div class="status" id="quizStatus" aria-live="polite"></div>
+
+          <div class="section-head" style="margin-top:58px">
+            <div class="lesson-no">4-SESSION PATH</div>
+            <div><h2>Build competence in four sittings.</h2></div>
+          </div>
+          <div class="roadmap">
+            <div><span class="day">SESSION 1</span><h3>Run</h3><p>Complete the diagnostic prompt. Watch Task Manager. Learn <span class="inline-code">list</span>, <span class="inline-code">run</span>, <span class="inline-code">ps</span>, and <span class="inline-code">/bye</span>.</p></div>
+            <div><span class="day">SESSION 2</span><h3>Specify</h3><p>Use CRAFT on one coursework topic and one redacted business task. Compare weak and strong prompts.</p></div>
+            <div><span class="day">SESSION 3</span><h3>Ground</h3><p>Give Hermes a short source packet. Force citations to labels. Audit every consequential claim.</p></div>
+            <div><span class="day">SESSION 4</span><h3>Package</h3><p>Create <span class="inline-code">evidence-desk</span> with a Modelfile, then call it once through the local API.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="final">
+        <div class="wrap">
+          <div class="final-box">
+            <h2>Your next command is still the right one.</h2>
+            <p>Do not optimize a system you have not yet run. Start the model, test instruction-following, and exit. Everything advanced in this course rests on that small loop working reliably.</p>
+            <div class="terminal"><div class="terminal-bar"><span>PowerShell</span><button class="copy" data-copy="ollama run hermes3:8b">Copy</button></div><pre><span class="prompt">PS&gt;</span> ollama run hermes3:8b</pre></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const copyText = async (text, button) => {
+      try {
+        await navigator.clipboard.writeText(text);
+        const old = button.textContent;
+        button.textContent = 'Copied';
+        setTimeout(() => button.textContent = old, 1400);
+      } catch {
+        button.textContent = 'Select text';
+        setTimeout(() => button.textContent = 'Copy', 1400);
+      }
+    };
+
+    document.querySelectorAll('[data-copy]').forEach(button => {
+      button.addEventListener('click', () => copyText(button.dataset.copy, button));
+    });
+
+    const defaults = {
+      role: 'Skeptical evidence analyst',
+      context: 'I have a source packet and need to understand what it proves before I act.',
+      task: 'Separate supported facts, assumptions, contradictions, and missing evidence.',
+      format: 'Four labeled sections with concise bullets',
+      tests: 'Use only the supplied packet. Cite dates or labels. Never invent missing facts. Say “not established” when evidence is insufficient.'
+    };
+    const role = document.getElementById('labRole');
+    const context = document.getElementById('labContext');
+    const task = document.getElementById('labTask');
+    const format = document.getElementById('labFormat');
+    const tests = document.getElementById('labTests');
+    const output = document.getElementById('promptOutput');
+    const copyStatus = document.getElementById('copyStatus');
+
+    function compilePrompt() {
+      output.textContent = `CONTEXT: ${context.value.trim() || '[add context]'}\n\nROLE: Act as a ${role.value.trim()}.\n\nASSIGNMENT: ${task.value.trim() || '[add one concrete task]'}\n\nFORMAT: ${format.value.trim() || '[define the output format]'}\n\nTESTS: ${tests.value.trim() || '[define the checks and limits]'}\n\nSOURCE PACKET:\n[PASTE ONLY THE RELEVANT, REDACTED MATERIAL HERE]`;
+      copyStatus.textContent = 'Prompt rebuilt from your current fields.';
+      setTimeout(() => copyStatus.textContent = '', 1800);
+    }
+    document.getElementById('buildPrompt').addEventListener('click', compilePrompt);
+    document.getElementById('resetPrompt').addEventListener('click', () => {
+      role.value = defaults.role; context.value = defaults.context; task.value = defaults.task; format.value = defaults.format; tests.value = defaults.tests; compilePrompt();
+    });
+    document.getElementById('copyPrompt').addEventListener('click', () => copyText(output.textContent, document.getElementById('copyPrompt')));
+    compilePrompt();
+
+    const explanations = [
+      'Use a live source for a live fact. Hermes can analyze a verified snapshot, but it cannot know today’s price on its own.',
+      'Grounding beats pleading. Narrow the evidence, force traceable labels, and give the model permission to admit uncertainty.',
+      'An agent combines a model with tools and a control loop. A label in a prompt does not grant capabilities.'
+    ];
+    document.getElementById('gradeQuiz').addEventListener('click', () => {
+      let score = 0;
+      document.querySelectorAll('.question').forEach((question, index) => {
+        const selected = question.querySelector('input:checked');
+        const result = question.querySelector('.result');
+        const correct = selected && selected.value === question.dataset.answer;
+        if (correct) score++;
+        result.className = `result show ${correct ? 'good' : 'bad'}`;
+        result.textContent = `${correct ? 'Correct. ' : 'Not yet. '}${explanations[index]}`;
+      });
+      document.getElementById('quizStatus').textContent = `${score}/3 correct${score === 3 ? ' — you are ready to build the specialist model.' : ' — review the explanations and try again.'}`;
+    });
+    document.getElementById('clearQuiz').addEventListener('click', () => {
+      document.querySelectorAll('.question input').forEach(input => input.checked = false);
+      document.querySelectorAll('.result').forEach(result => { result.className = 'result'; result.textContent = ''; });
+      document.getElementById('quizStatus').textContent = '';
+    });
+
+    const courseLinks = [...document.querySelectorAll('.rail nav a, .mobile-nav a')];
+    const sections = [...new Set(courseLinks.map(link => document.querySelector(link.getAttribute('href'))).filter(Boolean))];
+
+    function setActiveLesson(id) {
+      courseLinks.forEach(link => {
+        const active = link.getAttribute('href') === `#${id}`;
+        link.classList.toggle('active', active);
+        if (active) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+    }
+
+    courseLinks.forEach(link => {
+      link.addEventListener('click', event => {
+        const target = document.querySelector(link.getAttribute('href'));
+        if (!target) return;
+        event.preventDefault();
+        const stickyOffset = window.matchMedia('(max-width: 900px)').matches ? 58 : 0;
+        const top = Math.max(0, target.getBoundingClientRect().top + window.scrollY - stickyOffset);
+
+        // Some embedded webviews update the hash highlight without moving the page.
+        // Scroll the document explicitly so every lesson control behaves like a button.
+        const previousBehavior = document.documentElement.style.scrollBehavior;
+        document.documentElement.style.scrollBehavior = 'auto';
+        window.scrollTo(0, top);
+        document.documentElement.style.scrollBehavior = previousBehavior;
+        setActiveLesson(target.id);
+      });
+    });
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) setActiveLesson(entry.target.id);
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(section => observer.observe(section));
+  </script>
+
+<script>
+(function () {
+  var STORAGE_KEY = 'hermes-course-v1';
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail nav a'));
+  var ids = links.map(function (a) { return a.getAttribute('href'); })
+    .filter(function (x) { return x && x.charAt(0) === '#'; })
+    .map(function (x) { return x.slice(1); });
+  var sections = ids.map(function (id) { return document.getElementById(id); }).filter(Boolean);
+  if (!sections.length) return;
+
+  function stickyOffset() {
+    return window.matchMedia('(max-width: 900px)').matches ? 58 : 0;
+  }
+  function sectionFromScroll() {
+    var probe = window.scrollY + Math.min(200, Math.floor(window.innerHeight * 0.3));
+    var cur = sections[0];
+    for (var i = 0; i < sections.length; i++) {
+      if (sections[i].offsetTop <= probe) cur = sections[i];
+      else break;
+    }
+    return cur;
+  }
+  function scrollToSection(el) {
+    var top = Math.max(0, el.getBoundingClientRect().top + window.scrollY - stickyOffset());
+    var prev = document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior = 'smooth';
+    window.scrollTo(0, top);
+    document.documentElement.style.scrollBehavior = prev;
+  }
+
+  // Persist the visible lesson so a return visit picks up where you left off.
+  var saveTimer = null;
+  window.addEventListener('scroll', function () {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      try {
+        var cur = sectionFromScroll();
+        if (cur) localStorage.setItem(STORAGE_KEY, cur.id);
+      } catch (e) {}
+    }, 400);
+  }, { passive: true });
+
+  // Restore the saved lesson on a fresh load (explicit # links always win).
+  try {
+    if (!location.hash) {
+      var saved = localStorage.getItem(STORAGE_KEY);
+      var el = saved && document.getElementById(saved);
+      if (el) {
+        var top = Math.max(0, el.getBoundingClientRect().top + window.scrollY - stickyOffset());
+        window.scrollTo(0, top);
+      }
+    }
+  } catch (e) {}
+
+  // Arrow keys move between lessons; typing stays typed.
+  window.addEventListener('keydown', function (e) {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    var t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+    e.preventDefault();
+    var i = sections.indexOf(sectionFromScroll());
+    var next = sections[i + (e.key === 'ArrowRight' ? 1 : -1)];
+    if (next) scrollToSection(next);
+  });
+})();
+</script>
+</body>
+</html>

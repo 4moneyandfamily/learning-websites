@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Close and Compound: A Two-Video Masterclass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f2ee; --surface:#fff; --surface2:#e8ebe6; --ink:#161a18; --muted:#505b55;
+  --line:#c8cfc9; --strong:#929e97; --orange:#df4f2e; --green:#087d61; --greenSoft:#d9efe6;
+  --lime:#b7d957; --code:#101613; --codeInk:#ebf3ee; --codeMuted:#9bada3;
+  --success:#19734f; --danger:#a83c32; --shadow:0 14px 38px rgba(18,29,24,.1);
+  --side:#101613; --sideInk:#ebf3ee; --sideDiv:#26302b; --sideMuted:#9bada3;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0d1210; --surface:#151c18; --surface2:#202923; --ink:#eef4f0; --muted:#adbbb3;
+    --line:#334039; --strong:#5c6962; --orange:#ff7350; --green:#55c9a2; --greenSoft:#183b31;
+    --lime:#c5df72; --code:#080c0a; --codeMuted:#9bada3;
+    --success:#68d39f; --danger:#ff9182; --shadow:0 18px 54px rgba(0,0,0,.34);
+  }
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg); color:var(--ink); font-family:Archivo,system-ui,-apple-system,"Segoe UI",sans-serif; line-height:1.65; font-size:17px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+/* ---------- layout ---------- */
+.shell{display:flex; min-height:100vh}
+.sidebar{background:var(--side); color:var(--sideInk); width:300px; flex:0 0 300px; position:sticky; top:0; height:100vh; overflow-y:auto; padding:26px 0 30px; display:flex; flex-direction:column}
+.brand{padding:0 24px 20px; border-bottom:1px solid var(--sideDiv)}
+.brand .kicker{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.14em; color:var(--sideMuted); text-transform:uppercase}
+.brand h1{font-size:20px; font-weight:800; margin-top:6px}
+.brand h1 code{background:rgba(255,255,255,.08); color:#c5df72; padding:1px 7px; border-radius:6px; font-size:18px}
+.chapters{padding:14px 0; flex:1}
+.chapter{display:flex; gap:12px; align-items:flex-start; width:100%; text-align:left; background:none; border:none; border-left:3px solid transparent; color:var(--sideInk); padding:10px 20px 10px 21px; cursor:pointer; font-family:inherit}
+.chapter:hover{background:rgba(255,255,255,.04)}
+.chapter.active{border-left-color:#ff7350; background:rgba(255,255,255,.05)}
+.cnum{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--sideMuted); padding-top:3px; min-width:24px}
+.chapter.active .cnum{color:#ff7350}
+.ctitle{font-size:14px; font-weight:700; line-height:1.35}
+.csub{font-size:12px; color:var(--sideMuted); line-height:1.4; margin-top:2px}
+.tick{margin-left:auto; font-size:14px; color:#68d39f; opacity:0; padding-top:3px}
+.chapter.done .tick{opacity:1}
+.side-foot{padding:18px 24px 0; border-top:1px solid var(--sideDiv); font-size:12px; color:var(--sideMuted); line-height:1.5}
+.main{flex:1; min-width:0}
+.topbar{position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); padding:12px 26px; display:flex; align-items:center; gap:14px}
+.navbtn{background:var(--surface2); color:var(--ink); border:1px solid var(--line); border-radius:10px; padding:8px 16px; font-family:inherit; font-weight:700; font-size:14px; cursor:pointer}
+.navbtn:hover:not(:disabled){border-color:var(--strong)}
+.navbtn:disabled{opacity:.4; cursor:default}
+.pagecount{font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--muted); white-space:nowrap}
+.pbar{flex:1; height:8px; background:var(--surface2); border-radius:99px; overflow:hidden; min-width:60px}
+.pbar i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--green),var(--lime)); border-radius:99px; transition:width .4s ease}
+.content{max-width:860px; margin:0 auto; padding:40px 26px 90px}
+/* ---------- pages ---------- */
+.page{display:none}
+.page.active{display:block; animation:rise .45s ease}
+@keyframes rise{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}}
+@media (prefers-reduced-motion: reduce){.page.active{animation:none} html{scroll-behavior:auto}}
+.pager{display:flex; justify-content:space-between; gap:12px; margin-top:44px; padding-top:26px; border-top:1px solid var(--line)}
+.crumb{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--muted); letter-spacing:.04em; margin-bottom:22px}
+/* ---------- components ---------- */
+.hero{margin:26px 0 8px}
+.hero .kicker{font-family:"IBM Plex Mono",monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--orange); font-weight:600}
+.hero h1{font-size:clamp(38px,6vw,62px); font-weight:800; line-height:1.05; letter-spacing:-.01em; margin:12px 0 16px}
+.hero h1 code{background:var(--code); color:var(--lime); font-family:"IBM Plex Mono",monospace; font-size:.82em; padding:4px 12px; border-radius:10px; font-weight:600}
+.hero .lede{font-size:19px; color:var(--muted); max-width:640px}
+.hero-card{background:var(--code); color:var(--codeInk); border-radius:18px; padding:28px; margin-top:30px; box-shadow:var(--shadow)}
+.hero-card .hc-k{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--lime); font-weight:600}
+.hero-card h2{font-size:22px; margin:8px 0 10px}
+.hero-card p{color:var(--codeMuted); font-size:16px}
+.meta-row{display:flex; flex-wrap:wrap; gap:10px; margin-top:26px}
+.meta-pill{font-family:"IBM Plex Mono",monospace; font-size:12px; background:var(--surface2); border:1px solid var(--line); border-radius:99px; padding:6px 14px; color:var(--muted)}
+.section-head{margin:8px 0 26px}
+.lesson-no{font-family:"IBM Plex Mono",monospace; font-size:13px; font-weight:600; letter-spacing:.14em; color:var(--orange); text-transform:uppercase}
+.section-head h2{font-size:clamp(28px,4vw,40px); font-weight:800; letter-spacing:-.01em; line-height:1.12; margin:10px 0 12px}
+.section-head .intro{color:var(--muted); font-size:18px; max-width:660px}
+h3.sub{font-size:21px; font-weight:800; margin:34px 0 14px}
+p.body{margin:0 0 16px; max-width:700px}
+p.body strong{font-weight:700}
+.callout{background:var(--surface); border:1px solid var(--line); border-left:5px solid var(--green); border-radius:14px; padding:20px 22px 20px 20px; margin:24px 0; box-shadow:var(--shadow); display:flex; gap:16px}
+.callout.warn{border-left-color:var(--danger); background:color-mix(in srgb, var(--danger) 5%, var(--surface))}
+.callout .mark{flex:0 0 34px; width:34px; height:34px; border-radius:50%; background:var(--green); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; font-size:16px}
+.callout.warn .mark{background:var(--danger)}
+.callout .co-body{font-size:16px}
+.callout .co-body strong{display:block; margin-bottom:4px; font-size:16px}
+.steps{margin:22px 0; display:flex; flex-direction:column; gap:12px}
+.step{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:18px 20px; display:flex; gap:16px; align-items:flex-start}
+.step-num{flex:0 0 34px; width:34px; height:34px; border-radius:10px; background:var(--code); color:var(--lime); font-family:"IBM Plex Mono",monospace; font-weight:600; display:flex; align-items:center; justify-content:center; font-size:14px}
+.step .st-body{font-size:16px}
+.step .st-body strong{display:block; margin-bottom:2px}
+.terminal{background:var(--code); color:var(--codeInk); border-radius:14px; margin:22px 0; overflow:hidden; box-shadow:var(--shadow)}
+.terminal-bar{display:flex; align-items:center; gap:8px; padding:12px 16px; border-bottom:1px solid rgba(255,255,255,.08)}
+.dot{width:11px; height:11px; border-radius:50%; background:#3a453f}
+.tlabel{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--codeMuted); margin-left:6px}
+.copy-btn{margin-left:auto; background:rgba(255,255,255,.08); color:var(--codeInk); border:1px solid rgba(255,255,255,.16); border-radius:8px; padding:6px 14px; font-family:"IBM Plex Mono",monospace; font-size:12px; cursor:pointer}
+.copy-btn:hover{background:rgba(255,255,255,.16)}
+.terminal pre{padding:18px 20px; overflow-x:auto; font-family:"IBM Plex Mono",monospace; font-size:14px; line-height:1.7; white-space:pre-wrap}
+.prompt{color:var(--lime)} .comment{color:var(--codeMuted)}
+.matrix{margin:22px 0; border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--surface)}
+.matrix-row{display:grid; grid-template-columns:1.1fr 1fr 1.6fr; gap:0; border-top:1px solid var(--line)}
+.matrix-row.head{background:var(--code); color:var(--codeInk); border-top:none}
+.matrix-row>div{padding:13px 16px; font-size:14.5px}
+.matrix-row.head>div{font-family:"IBM Plex Mono",monospace; font-size:12px; letter-spacing:.08em; text-transform:uppercase; font-weight:600}
+.verdict{display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:600; padding:3px 10px; border-radius:99px; margin-bottom:6px}
+.v-ok{background:var(--greenSoft); color:var(--success)}
+.v-bad{background:color-mix(in srgb, var(--danger) 12%, var(--surface)); color:var(--danger)}
+.v-mid{background:color-mix(in srgb, var(--orange) 14%, var(--surface)); color:var(--orange)}
+.concept-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:22px 0}
+.concept{background:var(--surface); border:1px solid var(--line); border-top:4px solid var(--strong); border-radius:12px; padding:18px}
+.concept:nth-child(3n+2){border-top-color:var(--green)}
+.concept:nth-child(3n+3){border-top-color:var(--orange)}
+.concept .term{font-weight:800; font-size:16px; margin-bottom:6px}
+.concept p{font-size:14.5px; color:var(--muted)}
+.flow{margin:24px 0; display:flex; align-items:stretch; gap:0}
+.node{flex:1; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px; font-size:14px; text-align:center}
+.node strong{display:block; font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--orange); letter-spacing:.08em; margin-bottom:6px}
+.arrow{align-self:center; padding:0 8px; font-size:20px; color:var(--strong); font-weight:800}
+.split{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:22px 0}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px}
+.card.do{border-top:4px solid var(--green)} .card.dont{border-top:4px solid var(--danger)}
+.card h4{font-size:16px; font-weight:800; margin-bottom:10px}
+.card.do h4{color:var(--success)} .card.dont h4{color:var(--danger)}
+.list{list-style:none; font-size:15px}
+.list li{padding:7px 0 7px 26px; position:relative; border-top:1px dashed var(--line)}
+.list li:first-child{border-top:none}
+.list li::before{content:"→"; position:absolute; left:4px; color:var(--strong); font-weight:800}
+details{background:var(--surface); border:1px solid var(--line); border-radius:12px; margin:10px 0; overflow:hidden}
+summary{padding:16px 20px; font-weight:700; cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center; gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+"; font-size:22px; color:var(--orange); font-weight:400}
+details[open] summary::after{content:"–"}
+.details-body{padding:0 20px 18px; font-size:15.5px; color:var(--muted)}
+.quiz{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:26px; margin:24px 0; box-shadow:var(--shadow)}
+.question{padding:18px 0; border-top:1px solid var(--line)}
+.question:first-of-type{border-top:none; padding-top:4px}
+.question p.q{font-weight:700; font-size:16.5px; margin-bottom:12px}
+.opt{display:flex; gap:10px; align-items:flex-start; padding:9px 12px; border:1px solid var(--line); border-radius:10px; margin:8px 0; cursor:pointer; font-size:15px}
+.opt:hover{border-color:var(--strong)}
+.opt input{margin-top:4px; accent-color:var(--green)}
+.result{font-size:14.5px; margin-top:10px; padding:10px 14px; border-radius:10px; display:none}
+.result.show{display:block}
+.result.good{background:var(--greenSoft); color:var(--success)}
+.result.bad{background:color-mix(in srgb, var(--danger) 8%, var(--surface)); color:var(--danger)}
+.quiz-actions{display:flex; gap:10px; margin-top:18px; align-items:center; flex-wrap:wrap}
+.btn{background:var(--green); color:#fff; border:none; border-radius:10px; padding:11px 22px; font-family:inherit; font-weight:700; font-size:15px; cursor:pointer}
+.btn.ghost{background:var(--surface2); color:var(--ink); border:1px solid var(--line)}
+#quizStatus{font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--muted)}
+.sources{margin:24px 0; display:flex; flex-direction:column; gap:10px}
+.source-card{display:block; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:16px 18px; text-decoration:none; color:var(--ink)}
+.source-card:hover{border-color:var(--strong)}
+.source-card strong{font-size:15.5px}
+.source-card .stag{display:block; font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--muted); margin-top:4px}
+.final-box{background:var(--code); color:var(--codeInk); border-radius:18px; padding:32px; margin-top:30px; box-shadow:var(--shadow)}
+.final-box h2{font-size:26px; margin-bottom:12px}
+.final-box p{color:var(--codeMuted); font-size:16px; margin-bottom:14px}
+.final-box .terminal{margin:18px 0 0; box-shadow:none}
+.success-line{margin-top:26px; padding:14px 18px; background:var(--greenSoft); border-radius:12px; font-size:15px; color:var(--success); font-weight:600}
+/* ---------- simulator ---------- */
+.sim{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:24px; margin:24px 0; box-shadow:var(--shadow)}
+.sim h4{font-size:18px; font-weight:800; margin-bottom:4px}
+.sim .sim-sub{font-size:14px; color:var(--muted); margin-bottom:18px}
+.sim-controls{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:18px}
+.ctl label{display:block; font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--muted); margin-bottom:6px; letter-spacing:.04em}
+.ctl output{font-family:"IBM Plex Mono",monospace; font-size:14px; font-weight:600; color:var(--ink)}
+.ctl input[type=range]{width:100%; accent-color:var(--green)}
+.ctl-row{display:flex; align-items:center; gap:10px; padding-top:22px}
+.switch{position:relative; width:46px; height:26px; flex:0 0 46px}
+.switch input{opacity:0; width:100%; height:100%; position:absolute; cursor:pointer; margin:0}
+.track{position:absolute; inset:0; background:var(--surface2); border:1px solid var(--line); border-radius:99px; transition:.2s}
+.track::after{content:""; position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:var(--strong); transition:.2s}
+.switch input:checked + .track{background:var(--greenSoft); border-color:var(--green)}
+.switch input:checked + .track::after{left:22px; background:var(--green)}
+.sim-stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:18px}
+.stat{background:var(--surface2); border-radius:12px; padding:14px 16px}
+.stat .sl{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.stat .sv{font-family:"IBM Plex Mono",monospace; font-size:20px; font-weight:600; margin-top:4px}
+.stat .sv.pos{color:var(--success)} .stat .sv.neg{color:var(--danger)}
+#demonChart{width:100%; height:auto; display:block; background:var(--surface2); border-radius:12px; margin-bottom:12px}
+.legend{display:flex; flex-wrap:wrap; gap:16px; font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--muted); margin-bottom:14px}
+.legend span{display:flex; align-items:center; gap:7px}
+.sw{width:22px; height:4px; border-radius:2px; display:inline-block}
+.sim-note{font-size:13.5px; color:var(--muted)}
+/* ---------- responsive ---------- */
+@media (max-width: 900px){
+  .sidebar{position:sticky; top:0; width:100%; flex:none; height:auto; padding:0; z-index:60; border-bottom:1px solid var(--sideDiv)}
+  .brand, .side-foot{display:none}
+  .chapters{display:flex; overflow-x:auto; padding:8px 10px; gap:8px}
+  .chapter{flex:0 0 auto; border-left:none; border-bottom:3px solid transparent; padding:8px 12px; border-radius:10px; align-items:center}
+  .chapter.active{border-bottom-color:#ff7350; background:rgba(255,255,255,.06)}
+  .chapter .csub, .chapter .tick{display:none}
+  .chapter .cnum{padding-top:0}
+  .chapter .ctitle{font-size:13px; white-space:nowrap}
+  .shell{flex-direction:column}
+  .concept-grid{grid-template-columns:1fr 1fr}
+  .split{grid-template-columns:1fr}
+  .flow{flex-direction:column}
+  .arrow{transform:rotate(90deg); padding:4px 0; align-self:center}
+  .matrix-row{grid-template-columns:1fr}
+  .matrix-row.head{display:none}
+  .matrix-row>div{padding:8px 16px}
+  .matrix-row>div:first-child{padding-top:14px; font-weight:700}
+  .matrix-row>div:last-child{padding-bottom:14px}
+}
+@media (max-width: 560px){ .concept-grid{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="shell">
+<nav class="sidebar" aria-label="Chapters">
+  <div class="brand">
+    <div class="kicker">Two-video masterclass</div>
+    <h1>Close <code>&amp;</code> Compound</h1>
+  </div>
+  <div class="chapters" id="chapters"></div>
+  <div class="side-foot">Progress saves on this device. Finish all 12 pages and the quiz to complete the course.</div>
+</nav>
+<div class="main">
+  <div class="topbar">
+    <button class="navbtn" id="prevBtn">← Prev</button>
+    <span class="pagecount" id="pageCount">Page 1 of 12</span>
+    <div class="pbar"><i id="pbarFill"></i></div>
+    <button class="navbtn" id="nextBtn">Next →</button>
+  </div>
+  <div class="content" id="content">
+
+<!-- ==================== PAGE 0 : COVER ==================== -->
+<article class="page" id="page-cover">
+  <div class="hero">
+    <div class="kicker">A two-video masterclass · 12 pages</div>
+    <h1>Close <code>and</code> compound</h1>
+    <p class="lede">Two videos crossed your desk this week. One is a 21-minute Tony Robbins sales lesson on what an objection really is. The other is a 1991 Stanford lecture where Tom Cover shows how to manufacture 6% growth per period out of two assets that go nowhere. The first teaches you to get the yes. The second teaches you what to do with the money after you do.</p>
+    <div class="hero-card">
+      <div class="hc-k">Best first milestone</div>
+      <h2>Watch noise turn into 6% per period</h2>
+      <p>On page 05 there is a working Shannon's Demon simulator. Set volatility to 2.0, start with $100,000, hit run, and watch a 50/50 rebalance harvest pure oscillation into growth. Ten minutes, zero dollars, and you will never look at volatility the same way.</p>
+    </div>
+    <div class="meta-row">
+      <span class="meta-pill">2 videos</span>
+      <span class="meta-pill">9 lessons</span>
+      <span class="meta-pill">1 working simulator</span>
+      <span class="meta-pill">3-question final check</span>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="mark">1</div>
+    <div class="co-body"><strong>How to use this course.</strong> Pages 00 through 04 are the sales half: objection, attack and confess, the yes train, reading state. Pages 05 through 08 are the compounding half: the demon, the math, universal portfolios, and what it means for your actual book. Everything is graded: verified claims, creator framing, and hype, labeled as each appears.</div>
+  </div>
+  <div class="pager">
+    <button class="navbtn" disabled>← Prev</button>
+    <button class="navbtn" data-goto="1">Next →</button>
+  </div>
+</article>
+
+<!-- ==================== PAGE 1 : 00 CHECKPOINT ==================== -->
+<article class="page" id="page-checkpoint">
+  <div class="crumb">Cover · 00 Checkpoint · 01 Objection model</div>
+  <div class="section-head">
+    <div class="lesson-no">Lesson 00</div>
+    <h2>Checkpoint: what each video is actually worth</h2>
+    <p class="intro">Before a single tactic, decide what each video is for, where it fits your life, and which of its claims survive contact with reality. Conclusions first, hype graded up front.</p>
+  </div>
+  <div class="callout">
+    <div class="mark">1</div>
+    <div class="co-body"><strong>The verdict in two sentences.</strong> Video A gives you a usable sales operating system: objections are value problems, and "attack and confess" disarms them better than arguing. Video B gives you a real mathematical edge: rebalancing harvests volatility, and log-optimal sizing is the grown-up version of Kelly. Both videos arrive wrapped in hype that does not survive verification, graded below.</div>
+  </div>
+  <h3 class="sub">The two videos, identified</h3>
+  <p class="body"><strong>Video A:</strong> a 21:12 clip posted by @HeyShobhan on September 20, 2026, presenting an old Tony Robbins sales lesson. Playback failed in the browser, so the content here comes from the creator's written description: an objection reflects insufficient perceived value or the prospect's emotional state, "attack and confess" beats arguing, stack small agreements (the yes train), read the state then shift it.</p>
+  <p class="body"><strong>Video B:</strong> a 53:35 clip posted by @dkare1009, a Thomas M. Cover lecture on growth-optimal portfolios. Cover was a Stanford professor and an information theory pioneer. The lecture is archival, circa 1991, and the identical copy is public on YouTube, which is how the content below was verified. Its centerpiece is Shannon's Demon: two assets going nowhere, rebalanced 50/50, growing about 6% per period.</p>
+  <h3 class="sub">Hype grading, all of it, up front</h3>
+  <div class="matrix">
+    <div class="matrix-row head"><div>Claim</div><div>Grade</div><div>Why</div></div>
+    <div class="matrix-row"><div>"Robbins charges $1M for one day"</div><div><span class="verdict v-bad">Unverified</span></div><div>The creator's claim. No primary source found. Do not repeat it as fact.</div></div>
+    <div class="matrix-row"><div>"The historical seat cost $125"</div><div><span class="verdict v-bad">Unverified</span></div><div>Same. Colorful, sourceless, irrelevant to whether the tactic works.</div></div>
+    <div class="matrix-row"><div>"These are the two only moves"</div><div><span class="verdict v-mid">Creator framing</span></div><div>Useful packaging, not verified doctrine. Persuasion research supports the pieces, not the exclusivity.</div></div>
+    <div class="matrix-row"><div>"Objections are never about money"</div><div><span class="verdict v-ok">Mostly verified</span></div><div>Standard sales doctrine with real exceptions. Lesson 01 names them.</div></div>
+    <div class="matrix-row"><div>"$100k turned into $7M"</div><div><span class="verdict v-bad">Reposter invention</span></div><div>This framing does not appear in the lecture. Say so plainly whenever you see it.</div></div>
+    <div class="matrix-row"><div>"Demon makes ~6% per period"</div><div><span class="verdict v-ok">Verified</span></div><div>Cover's own demo and math. The simulator on page 05 reproduces it.</div></div>
+    <div class="matrix-row"><div>"Kark and Ikoy: 4x and 8x became 52x"</div><div><span class="verdict v-ok">Verified</span></div><div>Cover's example, cited in the lecture. Volatile, uncorrelated pair.</div></div>
+    <div class="matrix-row"><div>"Universal portfolio made 1.1x in the 2008 crash"</div><div><span class="verdict v-ok">Verified</span></div><div>Cover's claim: the universal portfolio gained while buy-and-hold lost.</div></div>
+  </div>
+  <div class="split">
+    <div class="card do">
+      <h4>Strong fit for you</h4>
+      <ul class="list">
+        <li>Video A maps directly onto Lendera calls: fee objections, "I need to think about it," stalls.</li>
+        <li>Video A maps onto Monday: AppleOne at 10 AM virtual, Express at 11 AM in Irvine.</li>
+        <li>Video B connects to the Kelly sizing chapter of your finance program.</li>
+        <li>Video B gives you a volatility-as-fuel intuition for pair trades.</li>
+      </ul>
+    </div>
+    <div class="card dont">
+      <h4>Weak fit, handle with care</h4>
+      <ul class="list">
+        <li>Video A is a 40-year-old tape repackaged. The moves are old because they work, not because they are secret.</li>
+        <li>Video B's demon wants volatile, uncorrelated assets. Your book is large-cap liquid names picked for tight spreads: the opposite shelf.</li>
+        <li>Neither video's hype numbers belong in your mouth. Quote the tactics, never the $1M or the $7M.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="success-line">Success state: you can say in one sentence what each video is worth, and in one sentence what is hype.</div>
+  <div class="pager">
+    <button class="navbtn" data-goto="0">← Prev</button>
+    <button class="navbtn" data-goto="2">Next →</button>
+  </div>
+</article>
+
+<!-- ==================== PAGE 2 : 01 OBJECTION MODEL ==================== -->
+<article class="page" id="page-objection">
+  <div class="crumb">00 Checkpoint · 01 Objection model · 02 Attack and confess</div>
+  <div class="section-head">
+    <div class="lesson-no">Lesson 01</div>
+    <h2>The objection is never about time or money</h2>
+    <p class="intro">The single mental model underneath the whole Robbins lesson. Learn to hear what the prospect is actually saying, and the rest of the course becomes mechanics.</p>
+  </div>
+  <div class="callout warn">
+    <div class="mark">!</div>
+    <div class="co-body"><strong>Disqualifier first.</strong> This is a 40-year-old sales principle, not physics. It breaks in two cases. One: the constraint is real. Some people genuinely cannot pay, and some calendars genuinely have no room. Two: the trust is gone. No technique repairs a prospect who has decided you are the enemy. Your job is to tell the difference fast, not to steamroll every no.</div>
+  </div>
+  <p class="body">Here is the model. When a prospect says "I don't have the money" or "I don't have the time," they are giving you the symptom, not the diagnosis. Underneath, one of two things is true. Either the perceived value of what you are offering does not yet exceed the price in their mind, or their current emotional state cannot hear value at all. Fix the value perception or fix the state, and the objection dissolves. Argue with the words they said, and you lose, because you are debating a symptom.</p>
+  <p class="body">Think about your own buying. You have paid real money for things on days you were "broke," and you have found hours for things on weeks you had "no time." Money and time appear exactly when value is obvious and the state is right. Your prospects work the same way. The objection is information: it tells you which of the two problems to solve.</p>
+  <h3 class="sub">The three surface objections, translated</h3>
+  <div class="concept-grid">
+    <div class="concept">
+      <div class="term">"Too expensive"</div>
+      <p>The real question: is the outcome worth more than this number? On a Lendera call, the fee is never weighed against zero. It is weighed against the cost of doing nothing: interest, minimums, and months of stress.</p>
+    </div>
+    <div class="concept">
+      <div class="term">"I don't have time"</div>
+      <p>The real question: is this worth bumping something else? Nobody has spare time. They reallocate it toward whatever feels most valuable or most urgent. Your job is to become that thing.</p>
+    </div>
+    <div class="concept">
+      <div class="term">"I need to think about it"</div>
+      <p>The real question: do I trust this, and do I feel the urgency? This is the state problem wearing a value costume. Thinking about it alone changes nothing. Thinking about it with you, guided, changes everything.</p>
+    </div>
+  </div>
+  <p class="body">Notice what this model demands of you. It forbids the two laziest responses in sales: discounting the price and pressuring the timeline. Both argue with the symptom. If the problem is value perception, a discount actually makes it worse, because a cheaper price signals a cheaper outcome. If the problem is state, pressure makes it worse, because a guarded prospect under pressure guards harder.</p>
+  <div class="callout">
+    <div class="mark">2</div>
+    <div class="co-body"><strong>The move this model unlocks.</strong> Never answer the objection as stated. Answer the question underneath it. "Too expensive" gets a value story, not a discount. "No time" gets a priority story, not a calendar link. "Think about it" gets a guided thinking session, not a follow-up date. Lesson 02 gives you the exact words for the first one.</div>
+  </div>
+  <div class="success-line">Success state: on your next call, when you hear a stall, you can name the real question underneath it in one sentence.</div>
+  <div class="pager">
+    <button class="navbtn" data-goto="1">← Prev</button>
+    <button class="navbtn" data-goto="3">Next →</button>
+  </div>
+</article>
+
+<!-- ==================== PAGE 3 : 02 ATTACK AND CONFESS ==================== -->
+<article class="page" id="page-attack">
+  <div class="crumb">01 Objection model · 02 Attack and confess · 03 Yes train</div>
+  <div class="section-head">
+    <div class="lesson-no">Lesson 02</div>
+    <h2>Attack and confess</h2>
+    <p class="intro">When the objection lands, do not argue it. Agree with the feeling, then confess how you once delayed on the same thing and what that delay cost you.</p>
+  </div>
+  <div class="callout">
+    <div class="mark">1</div>
+    <div class="co-body"><strong>Conclusion first.</strong> Arguing an objection makes you the opponent, and people do not buy from opponents. Confessing your own version of their delay makes you a fellow traveler who found the way out. The prospect stops defending and starts listening, because the fight is over and you surrendered first.</div>
+  </div>
+  <p class="body">The name is dramatic, but the mechanics are simple. "Attack" means you go straight at the objection instead of dancing around it. "Confess" means the weapon you bring is your own story, not their logic. A prospect expects you to fight the objection. When you instead say "I did the exact same thing, and here is what it cost me," there is nothing left to push against.</p>
+  <p class="body">Why does this work? You trade authority for honesty, and honesty is the rarer currency. Persuasion research has long supported the pieces: concession lowers defenses, and perspective-taking builds trust faster than credentials. What is not verified is the creator's framing that these are "the two only moves." They are two good moves. Treat them that way.</p>
+  <h3 class="sub">The five-beat sequence</h3>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="st-body"><strong>Name the objection back.</strong> "The fee feels like a lot. I hear you." No flinch, no discount offered, no defense mounted.</div></div>
+    <div class="step"><div class="step-num">2</div><div class="st-body"><strong>Confess your own version.</strong> "A few years ago I put off getting help with [X] because of the cost." Short, specific, true.</div></div>
+    <div class="step"><div class="step-num">3</div><div class="st-body"><strong>Price the delay.</strong> "Waiting cost me [Y]. More than the fee ever would have." This is the turn. The cost of inaction becomes the real price tag.</div></div>
+    <div class="step"><div class="step-num">4</div><div class="st-body"><strong>Bridge to their math.</strong> "Your accounts are costing you [Z] a month in interest and minimums while we talk." Their numbers, not yours.</div></div>
+    <div class="step"><div class="step-num">5</div><div class="st-body"><strong>Ask the small question.</strong> "Want me to walk you through what the next 90 days look like either way?" Small ask, forward motion.</div></div>
+  </div>
+  <h3 class="sub">Your Lendera script: the fee objection</h3>
+  <div class="terminal">
+    <div class="terminal-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="tlabel">attack-and-confess · fee objection</span><button class="copy-btn" data-copy="script-fee">Copy</button></div>
+    <pre id="script-fee">Prospect: "Your fee is too high."
+
+You: "Fair. And I want to be straight with you about it.
+
+A few years ago I put off getting help with something
+expensive because the price tag scared me. Waiting ended
+up costing me more than the price ever would have. That
+is the part nobody tells you: the fee is visible, the
+cost of waiting is invisible, so the fee looks like the
+bigger number. It is not.
+
+Here is your actual math. Right now your accounts are
+costing you [Z] a month in interest and minimums, and
+that number does not move while we think about it. Our
+fee is [F], one time, and the program is built to cut
+that monthly bleed starting in the first 30 days.
+
+So the question is not really fee versus no fee. It is
+fee versus [Z] a month, every month, until something
+changes. Want me to walk you through what the next 90
+days look like either way?"</pre>
+  </div>
+  <h3 class="sub">Your interview script: the salary question</h3>
+  <p class="body">Monday's interviews will ask about money. Same move, different costume. Do not argue your worth. Confess the lesson, price the delay, bridge to their math.</p>
+  <div class="terminal">
+    <div class="terminal-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="tlabel">attack-and-confess · salary question</span><button class="copy-btn" data-copy="script-salary">Copy</button></div>
+    <pre id="script-salary">Interviewer: "What are you looking for compensation-wise?"
+
+You: "Honest answer: early in my career I jumped at a
+role because the number sounded good, and it cost me a
+year in a seat that was failing. I learned to look at
+the whole picture instead of just the number.
+
+What I am looking for is [range]. The reason is pretty
+simple: I close, I run a real pipeline, and I am looking
+for a seat where that is worth something to both sides.
+I would rather be in the right role at the right number
+than chase a number into the wrong role again.
+
+Does that range work on your end, or does it make sense
+to talk about what the ramp and the upside look like?"</pre>
+  </div>
+  <div class="callout warn">
+    <div class="mark">!</div>
+    <div class="co-body"><strong>The confession must be true.</strong> A fabricated story is a lie that compounds, and prospects smell it. Use a real delay from your real life. You have 38 years of material. If you cannot find a true story for the objection in front of you, skip this move and use the yes train instead.</div>
+  </div>
+  <div class="success-line">Success state: both scripts are copied, the brackets are filled in with your real numbers, and you have read each aloud once.</div>
+  <div class="pager">
+    <button class="navbtn" data-goto="2">← Prev</button>
+    <button class="navbtn" data-goto="4">Next →</button>
+  </div>
+</article>
+
+<!-- ==================== PAGE 4 : 03 YES TRAIN ==================== -->
+<article class="page" id="page-yestrain">
+  <div class="crumb">02 Attack and confess · 03 Yes train · 04 Reading state</div>
+  <div class="section-head">
+    <div class="lesson-no">Lesson 03</div>
+    <h2>The yes train</h2>
+    <p class="intro">Stack three to five small, genuine agreements before you ask for the commitment. Each yes lowers the cost of the next one.</p>
+  </div>
+  <div class="callout">
+    <div class="mark">1</div>
+    <div class="co-body"><strong>Conclusion first.</strong> People do not reverse direction mid-conversation without a reason. Every genuine "yes" is a small commitment to the logic of the conversation, and the big ask at the end just becomes the next yes in the sequence. The key word is genuine: manufactured yeses ("nice weather today, right?") insult the prospect's intelligence and burn the trust you need.</div>
+  </div>
+  <p class="body">Here is the mechanism, stripped of mystique. Saying yes is a micro-commitment. Humans like to stay consistent with what they just said. So you build a staircase: pain, math, timeline, then the ask. Each step is a question the prospect can only honestly answer one way, because you did the discovery work to know the answers in advance. By the time you ask for the commitment, saying no would contradict everything they just agreed to.</p>
+  <h3 class="sub">The yes train on a Lendera call</h3>
+  <div class="flow">
+    <div class="node"><strong>YES 1 · PAIN</strong>"Those minimums are eating about $900 a month without touching the balance, right?"</div>
+    <div class="arrow">→</div>
+    <div class="node"><strong>YES 2 · MATH</strong>"If the program cuts that to $400, that is $500 back in your pocket every month. That is real money, agreed?"</div>
+    <div class="arrow">→</div>
+    <div class="node"><strong>YES 3 · TIMELINE</strong>"And doing nothing costs you that $500 every month until something changes. Fair?"</div>
+    <div class="arrow">→</div>
+    <div class="node"><strong>THE ASK</strong>"Then the only question is whether we start this week or next. Which works better?"</div>
+  </div>
+  <p class="body">Notice the ask. It is not "do you want to enroll." It is "this week or next." The commitment was already made across the three yeses. The ask just picks the flavor.</p>
+  <h3 class="sub">The yes train for Monday's interviews</h3>
+  <p class="body">Interviews are sales calls where you are the product. Same staircase. Write these out before Monday, in your own words:</p>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="st-body"><strong>Yes on the role's reality.</strong> "This seat lives or dies on relationships with clients and candidates, is that fair?" Every recruiter says yes. You have shown you understand the job.</div></div>
+    <div class="step"><div class="step-num">2</div><div class="st-body"><strong>Yes on your fit.</strong> "I do 1099 phone sales now, high volume, commission only. That is basically the same muscle, agreed?" True, and it reframes Lendera as training, not a fallback.</div></div>
+    <div class="step"><div class="step-num">3</div><div class="st-body"><strong>Yes on the timeline.</strong> "You are looking to fill this quickly with someone who can ramp fast, right?" Now the close is natural: "Then I would like to be your next step. What does the rest of your process look like?"</div></div>
+  </div>
+  <div class="split">
+    <div class="card do">
+      <h4>Do</h4>
+      <ul class="list">
+        <li>Earn each yes with real discovery. The questions work because the answers are true.</li>
+        <li>Keep the train short: three to five stops. Longer than that and it feels like a trap.</li>
+        <li>Let a real no stop the train. Pushing past one burns the whole sequence.</li>
+      </ul>
+    </div>
+    <div class="card dont">
+      <h4>Do not</h4>
+      <ul class="list">
+        <li>Manufacture yeses to trivia. "Nice weather" yeses train the prospect to notice the machinery.</li>
+        <li>Stack yeses you have not earned. If you do not know their monthly minimums, do not ask them to agree to a number.</li>
+        <li>Run the train on someone whose constraint is real. A genuine "I cannot pay" is information, not an objection.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="success-line">Success state: three genuine yes-train questions for Monday's 11 AM Express interview, written in your own words.</div>
+  <div class="pager">
+    <button class="navbtn" data-goto="3">← Prev</button>
+    <button class="navbtn" data-goto="5">Next →</button>
+  </div>
+</article>
+
+<!-- ==================== PAGE 5 : 04 STATE ==================== -->
+<article class="page" id="page-state">
+  <div class="crumb">03 Yes train · 04 Reading state · 05 Shannon's Demon</div>
+  <div class="section-head">
+    <div class="lesson-no">Lesson 04</div>
+    <h2>Read the room, then change it</h2>
+    <p class="intro">State first, content second. A prospect in a rushed, guarded state cannot hear value no matter how good your math is.</p>
+  </div>
+  <div class="callout">
+    <div class="mark">1</div>
+    <div class="co-body"><strong>Conclusion first.</strong> The Robbins lesson's fourth move is to read the prospect's emotional state and shift it before you ask for anything. This is the least mechanical and most important of the four moves. A perfect yes train delivered to a prospect who is guarding, rushing, or distracted will fail, and the failure will look like a value problem when it was a state problem all along.</div>
+  </div>
+  <p class="body">Reading state is a listening skill, not a trick. On the phone, you have three instruments: pace, tone, and answer length. Fast pace plus clipped tone plus short answers means rushed or guarded. Slow pace plus sighs means tired or defeated. Matching energy plus questions back means open. You are not diagnosing their soul. You are deciding whether this is a moment to present or a moment to earn the right to present.</p>
+  <p class="body">Shifting state is smaller than it sounds. You do not need to transform anyone. You need about thirty seconds of genuine human contact before the business starts. Slow down. Drop your voice half a notch. Name what you hear: "Sounds like today is slammed on your end." People relax when they feel accurately seen. One real laugh or one real admission of the pressure, and the guard drops enough for value to get through.</p>
+  <h3 class="sub">Your three arenas</h3>
+  <div class="concept-grid">
+    <div class="concept">
+      <div class="term">Lendera calls</div>
+      <p>Debt prospects answer the phone braced for judgment. Open by normalizing, not pitching: "Most people I talk to waited six months longer than they should have before calling. You are already ahead of them." Shame down, guard down, ears open.</p>
+    </div>
+    <div class="concept">
+      <div class="term">Monday 10 AM, AppleOne virtual</div>
+      <p>Video flattens energy, so bring ten percent more of it deliberately. Camera at eye level, first ninety seconds warm and unhurried. If the interviewer is clearly stacking calls back to back, name it: "I know you are running a tight schedule, I will keep my answers tight." Respect reads as confidence.</p>
+    </div>
+    <div class="concept">
+      <div class="term">Monday 11 AM, Express in Irvine</div>
+      <p>In person, read the room before you read the agenda. Arrive twelve minutes early, watch the office tempo, match it. A firm handshake and one genuine observation about the place beats three rehearsed openers. Calm is contagious.</p>
+    </div>
+  </div>
+  <div class="callout warn">
+    <div class="mark">!</div>
+    <div class="co-body"><strong>Disqualifier.</strong> State-shifting is attention and trust, not mind control. If the constraint is real, respect it and schedule the return. The prospect who says "I literally cannot pay this month, call me on the first" just gave you a layup. Take it.</div>
+  </div>
+  <details open>
+    <summary>What if I misread the state?</summary>
+    <div class="details-body">You will, regularly. The recovery is the skill: "I may be reading this wrong, but you sound rushed. Want me to get to the point?" Naming the possible misread honestly usually corrects the state by itself, because the prospect feels handled with care instead of handled.</div>
+  </details>
+  <div class="success-line">Success state: you can name two state-shift moves for the phone and one for in person, without looking at notes.</div>
+  <div class="pager">
+    <button class="navbtn" data-goto="4">← Prev</button>
+    <button class="navbtn" data-goto="6">Next →</button>
+  </div>
+</article>
+
+<!-- ==================== PAGE 6 : 05 SHANNON'S DEMON ==================== -->
+<article class="page" id="page-demon">
+  <div class="crumb">04 Reading state · 05 Shannon's Demon · 06 Log-optimal growth</div>
+  <div class="section-head">
+    <div class="lesson-no">Lesson 05</div>
+    <h2>Shannon's Demon: noise, converted to 6% a period</h2>
+    <p class="intro">The centerpiece of Cover's lecture. Two assets that go nowhere, rebalanced mechanically, manufacturing growth out of pure fluctuation. No prediction required.</p>
+  </div>
+  <div class="callout warn">
+    <div class="mark">!</div>
+    <div class="co-body"><strong>Disqualifier first.</strong> The "$100k turned into $7M" framing you saw on the reposts is the reposters' invention. It does not appear in the lecture. What Cover actually claimed is smaller, stranger, and it checks out mathematically. Grade the hype, keep the math.</div>
+  </div>
+  <p class="body">The setup is deliberately absurd. Asset one is cash: it sits at 1, forever. Asset two is a stock that each period either doubles or halves, a fair coin flip. Buy and hold either one and you go nowhere: the cash never moves, and the stock's doublings and halvings cancel out over time. Cover's line: "even though neither stock goes anywhere... you're making 6% per investment period essentially... you're living off the fluctuations."</p>
+  <p class="body">Now the trick. Start 50/50 and rebalance every period. On an up period, the stock half doubles, so the portfolio becomes 0.5 cash plus 1.0 stock, total 1.5. Sell a third of the stock, back to 50/50. On a down period, the stock half halves, so the portfolio is 0.5 plus 0.25, total 0.75. Buy stock with the cash, back to 50/50. Every period you are selling the winner and buying the loser, mechanically, without predicting a thing.</p>
+  <p class="body">The math, in plain numbers: an up period multiplies wealth by 1.5, a down period by 0.75. The average outcome is not the average of 1.5 and 0.75, which is 1.125. It is the geometric average: the square root of (1.5 × 0.75), which is 1.0607. That is 6.07% growth per period, manufactured from two assets with zero trend. The rebalancing is a volatility harvester. It converts oscillation into compounding.</p>
+  <div class="callout">
+    <div class="mark">2</div>
+    <div class="co-body"><strong>Translated to something you already know.</strong> Your scalping overlay is mean-reversion on 15-minute price charts: price stretches from VWAP, you bet on the snap back. The demon is mean-reversion on portfolio weights: the allocation stretches from 50/50, you bet on the snap back by rebalancing. Same instinct, different costume. One trades price, the other trades the mix.</div>
+  </div>
+  <h3 class="sub">Run it yourself</h3>
+  <div class="sim">
+    <h4>Shannon's Demon simulator</h4>
+    <p class="sim-sub">Deterministic and seeded, so every run is reproducible. Move the sliders and watch the growth rate respond. Toggle rebalancing off to see what the same portfolio does without the harvest.</p>
+    <div class="sim-controls">
+      <div class="ctl">
+        <label for="volRange">VOLATILITY FACTOR <output id="volOut">2.00x</output></label>
+        <input type="range" id="volRange" min="1.2" max="3" step="0.05" value="2">
+      </div>
+      <div class="ctl">
+        <label for="capRange">STARTING CAPITAL <output id="capOut">$100,000</output></label>
+        <input type="range" id="capRange" min="10000" max="500000" step="5000" value="100000">
+      </div>
+      <div class="ctl">
+        <label for="perRange">PERIODS <output id="perOut">24</output></label>
+        <input type="range" id="perRange" min="4" max="100" step="1" value="24">
+      </div>
+      <div class="ctl">
+        <div class="ctl-row">
+          <label class="switch"><input type="checkbox" id="rebalToggle" checked><span class="track"></span></label>
+          <label for="rebalToggle" style="margin:0">REBALANCE 50/50</label>
+        </div>
+      </div>
+      <div class="ctl">
+        <div class="ctl-row">
+          <button class="btn ghost" id="reshuffleBtn" style="padding:9px 18px">Reshuffle coin flips</button>
+        </div>
+      </div>
+    </div>
+    <div class="sim-stats">
+      <div class="stat"><div class="sl">Rebalanced final</div><div class="sv pos" id="statRebal">$0</div></div>
+      <div class="stat"><div class="sl">Buy-hold stock final</div><div class="sv" id="statStock">$0</div></div>
+      <div class="stat"><div class="sl">Buy-hold cash final</div><div class="sv" id="statCash">$0</div></div>
+      <div class="stat"><div class="sl">Growth / period (rebal)</div><div class="sv" id="statGrowth">0%</div></div>
+      <div class="stat"><div class="sl">Theory says</div><div class="sv" id="statTheory">0%</div></div>
+    </div>
+    <canvas id="demonChart" width="880" height="360"></canvas>
+    <div class="legend">
+      <span><i class="sw" style="background:#087d61"></i>50/50 rebalanced</span>
+      <span><i class="sw" style="background:#df4f2e"></i>buy-and-hold stock</span>
+      <span><i class="sw" style="background:#929e97"></i>buy-and-hold cash</span>
+    </div>
+    <p class="sim-note" id="simNote">Seed 20260920. The coin flips are fixed, so the chart is reproducible. Reshuffle to draw a new sequence.</p>
+  </div>
+  <details>
+    <summary>Why does the simulated growth rate wobble around the theory number?</summary>
+    <div class="details-body">The 6.07% is an expectation over all possible coin-flip sequences. Any single run of 24 flips has sampling noise: more ups than downs, or a lucky streak at the start when the base is small, moves the realized rate. Push periods to 100 and watch the realized rate converge toward theory. That convergence, by the way, is the entire argument for thinking in expected log rather than in single outcomes. Lesson 06 is exactly this idea.</div>
+  </details>
+  <div class="success-line">Success state: you ran the simulator, turned rebalancing off and on, and can explain the 6% in two sentences.</div>
+  <div class="pager">
+    <button class="navbtn" data-goto="5">← Prev</button>
+    <button class="navbtn" data-goto="7">Next →</button>
+  </div>
+</article>
+
+<!-- ==================== PAGE 7 : 06 LOG-OPTIMAL ==================== -->
+<article class="page" id="page-logopt">
+  <div class="crumb">05 Shannon's Demon · 06 Log-optimal growth · 07 Universal portfolios</div>
+  <div class="section-head">
+    <div class="lesson-no">Lesson 06</div>
+    <h2>Log-optimal growth, and the Kark and Ikoy punchline</h2>
+    <p class="intro">The demon is one instance of a general rule. Maximize expected log wealth and you maximize long-run growth. The arithmetic average lies. The geometric average tells the truth.</p>
+  </div>
+  <div class="callout">
+    <div class="mark">1</div>
+    <div class="co-body"><strong>Conclusion first.</strong> Over many periods, what matters is not your average return, it is your average <em>log</em> return. A portfolio that gains 50% then loses 50% is not flat, it is down 25%, because 1.5 × 0.5 = 0.75. Volatility is a tax on compounding, and log-optimal portfolios are built to pay the smallest possible tax. The demon pays it by harvesting the volatility instead of suffering it.</div>
+  </div>
+  <p class="body">This is the one formula worth internalizing. If wealth multiplies by random factors each period, long-run growth equals the expected value of the log of those factors. Logs turn multiplication into addition, so the law of large numbers applies cleanly: the realized growth rate converges to the expected log. Maximizing expected log is therefore maximizing the growth rate you actually live with. Everything else is commentary.</p>
+  <p class="body">Now the Kark and Ikoy example, which is Cover showing the same trick on real stocks instead of a toy. Two low-cap stocks over twenty years: buy and hold, one went up 4x and the other 8x. Respectable. But a constant 50/50 rebalanced portfolio, with the optimal mix at 52/48, grew 52x. Not a typo. Fifty-two times the starting money, from two stocks that individually did 4x and 8x. Cover's explanation: "I chose those two stocks because they had high degree of uncorrelatedness and high volatility." Volatility plus low correlation is the fuel. Rebalancing is the engine.</p>
+  <div class="concept-grid">
+    <div class="concept">
+      <div class="term">Volatility</div>
+      <p>Big swings create the mispricing between the two assets that rebalancing harvests. A flat asset pair gives the engine nothing to burn.</p>
+    </div>
+    <div class="concept">
+      <div class="term">Uncorrelatedness</div>
+      <p>When one zigs and the other zags, the rebalance always sells strength and buys weakness. Correlated assets move together, and the harvest shrinks.</p>
+    </div>
+    <div class="concept">
+      <div class="term">Rebalancing</div>
+      <p>The discipline that converts the first two into growth. No forecast, no timing, just the rule: restore the mix, every period.</p>
+    </div>
+  </div>
+  <div class="callout">
+    <div class="mark">2</div>
+    <div class="co-body"><strong>The Kelly connection.</strong> You are studying Kelly sizing in your finance program. Here is the bridge: the Kelly criterion is the single-bet special case of log-optimal growth. Kelly asks what fraction of the bankroll maximizes expected log wealth for one repeated bet. Cover's growth-optimal portfolio asks what mix of assets maximizes expected log wealth for a repeated portfolio. Same objective function, wider stage. Learn one deeply and the other comes free.</div>
+  </div>
+  <details>
+    <summary>So should I just run full Kelly on everything?</summary>
+    <div class="details-body">No. Full Kelly maximizes long-run growth but tolerates brutal drawdowns along the way, and it assumes you know the true odds. Practitioners run fractional Kelly, often half, to trade a little growth for a lot of sanity. Lesson 08 applies this to your book.</div>
+  </details>
+  <div class="success-line">Success state: you can state the log-optimal rule in one sentence, and explain why Kelly is its little sibling.</div>
+  <div class="pager">
+    <button class="navbtn" data-goto="6">← Prev</button>
+    <button class="navbtn" data-goto="8">Next →</button>
+  </div>
+</article>
+
+<!-- ==================== PAGE 8 : 07 UNIVERSAL ==================== -->
+<article class="page" id="page-universal">
+  <div class="crumb">06 Log-optimal growth · 07 Universal portfolios · 08 Your book</div>
+  <div class="section-head">
+    <div class="lesson-no">Lesson 07</div>
+    <h2>Universal portfolios: the no-prediction edge</h2>
+    <p class="intro">Cover's bigger claim. A strategy that never predicts, yet asymptotically matches the best constant-rebalanced portfolio chosen with perfect hindsight.</p>
+  </div>
+  <div class="callout">
+    <div class="mark">1</div>
+    <div class="co-body"><strong>Conclusion first.</strong> You do not need to know the right mix in advance. A universal portfolio is a causal, history-dependent strategy: it looks only at the past, shifts weight toward the mixes that would have worked, and over time performs as well as the single best constant-rebalanced portfolio you could have picked if you had known the future. The cost of this universality, the penalty for not knowing in advance, is negligible.</div>
+  </div>
+  <p class="body">Pause on how strange that is. The usual game in markets is prediction: which asset, which mix, which regime. The universal portfolio refuses to play. It holds a weighted average over all possible constant-rebalanced portfolios, updating the weights as history accumulates. Winners among the mixes get more weight automatically. It is diversification with a memory and a rebalance rule, instead of a forecast.</p>
+  <p class="body">Two more results from the lecture, stated plainly. First, the value of side information is bounded by mutual information: any signal, any tip, any model is worth at most as much as it actually tells you about the future. Most signals tell you almost nothing, which caps their value near zero regardless of how confident the source sounds. Second, Cover's empirical punchline: run over the 13-month 2008 crash, the universal portfolio made 1.1x while buy-and-hold lost money. No prediction, no timing, just the machinery.</p>
+  <div class="callout">
+    <div class="mark">2</div>
+    <div class="co-body"><strong>Translated for your desk.</strong> Your scalping overlay is prediction-heavy: RSI, stochastics, MACD, VWAP, fifteen-minute bars, six to eight decisions a day. The universal portfolio is the philosophical opposite: zero prediction, all structure. You do not have to choose between the churches. But notice which one keeps working when you are tired, distracted, or wrong, because those are most of your trading hours.</div>
+  </div>
+  <details open>
+    <summary>Is this just diversification with extra steps?</summary>
+    <div class="details-body">Partly, and that is the point. Ordinary diversification picks a mix and hopes. The universal portfolio adapts the mix toward whatever would have worked, without ever claiming to know the future. The extra steps are the adaptation, and the lecture's claim is that they cost almost nothing while buying the hindsight match.</div>
+  </details>
+  <div class="success-line">Success state: you can explain the "no-prediction edge" in one sentence, to someone who has never heard of Cover.</div>
+  <div class="pager">
+    <button class="navbtn" data-goto="7">← Prev</button>
+    <button class="navbtn" data-goto="9">Next →</button>
+  </div>
+</article>
+
+<!-- ==================== PAGE 9 : 08 YOUR BOOK ==================== -->
+<article class="page" id="page-yourbook">
+  <div class="crumb">07 Universal portfolios · 08 Your book · Final check</div>
+  <div class="section-head">
+    <div class="lesson-no">Lesson 08</div>
+    <h2>What this means for your actual book</h2>
+    <p class="intro">The honest translation: where the demon is allowed in your portfolio, where it is banned, and what rebalancing rules survive contact with taxes and spreads.</p>
+  </div>
+  <div class="callout warn">
+    <div class="mark">!</div>
+    <div class="co-body"><strong>Disqualifiers first, all of them.</strong> Your universe is institutional large-cap US equities, 12 to 20 names, chosen for tight spreads and liquidity. The demon wants high volatility and low correlation. That is the opposite shelf: your names are comparatively calm and they move together. Daily rebalancing in your taxable account means short-term capital gains on every rebalance, which eats the premium before it compounds. Your 15-minute mean-reversion scalping is mean-reversion on price, not on portfolio weights; do not confuse the two. And the MoneyLore reply had it right: Shannon himself noted transaction costs made the toy impractical, and he made his real fortune buying growth stocks and holding for decades.</div>
+  </div>
+  <p class="body">So the core book stays as it is: Buffett-style core, scalping overlay, VWAP anchor, limit orders, $75k minimum notional, never sell at a loss unless margin-forced. The demon does not touch the core. It gets a small, fenced-off satellite sleeve, or nothing at all. Here is the decision framework.</p>
+  <div class="split">
+    <div class="card do">
+      <h4>Where the demon is allowed</h4>
+      <ul class="list">
+        <li>A small satellite sleeve, sized with fractional Kelly, never full Kelly.</li>
+        <li>Volatile, uncorrelated pairs: the memory names on your rotation list (MU, WDC, SNDK) against something that zags when they zig.</li>
+        <li>Inside the IRA, where rebalancing does not trigger a tax bill per trade.</li>
+        <li>Calendar rebalancing (monthly or quarterly) or band-based (rebalance at 5% drift), not daily.</li>
+      </ul>
+    </div>
+    <div class="card dont">
+      <h4>Where it is banned</h4>
+      <ul class="list">
+        <li>The taxable core book. Daily or weekly rebalancing there converts long-term compounding into short-term tax drag.</li>
+        <li>Highly correlated large-cap pairs. The harvest shrinks as correlation rises; the simulator proves it if you doubt it.</li>
+        <li>Any sleeve where spreads and commissions exceed the expected harvest. Model the costs first, in dollars, before the first trade.</li>
+        <li>As a replacement for your scalping. Price mean-reversion and weight mean-reversion are different trades.</li>
+      </ul>
+    </div>
+  </div>
+  <h3 class="sub">Rebalancing rules that survive reality</h3>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="st-body"><strong>Pick the venue first.</strong> IRA before taxable. Every rebalance in taxable is a taxable event. The math does not care about your intentions, only your jurisdiction.</div></div>
+    <div class="step"><div class="step-num">2</div><div class="st-body"><strong>Pick the cadence second.</strong> Monthly or quarterly calendar, or a 5% drift band. The lecture's daily rebalancing is a theoretical convenience, not a trading plan.</div></div>
+    <div class="step"><div class="step-num">3</div><div class="st-body"><strong>Model the frictions in dollars.</strong> Spread plus commission plus expected tax per rebalance, annualized. If that number is bigger than the expected harvest, the demon stays in the simulator.</div></div>
+    <div class="step"><div class="step-num">4</div><div class="st-body"><strong>Size with fractional Kelly.</strong> The log-optimal mix is the starting point, not the order ticket. Half Kelly or less, because your volatility and correlation estimates are guesses with confidence intervals.</div></div>
+  </div>
+  <div class="callout">
+    <div class="mark">2</div>
+    <div class="co-body"><strong>The takeaway that costs you nothing.</strong> Even if you never run a rebalanced sleeve, the lecture upgrades your thinking: volatility is not just risk to be avoided, it is a resource that a rule can harvest; the value of any signal is capped by what it actually tells you; and the best-performing strategy in the room may be the one that predicts nothing. That is worth more than the simulator.</div>
+  </div>
+  <div class="success-line">Success state: you can name exactly where the demon is allowed in your book and where it is banned, with the tax reason.</div>
+  <div class="pager">
+    <button class="navbtn" data-goto="8">← Prev</button>
+    <button class="navbtn" data-goto="10">Next →</button>
+  </div>
+</article>
+
+<!-- ==================== PAGE 10 : FINAL CHECK ==================== -->
+<article class="page" id="page-final">
+  <div class="crumb">08 Your book · Final check · Complete</div>
+  <div class="section-head">
+    <div class="lesson-no">Final check</div>
+    <h2>Three questions, then sources</h2>
+    <p class="intro">One question per half of the course, plus one on the disqualifiers. Grade yourself honestly.</p>
+  </div>
+  <div class="quiz">
+    <div class="question" data-answer="b" data-explain="Under the Robbins model, 'too expensive' signals that the perceived value does not yet exceed the fee in the prospect's mind, or that their state cannot hear value. That is why attack and confess tells a value story instead of offering a discount.">
+      <p class="q">1. A Lendera prospect says "your fee is too high." Under the Robbins model taught here, what is the objection really signaling?</p>
+      <label class="opt"><input type="radio" name="q1" value="a"> They literally cannot afford any fee, so the only move is to discount immediately.</label>
+      <label class="opt"><input type="radio" name="q1" value="b"> The perceived value of the program does not yet exceed the fee in their mind, or their current state cannot hear value.</label>
+      <label class="opt"><input type="radio" name="q1" value="c"> They are lying to end the call, so you should pressure them to stay on the line.</label>
+      <div class="result"></div>
+    </div>
+    <div class="question" data-answer="b" data-explain="An up period multiplies wealth by 1.5 and a down period by 0.75. The geometric average, sqrt(1.5 x 0.75), is 1.0607: 6.07% per period. Rebalancing sells the doubled half and buys the halved half every period, converting oscillation into growth with zero prediction.">
+      <p class="q">2. In Cover's demo, the stock doubles or halves each period and cash stays flat. Why does a 50/50 rebalance grow about 6% a period?</p>
+      <label class="opt"><input type="radio" name="q2" value="a"> Because the stock has a positive expected return over time.</label>
+      <label class="opt"><input type="radio" name="q2" value="b"> Because rebalancing harvests volatility: it sells the doubled half and buys the halved half, turning oscillation into geometric growth.</label>
+      <label class="opt"><input type="radio" name="q2" value="c"> Because the cash half earns interest while the stock half recovers.</label>
+      <div class="result"></div>
+    </div>
+    <div class="question" data-answer="b" data-explain="Verified and fair: the demon needs oscillating, uncorrelated assets; the premium is small and shrinks with correlation; real-world rebalancing pays spreads, commissions, and short-term capital gains; and Shannon himself made his fortune buying growth stocks and holding. The $100k-to-$7M framing, meanwhile, never appeared in the lecture.">
+      <p class="q">3. Which of these is a verified, fair disqualifier on Shannon's Demon?</p>
+      <label class="opt"><input type="radio" name="q3" value="a"> It is illegal to run in a taxable brokerage account.</label>
+      <label class="opt"><input type="radio" name="q3" value="b"> Real frictions (spreads, commissions, short-term capital gains on every rebalance, correlation) shrink or eat the premium, and Shannon himself made his real fortune buying growth stocks and holding.</label>
+      <label class="opt"><input type="radio" name="q3" value="c"> It only works with exactly two assets and can never be extended.</label>
+      <div class="result"></div>
+    </div>
+    <div class="quiz-actions">
+      <button class="btn" id="gradeQuiz">Grade my answers</button>
+      <button class="btn ghost" id="clearQuiz">Clear</button>
+      <span id="quizStatus">Not graded yet.</span>
+    </div>
+  </div>
+  <h3 class="sub">Sources</h3>
+  <div class="sources">
+    <a class="source-card" href="https://www.youtube.com/watch?v=H7xyyTboY7E"><strong>Thomas M. Cover lecture, full (circa 1991)</strong><span class="stag">youtube.com · watch?v=H7xyyTboY7E · the verified source for the demon, Kark/Ikoy, and universal portfolios</span></a>
+    <a class="source-card" href="https://www.youtube.com/watch?v=EZjLPsRvxuY"><strong>The 1:40 cut of the lecture</strong><span class="stag">youtube.com · watch?v=EZjLPsRvxuY · the short version that circulated</span></a>
+    <a class="source-card" href="https://x.com/HeyShobhan/status/2101696634270908879"><strong>@HeyShobhan: the Robbins sales lesson (21:12)</strong><span class="stag">x.com · video A · content taken from the creator's written description; playback failed</span></a>
+    <a class="source-card" href="https://x.com/dkare1009/status/2101650078813565244"><strong>@dkare1009: the Cover lecture clip (53:35)</strong><span class="stag">x.com · video B · transcript verified against the public YouTube copy</span></a>
+  </div>
+  <div class="success-line">Success state: 3 out of 3, and you can say which hype claim from each video you will never repeat.</div>
+  <div class="pager">
+    <button class="navbtn" data-goto="9">← Prev</button>
+    <button class="navbtn" data-goto="11">Next →</button>
+  </div>
+</article>
+
+<!-- ==================== PAGE 11 : COMPLETE ==================== -->
+<article class="page" id="page-complete">
+  <div class="crumb">Final check · Complete</div>
+  <div class="final-box">
+    <div class="lesson-no" style="color:#c5df72">Complete</div>
+    <h2>Tonight's one action</h2>
+    <p>Monday is interview day: AppleOne at 10 AM virtual, Express at 11 AM in Irvine. Everything in the sales half of this course was built for exactly that. So tonight, do one thing.</p>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="tlabel">tonight · one action</span><button class="copy-btn" data-copy="tonight-action">Copy</button></div>
+      <pre id="tonight-action">TONIGHT:
+1. Write three yes-train questions for Monday's 11 AM
+   Express interview, in your own words.
+2. Read the attack-and-confess salary script aloud once.
+3. Fill in the [range] bracket with your real number.
+
+The demon will still be there on Tuesday. The interviews
+will not wait.</pre>
+    </div>
+    <p style="margin-top:18px">Close the yeses on Monday. Compound the money after. That is the whole course in one sentence.</p>
+  </div>
+  <div class="pager">
+    <button class="navbtn" data-goto="10">← Prev</button>
+    <button class="navbtn" data-goto="0">Back to start →</button>
+  </div>
+</article>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /shell -->
+<script>
+(function(){
+"use strict";
+var PAGE_IDS = ["page-cover","page-checkpoint","page-objection","page-attack","page-yestrain","page-state","page-demon","page-logopt","page-universal","page-yourbook","page-final","page-complete"];
+var CHAPTERS = [
+  {n:"00", t:"Cover", s:"Two videos, one skill stack"},
+  {n:"01", t:"00 \u00B7 Checkpoint", s:"What each video is actually worth"},
+  {n:"02", t:"01 \u00B7 Objection model", s:"Never about time or money"},
+  {n:"03", t:"02 \u00B7 Attack and confess", s:"Disarm the fee objection"},
+  {n:"04", t:"03 \u00B7 Yes train", s:"Small yeses, big ask"},
+  {n:"05", t:"04 \u00B7 Reading state", s:"Read the room, change it"},
+  {n:"06", t:"05 \u00B7 Shannon\u2019s Demon", s:"Noise into 6% a period"},
+  {n:"07", t:"06 \u00B7 Log-optimal growth", s:"The math, and Kark/Ikoy"},
+  {n:"08", t:"07 \u00B7 Universal portfolios", s:"An edge with no predictions"},
+  {n:"09", t:"08 \u00B7 Your book", s:"Where the demon is allowed"},
+  {n:"10", t:"Final check", s:"Three questions, sources"},
+  {n:"11", t:"Complete", s:"Tonight\u2019s one action"}
+];
+var LS_KEY = "close-and-compound-course-v1";
+var chaptersEl = document.getElementById("chapters");
+var pages = PAGE_IDS.map(function(id){ return document.getElementById(id); });
+var prevBtn = document.getElementById("prevBtn");
+var nextBtn = document.getElementById("nextBtn");
+var pageCount = document.getElementById("pageCount");
+var pbarFill = document.getElementById("pbarFill");
+var done = {};
+var current = 0;
+
+CHAPTERS.forEach(function(c, i){
+  var b = document.createElement("button");
+  b.className = "chapter";
+  b.setAttribute("data-i", i);
+  b.innerHTML = '<span class="cnum">'+c.n+'</span><span><span class="ctitle">'+c.t+'</span><br><span class="csub">'+c.s+'</span></span><span class="tick">\u2713</span>';
+  b.addEventListener("click", function(){ show(i); });
+  chaptersEl.appendChild(b);
+});
+var chapterBtns = Array.prototype.slice.call(chaptersEl.children);
+
+function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({page:current, done:Object.keys(done)})); }catch(e){} }
+function load(){ try{ var s = JSON.parse(localStorage.getItem(LS_KEY)||"null"); if(s){ current = Math.max(0, Math.min(11, s.page|0)); (s.done||[]).forEach(function(k){ done[k]=1; }); } }catch(e){} }
+
+function show(i){
+  i = Math.max(0, Math.min(11, i));
+  current = i;
+  pages.forEach(function(p, j){ p.classList.toggle("active", j===i); });
+  chapterBtns.forEach(function(b, j){
+    b.classList.toggle("active", j===i);
+    if(j<=i){ b.classList.add("done"); done[j]=1; } else { b.classList.toggle("done", !!done[j]); }
+  });
+  pageCount.textContent = "Page " + (i+1) + " of 12";
+  pbarFill.style.width = ((i+1)/12*100) + "%";
+  prevBtn.disabled = (i===0);
+  if(i===11){ nextBtn.textContent = "Done \u2713"; } else { nextBtn.textContent = "Next \u2192"; }
+  save();
+  window.scrollTo(0,0);
+}
+prevBtn.addEventListener("click", function(){ if(current>0) show(current-1); });
+nextBtn.addEventListener("click", function(){ if(current<11) show(current+1); });
+document.querySelectorAll("[data-goto]").forEach(function(b){
+  b.addEventListener("click", function(){ show(parseInt(b.getAttribute("data-goto"),10)); });
+});
+document.addEventListener("keydown", function(e){
+  var t = e.target;
+  if(t && (t.tagName==="INPUT" || t.tagName==="TEXTAREA" || t.tagName==="SELECT" || t.isContentEditable)) return;
+  if(e.key==="ArrowRight" && current<11){ show(current+1); }
+  else if(e.key==="ArrowLeft" && current>0){ show(current-1); }
+});
+
+/* copy buttons */
+document.querySelectorAll(".copy-btn").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    var el = document.getElementById(btn.getAttribute("data-copy"));
+    if(!el) return;
+    var text = el.textContent;
+    function ok(){ var old = btn.textContent; btn.textContent = "Copied \u2713"; setTimeout(function(){ btn.textContent = old; }, 1500); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(ok, function(){ fallback(); });
+    } else { fallback(); }
+    function fallback(){
+      var ta = document.createElement("textarea");
+      ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand("copy"); ok(); }catch(e){}
+      document.body.removeChild(ta);
+    }
+  });
+});
+
+/* quiz */
+var gradeBtn = document.getElementById("gradeQuiz");
+var clearBtn = document.getElementById("clearQuiz");
+var quizStatus = document.getElementById("quizStatus");
+gradeBtn.addEventListener("click", function(){
+  var questions = document.querySelectorAll(".question");
+  var score = 0;
+  questions.forEach(function(q, idx){
+    var name = "q" + (idx+1);
+    var checked = q.querySelector('input[name="'+name+'"]:checked');
+    var res = q.querySelector(".result");
+    res.classList.add("show");
+    if(checked && checked.value === q.getAttribute("data-answer")){
+      score++;
+      res.className = "result show good";
+      res.textContent = "Correct. " + q.getAttribute("data-explain");
+    } else {
+      res.className = "result show bad";
+      res.textContent = "Not yet. " + q.getAttribute("data-explain");
+    }
+  });
+  quizStatus.textContent = "Score: " + score + " / " + questions.length + (score===questions.length ? ". Complete." : ". Review the explanations above.");
+  if(score===questions.length){ done[10]=1; chapterBtns[10].classList.add("done"); save(); }
+});
+clearBtn.addEventListener("click", function(){
+  document.querySelectorAll(".question").forEach(function(q){
+    q.querySelectorAll('input[type="radio"]').forEach(function(r){ r.checked = false; });
+    var res = q.querySelector(".result");
+    res.className = "result"; res.textContent = "";
+  });
+  quizStatus.textContent = "Not graded yet.";
+});
+
+/* ---------- Shannon's Demon simulator ---------- */
+function mulberry32(a){ return function(){ a|=0; a = a+0x6D2B79F5|0; var t = Math.imul(a^a>>>15, 1|a); t = t+Math.imul(t^t>>>7, 61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+var seed = 20260920;
+var volRange = document.getElementById("volRange");
+var capRange = document.getElementById("capRange");
+var perRange = document.getElementById("perRange");
+var volOut = document.getElementById("volOut");
+var capOut = document.getElementById("capOut");
+var perOut = document.getElementById("perOut");
+var rebalToggle = document.getElementById("rebalToggle");
+var simNote = document.getElementById("simNote");
+var canvas = document.getElementById("demonChart");
+var ctx = canvas.getContext("2d");
+
+function fmtMoney(v){
+  if(v >= 1e6) return "$" + (v/1e6).toFixed(2) + "M";
+  if(v >= 1e3) return "$" + (v/1e3).toFixed(1) + "k";
+  return "$" + Math.round(v).toString();
+}
+function fmtFull(v){ return "$" + Math.round(v).toLocaleString("en-US"); }
+
+function theoryGrowth(m){
+  var e = 0.5*Math.log(0.5*(1+m)) + 0.5*Math.log(0.5*(1+1/m));
+  return Math.exp(e) - 1;
+}
+
+function runSim(){
+  var m = parseFloat(volRange.value);
+  var C = parseFloat(capRange.value);
+  var n = parseInt(perRange.value, 10);
+  var reb = rebalToggle.checked;
+  volOut.textContent = m.toFixed(2) + "x";
+  capOut.textContent = fmtFull(C);
+  perOut.textContent = n;
+  var rand = mulberry32(seed);
+  var rcash = C/2, rstock = C/2, stock = C;
+  var pS = [C], sS = [C];
+  for(var i=0;i<n;i++){
+    var f = (rand() < 0.5) ? m : 1/m;
+    rstock *= f;
+    stock *= f;
+    if(reb){ var tot = rcash + rstock; rcash = tot/2; rstock = tot/2; }
+    pS.push(rcash + rstock);
+    sS.push(stock);
+  }
+  var g = Math.pow(pS[n]/C, 1/n) - 1;
+  document.getElementById("statRebal").textContent = fmtFull(pS[n]);
+  document.getElementById("statStock").textContent = fmtFull(sS[n]);
+  document.getElementById("statCash").textContent = fmtFull(C);
+  var gEl = document.getElementById("statGrowth");
+  gEl.textContent = (g*100).toFixed(2) + "%";
+  gEl.className = "sv " + (g>=0 ? "pos" : "neg");
+  document.getElementById("statTheory").textContent = (theoryGrowth(m)*100).toFixed(2) + "%";
+  simNote.textContent = "Seed " + seed + ". The coin flips are fixed, so the chart is reproducible. Reshuffle to draw a new sequence.";
+  drawChart(pS, sS, C, n);
+}
+
+function drawChart(pS, sS, C, n){
+  var W = canvas.width, H = canvas.height;
+  var padL = 64, padR = 14, padT = 16, padB = 30;
+  ctx.clearRect(0,0,W,H);
+  var allMin = C, allMax = C;
+  pS.concat(sS).forEach(function(v){ if(v<allMin) allMin=v; if(v>allMax) allMax=v; });
+  allMin *= 0.92; allMax *= 1.08;
+  var lMin = Math.log(allMin), lMax = Math.log(allMax);
+  function X(i){ return padL + (W-padL-padR) * (i/n); }
+  function Y(v){ var l = Math.log(v); return padT + (H-padT-padB) * (1 - (l-lMin)/(lMax-lMin)); }
+  ctx.strokeStyle = "rgba(128,140,132,.35)";
+  ctx.fillStyle = "#8a948e";
+  ctx.font = "11px 'IBM Plex Mono', monospace";
+  ctx.lineWidth = 1;
+  for(var g=0; g<=4; g++){
+    var lv = lMin + (lMax-lMin)*g/4;
+    var vv = Math.exp(lv);
+    var y = Y(vv);
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+    ctx.fillText(fmtMoney(vv), 8, y+4);
+  }
+  function line(series, color, dash){
+    ctx.beginPath();
+    ctx.setLineDash(dash||[]);
+    ctx.strokeStyle = color; ctx.lineWidth = 2.5;
+    series.forEach(function(v,i){ var x=X(i), y=Y(v); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); });
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+  var dark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  line(sS, dark ? "#ff7350" : "#df4f2e");
+  var cashS = pS.map(function(){ return C; });
+  line(cashS, "#929e97", [6,5]);
+  line(pS, dark ? "#55c9a2" : "#087d61");
+  ctx.fillStyle = "#8a948e";
+  ctx.fillText("period 0", padL, H-10);
+  ctx.fillText("period " + n, W-padR-64, H-10);
+}
+
+[volRange, capRange, perRange].forEach(function(el){ el.addEventListener("input", runSim); });
+rebalToggle.addEventListener("change", runSim);
+document.getElementById("reshuffleBtn").addEventListener("click", function(){
+  seed = Math.floor(Math.random()*1e9);
+  runSim();
+});
+
+/* init */
+load();
+show(current);
+runSim();
+})();
+</script>
+</body>
+</html>

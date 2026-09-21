@@ -1,0 +1,827 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <link rel="icon" href="data:," />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>Obsidian Tutorial</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f2f3ef;
+      --surface: #ffffff;
+      --surface-2: #e8ebe6;
+      --ink: #171b19;
+      --muted: #535c57;
+      --line: #c8cfca;
+      --line-strong: #9ba69f;
+      --accent: #d34b26;
+      --accent-ink: #ffffff;
+      --teal: #087d75;
+      --teal-soft: #d8efeb;
+      --yellow: #f1c75b;
+      --code: #111715;
+      --code-ink: #eaf3ed;
+      --code-muted: #9db0a5;
+      --success: #19744f;
+      --danger: #a8382d;
+      --shadow: 0 12px 36px rgba(18, 29, 24, .10);
+      --sidebar: 250px;
+      --radius-lg: 24px;
+      --radius-md: 14px;
+      --radius-sm: 8px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d1210;
+        --surface: #151c18;
+        --surface-2: #202923;
+        --ink: #eef4f0;
+        --muted: #aebbb3;
+        --line: #334039;
+        --line-strong: #56645c;
+        --accent: #ff7043;
+        --accent-ink: #160a06;
+        --teal: #54c8ba;
+        --teal-soft: #183c36;
+        --yellow: #e9c15b;
+        --code: #080c0a;
+        --code-ink: #eaf3ed;
+        --code-muted: #93a79b;
+        --success: #66d19e;
+        --danger: #ff8f80;
+        --shadow: 0 18px 54px rgba(0, 0, 0, .34);
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+    body {
+      margin: 0;
+      min-width: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Archivo", sans-serif;
+      line-height: 1.62;
+      text-rendering: optimizeLegibility;
+    }
+    button, input, textarea, select { font: inherit; }
+    button { color: inherit; }
+    a { color: inherit; }
+    code, pre, .mono { font-family: "IBM Plex Mono", monospace; }
+    :focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+
+    .layout { display: grid; grid-template-columns: var(--sidebar) minmax(0, 1fr); min-height: 100vh; }
+    .rail {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 28px 22px;
+      border-right: 1px solid var(--line);
+      background: var(--surface);
+      overflow-y: auto;
+    }
+    .rail-label { font: 600 12px/1.2 "IBM Plex Mono", monospace; color: var(--accent); letter-spacing: .05em; text-transform: uppercase; }
+    .rail h2 { margin: 12px 0 6px; font-size: 20px; line-height: 1.2; letter-spacing: -.02em; }
+    .rail p { margin: 0 0 24px; color: var(--muted); font-size: 13px; }
+    .rail nav { display: grid; gap: 4px; }
+    .rail nav a {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      align-items: center;
+      min-height: 42px;
+      padding: 7px 9px;
+      border-radius: var(--radius-sm);
+      color: var(--muted);
+      font-size: 14px;
+      text-decoration: none;
+    }
+    .rail nav a span:first-child { font: 500 11px "IBM Plex Mono", monospace; color: var(--line-strong); }
+    .rail nav a:hover, .rail nav a.active { background: var(--surface-2); color: var(--ink); }
+    .rail nav a.active span:first-child { color: var(--accent); }
+    .rail-foot { margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+    .mobile-nav { display: none; }
+
+    main { min-width: 0; }
+    .wrap { width: min(100% - 64px, 1040px); margin: 0 auto; }
+    .hero { position: relative; padding: 78px 0 54px; overflow: hidden; border-bottom: 1px solid var(--line); }
+    .hero::after {
+      content: ""; position: absolute; inset: auto -8vw -42px auto; width: 330px; height: 330px;
+      border-radius: 50%; border: 56px solid color-mix(in srgb, var(--teal) 22%, transparent); pointer-events: none;
+    }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(260px, .7fr); gap: 52px; align-items: end; }
+    .kicker { display: inline-flex; align-items: center; gap: 9px; margin-bottom: 18px; color: var(--teal); font: 600 13px "IBM Plex Mono", monospace; }
+    .kicker::before { content: ""; width: 34px; height: 2px; background: currentColor; }
+    h1 { margin: 0; max-width: 760px; font-size: clamp(42px, 6.2vw, 78px); line-height: .98; letter-spacing: -.055em; }
+    h1 code { display: inline; color: var(--accent); font: inherit; }
+    .lede { max-width: 700px; margin: 25px 0 0; color: var(--muted); font-size: clamp(17px, 2vw, 21px); line-height: 1.5; }
+    .hero-card { position: relative; z-index: 1; padding: 22px; background: var(--code); color: var(--code-ink); border-radius: 4px 4px 22px 4px; box-shadow: var(--shadow); }
+    .hero-card .label { color: #7bc7b2; font: 500 11px "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .08em; }
+    .hero-card strong { display: block; margin: 10px 0 4px; font-size: 24px; }
+    .hero-card p { margin: 0; color: var(--code-muted); font-size: 14px; }
+    .hero-card .price { display: flex; align-items: baseline; gap: 8px; margin-top: 24px; }
+    .hero-card .price b { font-size: 42px; line-height: 1; color: #fff; }
+    .hero-card .price span { color: var(--code-muted); font-size: 12px; }
+
+    section { padding: 72px 0; border-bottom: 1px solid var(--line); }
+    .section-head { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 24px; margin-bottom: 34px; }
+    .lesson-no { padding-top: 7px; color: var(--accent); font: 600 12px "IBM Plex Mono", monospace; }
+    .section-head h2 { margin: 0; font-size: clamp(30px, 4vw, 48px); line-height: 1.08; letter-spacing: -.035em; }
+    .section-head p { max-width: 760px; margin: 14px 0 0; color: var(--muted); font-size: 17px; }
+    h3 { margin: 0 0 10px; font-size: 21px; line-height: 1.25; letter-spacing: -.015em; }
+    h4 { margin: 0 0 6px; font-size: 15px; }
+    p { margin-top: 0; }
+
+    .callout {
+      display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px;
+      padding: 22px; margin: 24px 0; background: var(--teal-soft); border-radius: var(--radius-md);
+    }
+    .callout .mark { width: 40px; height: 40px; display: grid; place-items: center; border: 2px solid var(--teal); border-radius: 50%; color: var(--teal); font: 700 16px "IBM Plex Mono", monospace; }
+    .callout p { margin: 4px 0 0; color: var(--muted); }
+    .callout.warn { background: color-mix(in srgb, var(--yellow) 24%, var(--surface)); }
+    .callout.warn .mark { color: var(--danger); border-color: var(--danger); }
+
+    .steps { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+    .step { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 16px; padding: 24px; background: var(--surface); }
+    .step-num { width: 40px; height: 40px; display: grid; place-items: center; background: var(--ink); color: var(--bg); font: 600 13px "IBM Plex Mono", monospace; }
+    .step p:last-child { margin-bottom: 0; }
+    .inline-code { padding: 2px 6px; background: var(--surface-2); border-radius: 4px; font-size: .9em; }
+
+    .terminal { margin: 16px 0 6px; background: var(--code); color: var(--code-ink); border: 1px solid color-mix(in srgb, var(--code-ink) 18%, transparent); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
+    .terminal-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 42px; padding: 8px 10px 8px 15px; border-bottom: 1px solid #29332f; color: var(--code-muted); font: 500 11px "IBM Plex Mono", monospace; }
+    .terminal-dots { display: inline-flex; gap: 6px; }
+    .terminal-dots i { width: 8px; height: 8px; display: block; border-radius: 50%; background: #405048; }
+    pre { margin: 0; padding: 19px; overflow-x: auto; color: var(--code-ink); font-size: 13px; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .prompt { color: #80d7b8; }
+    .comment { color: #899b91; }
+    .copy {
+      border: 1px solid #405048; background: #18211d; color: #dce9e1; border-radius: 7px;
+      padding: 6px 9px; cursor: pointer; font: 500 11px "IBM Plex Mono", monospace;
+    }
+    .copy:hover { border-color: #7aa28e; }
+
+    figure { margin: 28px 0 0; }
+    .checkpoint { overflow: hidden; background: #050706; border-radius: 6px; box-shadow: var(--shadow); }
+    .checkpoint img { display: block; width: 100%; height: auto; }
+    figcaption { margin-top: 10px; color: var(--muted); font-size: 13px; }
+
+    .concept-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .concept { padding: 22px; background: var(--surface); border-top: 4px solid var(--line-strong); }
+    .concept:nth-child(2), .concept:nth-child(5) { border-top-color: var(--teal); }
+    .concept:nth-child(3), .concept:nth-child(6) { border-top-color: var(--accent); }
+    .concept .term { display: block; margin-bottom: 8px; font: 600 13px "IBM Plex Mono", monospace; }
+    .concept p { margin: 0; color: var(--muted); font-size: 14px; }
+
+    .split { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+    .card { padding: 26px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); }
+    .card p:last-child { margin-bottom: 0; }
+    .do { border-top: 4px solid var(--success); }
+    .dont { border-top: 4px solid var(--danger); }
+    .list { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 12px; }
+    .list li { position: relative; padding-left: 24px; color: var(--muted); }
+    .list li::before { content: "→"; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+
+    .formula { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin: 28px 0; }
+    .formula > div { min-height: 150px; padding: 18px 14px; background: var(--surface); border: 1px solid var(--line); }
+    .formula b { display: block; color: var(--accent); font: 700 28px "IBM Plex Mono", monospace; }
+    .formula span { display: block; margin: 6px 0; font-weight: 700; font-size: 14px; }
+    .formula p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.45; }
+
+    .use-cases { display: grid; gap: 14px; }
+    details { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+    summary { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 20px 22px; cursor: pointer; font-weight: 700; list-style: none; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; color: var(--accent); font: 500 24px "IBM Plex Mono", monospace; }
+    details[open] summary::after { content: "−"; }
+    details[open] summary { border-bottom: 1px solid var(--line); }
+    .details-body { padding: 22px; }
+    .details-body > p { color: var(--muted); }
+    .tag { display: inline-block; margin-right: 7px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font: 500 11px "IBM Plex Mono", monospace; }
+
+    .lab { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow); }
+    .lab-form { padding: 26px; border-right: 1px solid var(--line); }
+    .field { display: grid; gap: 6px; margin-bottom: 14px; }
+    .field label { font: 600 12px "IBM Plex Mono", monospace; color: var(--muted); }
+    .field input, .field textarea, .field select { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: var(--bg); color: var(--ink); }
+    .field textarea { min-height: 82px; resize: vertical; }
+    .button-row { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 18px; }
+    .primary, .secondary { border: 0; border-radius: 8px; padding: 10px 14px; cursor: pointer; font-weight: 700; }
+    .primary { background: var(--accent); color: var(--accent-ink); }
+    .secondary { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); }
+    .lab-output { min-width: 0; padding: 26px; background: var(--code); color: var(--code-ink); }
+    .lab-output .top { display: flex; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
+    .lab-output label { color: #86bda9; font: 600 12px "IBM Plex Mono", monospace; }
+    #promptOutput { min-height: 350px; margin: 0; padding: 0; overflow: visible; white-space: pre-wrap; color: var(--code-ink); }
+    .status { min-height: 20px; margin-top: 8px; color: var(--teal); font-size: 12px; }
+
+    .matrix { border: 1px solid var(--line); }
+    .matrix-row { display: grid; grid-template-columns: 150px repeat(3, minmax(0, 1fr)); }
+    .matrix-row > div { padding: 15px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--surface); }
+    .matrix-row > div:last-child { border-right: 0; }
+    .matrix-row:last-child > div { border-bottom: 0; }
+    .matrix .head > div { background: var(--ink); color: var(--bg); font-weight: 700; }
+    .matrix .head > div:not(:first-child) { font: 600 12px "IBM Plex Mono", monospace; }
+    .matrix-row > div:first-child { font-weight: 700; }
+    .yes { color: var(--success); font-weight: 700; }
+    .no { color: var(--danger); font-weight: 700; }
+
+    .quiz { display: grid; gap: 16px; }
+    .question { padding: 22px; background: var(--surface); border: 1px solid var(--line); }
+    .question fieldset { border: 0; padding: 0; margin: 0; }
+    .question legend { margin-bottom: 14px; font-weight: 700; }
+    .option { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; color: var(--muted); cursor: pointer; }
+    .option input { margin-top: 5px; accent-color: var(--accent); }
+    .result { display: none; margin-top: 14px; padding: 12px; border-radius: 7px; background: var(--surface-2); }
+    .result.show { display: block; }
+    .result.good { color: var(--success); }
+    .result.bad { color: var(--danger); }
+
+    .roadmap { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+    .roadmap > div { padding: 22px; background: var(--surface); }
+    .roadmap .day { color: var(--accent); font: 600 12px "IBM Plex Mono", monospace; }
+    .roadmap h3 { margin-top: 10px; }
+    .roadmap p { margin-bottom: 0; color: var(--muted); font-size: 14px; }
+
+    .final { padding-bottom: 96px; border-bottom: 0; }
+    .final-box { padding: 38px; background: var(--ink); color: var(--bg); border-radius: 4px 28px 4px 4px; }
+    .final-box h2 { max-width: 760px; margin: 0; font-size: clamp(30px, 4vw, 50px); line-height: 1.08; letter-spacing: -.035em; }
+    .final-box p { max-width: 720px; margin: 16px 0 0; color: color-mix(in srgb, var(--bg) 72%, transparent); }
+    .final-box .terminal { margin-top: 28px; box-shadow: none; }
+
+    @media (max-width: 900px) {
+      .layout { display: block; }
+      .rail { display: none; }
+      .mobile-nav { position: sticky; top: 0; z-index: 10; display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 2px; padding: 7px 8px; background: color-mix(in srgb, var(--surface) 94%, transparent); border-bottom: 1px solid var(--line); backdrop-filter: blur(12px); }
+      .mobile-nav a { min-width: 0; padding: 7px 2px; border-radius: 6px; background: var(--surface-2); color: var(--muted); text-align: center; text-decoration: none; font: 600 10px "IBM Plex Mono", monospace; }
+      .mobile-nav a.active { background: var(--ink); color: var(--bg); }
+      .mobile-nav a { font-size: 0; }
+      .mobile-nav a:nth-child(1)::after { content: "00"; font-size: 10px; }
+      .mobile-nav a:nth-child(2)::after { content: "01"; font-size: 10px; }
+      .mobile-nav a:nth-child(3)::after { content: "02"; font-size: 10px; }
+      .mobile-nav a:nth-child(4)::after { content: "03"; font-size: 10px; }
+      .mobile-nav a:nth-child(5)::after { content: "04"; font-size: 10px; }
+      .mobile-nav a:nth-child(6)::after { content: "05"; font-size: 10px; }
+      .mobile-nav a:nth-child(7)::after { content: "06"; font-size: 10px; }
+      .mobile-nav a:nth-child(8)::after { content: "07"; font-size: 10px; }
+      .mobile-nav a:nth-child(9)::after { content: "08"; font-size: 10px; }
+      .wrap { width: min(100% - 38px, 760px); }
+      .hero-grid, .section-head { grid-template-columns: 1fr; gap: 22px; }
+      .hero { padding-top: 56px; }
+      .hero-card { max-width: 450px; }
+      .concept-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .formula { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .formula > div:last-child { grid-column: 1 / -1; }
+      .lab { grid-template-columns: 1fr; }
+      .lab-form { border-right: 0; border-bottom: 1px solid var(--line); }
+      .roadmap { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 620px) {
+      html { scroll-padding-top: 64px; }
+      .wrap { width: min(100% - 28px, 560px); }
+      .hero { padding: 42px 0 44px; }
+      .hero-grid { gap: 30px; }
+      h1 { font-size: clamp(38px, 13vw, 58px); }
+      .hero::after { width: 200px; height: 200px; border-width: 34px; }
+      section { padding: 54px 0; }
+      .section-head { margin-bottom: 26px; }
+      .concept-grid, .split, .formula, .roadmap { grid-template-columns: 1fr; }
+      .formula > div:last-child { grid-column: auto; }
+      .step { grid-template-columns: 42px minmax(0, 1fr); padding: 18px 15px; gap: 12px; }
+      .step-num { width: 34px; height: 34px; }
+      .callout { grid-template-columns: 36px minmax(0, 1fr); padding: 17px; gap: 12px; }
+      .callout .mark { width: 34px; height: 34px; }
+      .terminal { margin-left: -4px; margin-right: -4px; }
+      pre { padding: 16px; font-size: 12px; }
+      .matrix { border: 0; display: grid; gap: 12px; }
+      .matrix-row { display: block; border: 1px solid var(--line); }
+      .matrix-row.head { display: none; }
+      .matrix-row > div { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; border-right: 0; padding: 12px; font-size: 13px; }
+      .matrix-row > div::before { content: attr(data-label); color: var(--muted); font: 500 10px "IBM Plex Mono", monospace; text-transform: uppercase; }
+      .matrix-row > div:first-child { grid-template-columns: 1fr; background: var(--surface-2); font-size: 16px; }
+      .matrix-row > div:first-child::before { display: none; }
+      .lab-form, .lab-output { padding: 20px; }
+      .final-box { padding: 26px 20px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  
+    .verdict { display:grid; grid-template-columns: 120px minmax(0,1fr); gap:18px; align-items:start; margin:28px 0; }
+    .verdict .score { min-height:112px; display:grid; place-items:center; background:var(--ink); color:var(--bg); border-radius:4px 22px 4px 4px; font:800 42px "IBM Plex Mono",monospace; }
+    .verdict .score small { display:block; margin-top:-28px; font-size:10px; letter-spacing:.08em; text-transform:uppercase; }
+    .verdict-copy { padding:20px 22px; background:var(--surface); border:1px solid var(--line); }
+    .verdict-copy p:last-child { margin-bottom:0; color:var(--muted); }
+    .note-map { position:relative; min-height:360px; margin-top:28px; padding:34px; overflow:hidden; background:var(--code); color:var(--code-ink); border-radius:4px 4px 24px 4px; box-shadow:var(--shadow); }
+    .note-map svg { position:absolute; inset:0; width:100%; height:100%; opacity:.56; }
+    .note-map .nodes { position:relative; z-index:1; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; align-items:center; min-height:292px; }
+    .note-node { padding:18px; background:#18211d; border:1px solid #405048; border-radius:9px; }
+    .note-node:nth-child(2) { border-color:#80d7b8; transform:translateY(54px); }
+    .note-node:nth-child(3) { border-color:#ff7043; transform:translateY(-34px); }
+    .note-node span { color:#80d7b8; font:500 10px "IBM Plex Mono",monospace; }
+    .note-node strong { display:block; margin-top:8px; font-size:17px; }
+    .note-node p { margin:7px 0 0; color:var(--code-muted); font-size:12px; }
+    .source-strip { display:flex; flex-wrap:wrap; gap:10px; margin-top:24px; }
+    .source-strip a { padding:8px 11px; border:1px solid var(--line); border-radius:7px; color:var(--muted); text-decoration:none; font:500 12px "IBM Plex Mono",monospace; }
+    .source-strip a:hover { color:var(--ink); border-color:var(--line-strong); }
+    .syntax-demo { display:grid; grid-template-columns:1fr 1fr; gap:0; border:1px solid var(--line); background:var(--line); }
+    .syntax-demo > div { min-width:0; padding:22px; background:var(--surface); }
+    .syntax-demo .rendered { background:var(--surface-2); }
+    .syntax-demo .rendered a { color:var(--teal); font-weight:700; text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:3px; }
+    .decision { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-top:22px; }
+    .decision article { padding:22px; background:var(--surface); border-top:4px solid var(--line-strong); }
+    .decision article:first-child { border-top-color:var(--success); }
+    .decision article:last-child { border-top-color:var(--danger); }
+    .decision p { margin:0; color:var(--muted); font-size:14px; }
+    .checkline { display:flex; gap:12px; align-items:flex-start; padding:11px 0; border-bottom:1px solid var(--line); }
+    .checkline:last-child { border-bottom:0; }
+    .checkline b { flex:0 0 26px; width:26px; height:26px; display:grid; place-items:center; background:var(--ink); color:var(--bg); font:600 11px "IBM Plex Mono",monospace; }
+    @media (max-width:900px){ .decision{grid-template-columns:1fr 1fr}.decision article:last-child{grid-column:1/-1} }
+    @media (max-width:620px){ .verdict,.syntax-demo,.decision{grid-template-columns:1fr}.note-map{min-height:520px;padding:22px}.note-map .nodes{grid-template-columns:1fr;min-height:470px}.note-node:nth-child(2),.note-node:nth-child(3){transform:none}.decision article:last-child{grid-column:auto} }
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="rail" aria-label="Course navigation">
+      <div class="rail-label">Local knowledge field course</div>
+      <h2>From empty vault to useful system</h2>
+      <p>Eight lessons. A verdict, setup, note patterns, AI boundaries, and a final check.</p>
+      <nav>
+        <a href="#verdict"><span>00</span><span>Is it useful?</span></a>
+        <a href="#mental-model"><span>01</span><span>The mental model</span></a>
+        <a href="#first-vault"><span>02</span><span>Build the vault</span></a>
+        <a href="#note-craft"><span>03</span><span>Write connected notes</span></a>
+        <a href="#use-cases"><span>04</span><span>Your use cases</span></a>
+        <a href="#note-lab"><span>05</span><span>Note lab</span></a>
+        <a href="#advanced"><span>06</span><span>AI & advanced</span></a>
+        <a href="#security"><span>07</span><span>Trust & security</span></a>
+        <a href="#quiz"><span>08</span><span>Final check</span></a>
+      </nav>
+      <div class="rail-foot">Core app path: $0<br>Paid Sync, Publish, and AI APIs: skipped</div>
+    </aside>
+
+    <div class="mobile-nav" aria-label="Course navigation">
+      <a href="#verdict">00 Verdict</a><a href="#mental-model">01 Model</a><a href="#first-vault">02 Vault</a><a href="#note-craft">03 Notes</a><a href="#use-cases">04 Uses</a><a href="#note-lab">05 Lab</a><a href="#advanced">06 AI</a><a href="#security">07 Trust</a><a href="#quiz">08 Check</a>
+    </div>
+
+    <main>
+      <header class="hero">
+        <div class="wrap hero-grid">
+          <div>
+            <div class="kicker">Beginner → advanced</div>
+            <h1>Build a <code>second brain</code> only if it earns the name.</h1>
+            <p class="lede">A practical Obsidian course for deciding whether it fits, creating one clean local vault, connecting useful notes, and adding local AI only after the foundation works.</p>
+          </div>
+          <aside class="hero-card" aria-label="Budget verdict">
+            <div class="label">Budget verdict</div>
+            <strong>Start with the core app.</strong>
+            <p>Obsidian and its built-in features cover this entire course. No account, subscription, cloud hosting, or paid AI is required.</p>
+            <div class="price"><b>$0</b><span>software path<br>backup drive aside</span></div>
+          </aside>
+        </div>
+      </header>
+
+      <section id="verdict">
+        <div class="wrap">
+          <div class="section-head">
+            <div class="lesson-no">LESSON 00</div>
+            <div><h2>Yes—but only for work that compounds.</h2><p>Obsidian is useful when today’s note should make a future note easier: research, coursework, case files, recurring decisions, and long projects. It is overkill for a grocery list or a pile of notes you never revisit.</p></div>
+          </div>
+          <div class="verdict">
+            <div class="score">8<small>out of 10</small></div>
+            <div class="verdict-copy"><h3>Best fit: a durable, private reference system.</h3><p>The core advantage is not the graph. It is that a vault is a normal local folder of Markdown files, while Obsidian adds links, backlinks, properties, search, templates, and multiple views over those files.</p></div>
+          </div>
+          <div class="decision">
+            <article><h3>Use it</h3><p>You revisit the same topics, need source trails, and want files you can still read outside the app.</p></article>
+            <article><h3>Trial it first</h3><p>You like the idea of a “second brain” but do not yet have one repeated workflow worth organizing.</p></article>
+            <article><h3>Skip it</h3><p>You mainly need shared real-time documents, a team database, or a simple reminder list.</p></article>
+          </div>
+          <div class="callout warn"><div class="mark">!</div><div><h3>The video shows the ceiling, not the starting line.</h3><p>Its three AI layers—second brain, database, and LLM wiki—are possible directions. None are required to make Obsidian useful, and automating too early creates a beautifully indexed mess.</p></div></div>
+          <div class="source-strip" aria-label="Sources"><a href="https://www.youtube.com/watch?v=4Hvkv_I8QDE" target="_blank" rel="noopener">Watch the referenced video ↗</a><a href="https://obsidian.md/download" target="_blank" rel="noopener">Official download ↗</a><a href="https://help.obsidian.md/data-storage" target="_blank" rel="noopener">How Obsidian stores data ↗</a></div>
+        </div>
+      </section>
+
+      <section id="mental-model">
+        <div class="wrap">
+          <div class="section-head">
+            <div class="lesson-no">LESSON 01</div>
+            <div><h2>Know what each layer does.</h2><p>Obsidian is an editor and index over files. The files remain the source of truth. Links and properties create structure; AI is optional.</p></div>
+          </div>
+          <div class="concept-grid">
+            <article class="concept"><span class="term">VAULT</span><h3>A local folder</h3><p>One directory containing notes, attachments, and an <span class="inline-code">.obsidian</span> configuration folder.</p></article>
+            <article class="concept"><span class="term">NOTE</span><h3>A Markdown file</h3><p>Plain text with an <span class="inline-code">.md</span> extension. Readable without Obsidian and editable with other text tools.</p></article>
+            <article class="concept"><span class="term">LINK</span><h3>A deliberate connection</h3><p><span class="inline-code">[[Topic]]</span> points to another note. Backlinks show every note that points back.</p></article>
+            <article class="concept"><span class="term">PROPERTY</span><h3>Structured metadata</h3><p>Small fields such as type, status, source, date, or ticker stored at the top of a note.</p></article>
+            <article class="concept"><span class="term">VIEW</span><h3>A lens, not new data</h3><p>Search, graph, and database-style views reveal patterns already present in notes and properties.</p></article>
+            <article class="concept"><span class="term">AI</span><h3>A guest analyst</h3><p>A model can summarize selected material. It should not silently become the owner of your vault or its truth.</p></article>
+          </div>
+          <div class="note-map" aria-label="Three connected notes example">
+            <svg viewBox="0 0 1000 360" aria-hidden="true"><line x1="170" y1="110" x2="505" y2="250" stroke="#80d7b8" stroke-width="3"/><line x1="505" y1="250" x2="820" y2="95" stroke="#ff7043" stroke-width="3"/><line x1="170" y1="110" x2="820" y2="95" stroke="#899b91" stroke-width="2" stroke-dasharray="8 10"/></svg>
+            <div class="nodes">
+              <div class="note-node"><span>NOTE 01 · SOURCE</span><strong>Company filing</strong><p>Facts, dates, excerpt, original URL.</p></div>
+              <div class="note-node"><span>NOTE 02 · THESIS</span><strong>Investment thesis</strong><p>Claims linked back to the source note.</p></div>
+              <div class="note-node"><span>NOTE 03 · DECISION</span><strong>Post-mortem</strong><p>What changed, what held, and what to revisit.</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="first-vault">
+        <div class="wrap">
+          <div class="section-head">
+            <div class="lesson-no">LESSON 02</div>
+            <div><h2>Create one vault, not a taxonomy.</h2><p>The first build should take fifteen minutes. Use a broad vault name, four folders, and one index note. Organization follows actual use.</p></div>
+          </div>
+          <div class="steps">
+            <article class="step"><div class="step-num">01</div><div><h3>Install from the official site</h3><p>Download Obsidian for Windows, install it normally, and choose <strong>Create new vault</strong>. A vault is just a folder, so put it somewhere easy to back up.</p><div class="button-row"><a class="primary" href="https://obsidian.md/download" target="_blank" rel="noopener" style="text-decoration:none">Open official download</a></div></div></article>
+            <article class="step"><div class="step-num">02</div><div><h3>Name it broadly</h3><p>Use <span class="inline-code">Knowledge</span>, not <span class="inline-code">Obsidian experiment September</span>. Do not create separate work, school, market, and life vaults until a real security or ownership boundary requires it.</p></div></article>
+            <article class="step"><div class="step-num">03</div><div><h3>Add four folders</h3><div class="terminal"><div class="terminal-bar"><span>Vault layout</span><button class="copy" data-copy="00 Inbox&#10;10 Notes&#10;20 Sources&#10;90 Archive">Copy</button></div><pre>00 Inbox
+10 Notes
+20 Sources
+90 Archive</pre></div><p>That is enough. The numbers keep navigation stable; links do the conceptual work.</p></div></article>
+            <article class="step"><div class="step-num">04</div><div><h3>Create <span class="inline-code">Home.md</span></h3><p>This is a map of content: a short page linking to active areas and recent projects. It is a hand-built control panel, not an exhaustive directory.</p><div class="terminal"><div class="terminal-bar"><span>Home.md starter</span><button class="copy" data-copy="# Home&#10;&#10;## Active&#10;- [[Coursework]]&#10;- [[Market research]]&#10;- [[Open case files]]&#10;&#10;## Capture&#10;- [[Inbox]]&#10;&#10;## Reviews&#10;- [[Weekly review]]">Copy</button></div><pre># Home
+
+## Active
+- [[Coursework]]
+- [[Market research]]
+- [[Open case files]]
+
+## Capture
+- [[Inbox]]
+
+## Reviews
+- [[Weekly review]]</pre></div></div></article>
+          </div>
+          <div class="callout"><div class="mark">→</div><div><h3>Your first success condition</h3><p>You can create a note, link it from Home, close Obsidian, and still find the <span class="inline-code">.md</span> file in Windows Explorer. Nothing more is required on day one.</p></div></div>
+        </div>
+      </section>
+
+      <section id="note-craft">
+        <div class="wrap">
+          <div class="section-head">
+            <div class="lesson-no">LESSON 03</div>
+            <div><h2>Write notes that can survive retrieval.</h2><p>A good note has one clear subject, a source or provenance line when facts matter, and links that explain why it belongs in the system.</p></div>
+          </div>
+          <div class="syntax-demo">
+            <div><h3>What you type</h3><div class="terminal" style="box-shadow:none"><div class="terminal-bar"><span>Markdown</span><button class="copy" data-copy="---&#10;type: research&#10;status: active&#10;source: &quot;[SOURCE URL]&quot;&#10;---&#10;&#10;# Margin policy change&#10;&#10;## Claim&#10;The broker changed the rate.&#10;&#10;## Evidence&#10;See [[September statement]].&#10;&#10;## Related&#10;- [[Broker dispute chronology]]&#10;- [[Cash-flow constraints]]">Copy</button></div><pre>---
+type: research
+status: active
+source: "[SOURCE URL]"
+---
+
+# Margin policy change
+
+## Claim
+The broker changed the rate.
+
+## Evidence
+See [[September statement]].
+
+## Related
+- [[Broker dispute chronology]]
+- [[Cash-flow constraints]]</pre></div></div>
+            <div class="rendered"><h3>What the structure means</h3><div class="checkline"><b>1</b><div><strong>Properties filter the note.</strong><br><span class="muted">Type and status support future views.</span></div></div><div class="checkline"><b>2</b><div><strong>The title names one subject.</strong><br><span class="muted">Not “random thoughts 7.”</span></div></div><div class="checkline"><b>3</b><div><strong>Claims point to evidence.</strong><br><span class="muted">The statement note preserves the source trail.</span></div></div><div class="checkline"><b>4</b><div><strong>Links state relationships.</strong><br><span class="muted"><a href="#use-cases">See the use-case patterns</a>.</span></div></div></div>
+          </div>
+          <div class="formula" aria-label="CLEAR note framework">
+            <div><b>C</b><span>Claim</span><p>What this note says in one sentence.</p></div>
+            <div><b>L</b><span>Links</span><p>Which existing ideas this changes or supports.</p></div>
+            <div><b>E</b><span>Evidence</span><p>The source, date, excerpt, or record behind it.</p></div>
+            <div><b>A</b><span>Action</span><p>What decision or next step follows, if any.</p></div>
+            <div><b>R</b><span>Review</span><p>When this could become stale or needs checking.</p></div>
+          </div>
+          <div class="callout warn"><div class="mark">∴</div><div><h3>The CS50 rule: build the smallest useful abstraction.</h3><p>Do not invent twenty note types before you have twenty notes. Start with <strong>source</strong>, <strong>concept</strong>, <strong>project</strong>, and <strong>decision</strong>. Add a type only when two real notes need the same structure.</p></div></div>
+        </div>
+      </section>
+
+      <section id="use-cases">
+        <div class="wrap">
+          <div class="section-head">
+            <div class="lesson-no">LESSON 04</div>
+            <div><h2>Four workflows worth testing.</h2><p>Each one turns repeated work into linked evidence. Open a pattern and copy the starter note.</p></div>
+          </div>
+          <div class="use-cases">
+            <details open><summary><span>Market research packet</span><span class="tag">sources → thesis</span></summary><div class="details-body"><p>Give each company one hub note. Link filings, earnings notes, thesis changes, and decision reviews back to it. Keep live prices out; Obsidian is the research memory, not the tape.</p><div class="terminal"><div class="terminal-bar"><span>Company hub template</span><button class="copy" data-copy="---&#10;type: company&#10;ticker: [TICKER]&#10;status: watch&#10;---&#10;&#10;# [Company]&#10;&#10;## Thesis in one paragraph&#10;[Current thesis]&#10;&#10;## Primary evidence&#10;- [[Latest 10-K]]&#10;- [[Latest earnings notes]]&#10;&#10;## What would change my mind&#10;- [Falsifier]&#10;&#10;## Decisions&#10;- [[Decision — YYYY-MM-DD]]">Copy</button></div><pre>---
+type: company
+ticker: [TICKER]
+status: watch
+---
+
+# [Company]
+
+## Thesis in one paragraph
+[Current thesis]
+
+## Primary evidence
+- [[Latest 10-K]]
+- [[Latest earnings notes]]
+
+## What would change my mind
+- [Falsifier]
+
+## Decisions
+- [[Decision — YYYY-MM-DD]]</pre></div></div></details>
+            <details><summary><span>Coursework concept network</span><span class="tag">learning</span></summary><div class="details-body"><p>One note per durable concept, not per lecture. A lecture note can link to concepts such as elasticity, agency costs, or contribution margin.</p><div class="terminal"><div class="terminal-bar"><span>Concept note</span><button class="copy" data-copy="---&#10;type: concept&#10;course: [COURSE]&#10;status: learning&#10;---&#10;&#10;# [Concept]&#10;&#10;## In my own words&#10;[Explanation]&#10;&#10;## Example&#10;[Business example]&#10;&#10;## Confused with&#10;- [[Related concept]]&#10;&#10;## Source&#10;- [[Lecture — YYYY-MM-DD]]">Copy</button></div><pre>---
+type: concept
+course: [COURSE]
+status: learning
+---
+
+# [Concept]
+
+## In my own words
+[Explanation]
+
+## Example
+[Business example]
+
+## Confused with
+- [[Related concept]]
+
+## Source
+- [[Lecture — YYYY-MM-DD]]</pre></div></div></details>
+            <details><summary><span>Dispute or case chronology</span><span class="tag">evidence</span></summary><div class="details-body"><p>Keep one chronology hub and one note per primary document. Link every consequential claim to the document that establishes it; do not bury exhibits in a giant narrative.</p><div class="terminal"><div class="terminal-bar"><span>Event note</span><button class="copy" data-copy="---&#10;type: event&#10;date: YYYY-MM-DD&#10;matter: [[Matter name]]&#10;source: [[Exhibit label]]&#10;---&#10;&#10;# YYYY-MM-DD — [Event]&#10;&#10;## Established&#10;[What the record directly shows]&#10;&#10;## Contested&#10;[What another party disputes]&#10;&#10;## Significance&#10;[Why it matters]&#10;&#10;## Follow-up&#10;[Missing proof or next step]">Copy</button></div><pre>---
+type: event
+date: YYYY-MM-DD
+matter: [[Matter name]]
+source: [[Exhibit label]]
+---
+
+# YYYY-MM-DD — [Event]
+
+## Established
+[What the record directly shows]
+
+## Contested
+[What another party disputes]
+
+## Significance
+[Why it matters]
+
+## Follow-up
+[Missing proof or next step]</pre></div></div></details>
+            <details><summary><span>Weekly decision review</span><span class="tag">reflection</span></summary><div class="details-body"><p>Capture only decisions and lessons that will matter again. A short weekly review is more valuable than daily notes no one reads.</p><div class="terminal"><div class="terminal-bar"><span>Weekly review</span><button class="copy" data-copy="# Weekly review — YYYY-MM-DD&#10;&#10;## Decisions made&#10;- [Decision] → [[Related project]]&#10;&#10;## Evidence that changed my view&#10;- [Observation] → [[Source note]]&#10;&#10;## Open loops&#10;- [Next action]&#10;&#10;## One rule to carry forward&#10;- [Rule]">Copy</button></div><pre># Weekly review — YYYY-MM-DD
+
+## Decisions made
+- [Decision] → [[Related project]]
+
+## Evidence that changed my view
+- [Observation] → [[Source note]]
+
+## Open loops
+- [Next action]
+
+## One rule to carry forward
+- [Rule]</pre></div></div></details>
+          </div>
+        </div>
+      </section>
+
+      <section id="note-lab">
+        <div class="wrap">
+          <div class="section-head">
+            <div class="lesson-no">LESSON 05</div>
+            <div><h2>Compile a clean starter note.</h2><p>This lab builds Markdown in your browser. Nothing is saved or sent. Copy the result into a new Obsidian note.</p></div>
+          </div>
+          <div class="lab">
+            <div class="lab-form">
+              <div class="field"><label for="noteType">NOTE TYPE</label><select id="noteType"><option>source</option><option>concept</option><option>project</option><option>decision</option><option>event</option></select></div>
+              <div class="field"><label for="noteTitle">TITLE</label><input id="noteTitle" value="A durable note title" /></div>
+              <div class="field"><label for="noteClaim">CLAIM OR PURPOSE</label><textarea id="noteClaim">State the one thing this note should help me remember or decide.</textarea></div>
+              <div class="field"><label for="noteEvidence">EVIDENCE OR SOURCE</label><textarea id="noteEvidence">Name the document, URL, date, or observation that supports it.</textarea></div>
+              <div class="field"><label for="noteLinks">RELATED NOTES</label><input id="noteLinks" value="Related topic, Active project" /></div>
+              <div class="button-row"><button class="primary" id="buildNote">Build note</button><button class="secondary" id="resetNote">Reset</button></div>
+            </div>
+            <div class="lab-output">
+              <div class="top"><label>COMPILED MARKDOWN</label><button class="copy" id="copyNote">Copy</button></div>
+              <pre id="noteOutput" aria-live="polite"></pre>
+              <div class="status" id="copyStatus" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="advanced">
+        <div class="wrap">
+          <div class="section-head">
+            <div class="lesson-no">LESSON 06</div>
+            <div><h2>Climb the AI ladder one rung at a time.</h2><p>The video’s AI layers make sense only after retrieval works without AI. Begin with manual, inspectable context and keep inference local.</p></div>
+          </div>
+          <div class="roadmap">
+            <div><span class="day">LEVEL 0</span><h3>Human vault</h3><p>Notes, links, properties, search, and templates. This is already a complete useful system.</p></div>
+            <div><span class="day">LEVEL 1</span><h3>Selected-note AI</h3><p>Copy one note or small packet into local Hermes. Ask for a summary, critique, or missing links.</p></div>
+            <div><span class="day">LEVEL 2</span><h3>Structured index</h3><p>Use consistent properties and saved searches or Bases-style views to create a database over your notes.</p></div>
+            <div><span class="day">LEVEL 3</span><h3>Local retrieval</h3><p>Only later, add a reviewed local tool that selects relevant notes for your local model. Keep it read-only first.</p></div>
+          </div>
+          <div class="steps" style="margin-top:24px">
+            <article class="step"><div class="step-num">01</div><div><h3>Use Hermes as a reviewer, not a vault owner</h3><div class="terminal"><div class="terminal-bar"><span>Paste into local Hermes with selected notes</span><button class="copy" data-copy="You are reviewing a small Obsidian source packet. Use only the notes below.&#10;&#10;Return:&#10;1. The central claim&#10;2. Direct supporting evidence, cited by note title&#10;3. Contradictions or stale dates&#10;4. Missing links to other concepts named in the packet&#10;5. A proposed index-note outline&#10;&#10;Rules: Do not invent notes, sources, dates, or facts. If the packet does not establish something, write ‘not established.’&#10;&#10;NOTES:&#10;[PASTE THE SELECTED NOTES]">Copy</button></div><pre>You are reviewing a small Obsidian source packet. Use only the notes below.
+
+Return:
+1. The central claim
+2. Direct supporting evidence, cited by note title
+3. Contradictions or stale dates
+4. Missing links to other concepts named in the packet
+5. A proposed index-note outline
+
+Rules: Do not invent notes, sources, dates, or facts. If the packet does not establish something, write “not established.”
+
+NOTES:
+[PASTE THE SELECTED NOTES]</pre></div></div></article>
+            <article class="step"><div class="step-num">02</div><div><h3>Add one core feature at a time</h3><p>Enable built-in Templates after you repeat a note structure. Add Properties when you need filtering. Use Graph only to inspect connection gaps—not as a dashboard you must keep pretty.</p></div></article>
+            <article class="step"><div class="step-num">03</div><div><h3>Back up before automation</h3><p>A local vault protects you from platform lock-in, not from disk failure or accidental deletion. Keep an independent backup before scripts or plugins get write access.</p><div class="terminal"><div class="terminal-bar"><span>PowerShell · manual local backup example</span><button class="copy" data-copy="robocopy &quot;C:\Path\To\Knowledge&quot; &quot;E:\Backups\Knowledge&quot; /MIR /XD .trash">Copy</button></div><pre>robocopy "C:\Path\To\Knowledge" "E:\Backups\Knowledge" /MIR /XD .trash</pre></div><p class="comment">Replace both paths first. <span class="inline-code">/MIR</span> mirrors deletions too, so test with a disposable folder before relying on it.</p></div></article>
+          </div>
+          <div class="callout warn"><div class="mark">$</div><div><h3>What this course deliberately skips</h3><p>Obsidian Sync, Publish, paid AI APIs, hosted vector databases, affiliate templates, and “second brain” courses. None are needed to prove whether the core workflow is useful to you.</p></div></div>
+        </div>
+      </section>
+
+      <section id="security">
+        <div class="wrap">
+          <div class="section-head">
+            <div class="lesson-no">LESSON 07</div>
+            <div><h2>Local files are a boundary, not a force field.</h2><p>Obsidian stores notes locally, but anything you install, sync, paste, or automate can expand the trust boundary. Keep the core simple until you understand the permissions.</p></div>
+          </div>
+          <div class="matrix" role="table" aria-label="Obsidian trust boundary matrix">
+            <div class="matrix-row head" role="row"><div>Layer</div><div>What it can see</div><div>Default move</div><div>Primary risk</div></div>
+            <div class="matrix-row" role="row"><div data-label="Layer">Core Obsidian</div><div data-label="What it can see">The vault and files your OS account can access</div><div data-label="Default move"><span class="yes">Use</span></div><div data-label="Primary risk">Device access and backup gaps</div></div>
+            <div class="matrix-row" role="row"><div data-label="Layer">Community plugin</div><div data-label="What it can see">Potentially broad desktop permissions</div><div data-label="Default move"><span class="no">Restricted mode first</span></div><div data-label="Primary risk">Third-party code</div></div>
+            <div class="matrix-row" role="row"><div data-label="Layer">Cloud sync</div><div data-label="What it can see">Files moved to the chosen service</div><div data-label="Default move">Evaluate terms and encryption</div><div data-label="Primary risk">Account compromise or conflict</div></div>
+            <div class="matrix-row" role="row"><div data-label="Layer">Local Hermes</div><div data-label="What it can see">Only what you paste or explicitly expose</div><div data-label="Default move"><span class="yes">Selected packet</span></div><div data-label="Primary risk">Hallucination, logs, overbroad access</div></div>
+            <div class="matrix-row" role="row"><div data-label="Layer">Cloud AI plugin</div><div data-label="What it can see">Whatever the plugin sends</div><div data-label="Default move"><span class="no">Skip</span></div><div data-label="Primary risk">Data disclosure and recurring cost</div></div>
+          </div>
+          <div class="split" style="margin-top:22px">
+            <article class="card do"><h3>Safe starting boundary</h3><ul class="list"><li>Keep Restricted Mode on and use only core plugins.</li><li>Back up the vault outside its working drive.</li><li>Paste only selected, redacted notes into Hermes.</li><li>Give any future automation read-only access first.</li></ul></article>
+            <article class="card dont"><h3>Never store in ordinary notes</h3><ul class="list"><li>Passwords, API keys, recovery codes, or private keys.</li><li>Full account, claim, policy, or government ID numbers.</li><li>Unredacted client records without explicit authorization.</li><li>A single copy of anything you cannot afford to lose.</li></ul></article>
+          </div>
+          <div class="source-strip"><a href="https://help.obsidian.md/properties" target="_blank" rel="noopener">Official Properties reference ↗</a><a href="https://forum.obsidian.md/t/security-of-the-plugins/7544/43?page=3" target="_blank" rel="noopener">Plugin security discussion ↗</a><a href="https://Obsidian.Md/terms" target="_blank" rel="noopener">Terms and license ↗</a></div>
+        </div>
+      </section>
+
+      <section id="quiz">
+        <div class="wrap">
+          <div class="section-head">
+            <div class="lesson-no">LESSON 08</div>
+            <div><h2>Prove you can keep it useful.</h2><p>Four questions. The goal is to avoid the two classic failures: overbuilding the system and trusting it more than the source material.</p></div>
+          </div>
+          <div class="quiz">
+            <div class="question" data-answer="b"><fieldset><legend>1. What is an Obsidian vault?</legend><label class="option"><input type="radio" name="q1" value="a">A proprietary cloud database.</label><label class="option"><input type="radio" name="q1" value="b">A local folder containing Markdown notes, attachments, and configuration.</label><label class="option"><input type="radio" name="q1" value="c">A visual graph stored only inside the app.</label></fieldset><div class="result"></div></div>
+            <div class="question" data-answer="c"><fieldset><legend>2. You have six notes and want twenty metadata fields. Best move?</legend><label class="option"><input type="radio" name="q2" value="a">Add all fields now so the system is future-proof.</label><label class="option"><input type="radio" name="q2" value="b">Install a plugin that generates them.</label><label class="option"><input type="radio" name="q2" value="c">Keep only fields needed by a real repeated workflow.</label></fieldset><div class="result"></div></div>
+            <div class="question" data-answer="a"><fieldset><legend>3. Safest first AI workflow?</legend><label class="option"><input type="radio" name="q3" value="a">Paste a selected source packet into local Hermes and require title-level citations.</label><label class="option"><input type="radio" name="q3" value="b">Give a new cloud plugin the entire vault.</label><label class="option"><input type="radio" name="q3" value="c">Let AI rewrite every note automatically.</label></fieldset><div class="result"></div></div>
+            <div class="question" data-answer="b"><fieldset><legend>4. What makes Obsidian worth keeping after the trial?</legend><label class="option"><input type="radio" name="q4" value="a">The graph looks impressive.</label><label class="option"><input type="radio" name="q4" value="b">It shortens retrieval and improves a repeated decision or learning workflow.</label><label class="option"><input type="radio" name="q4" value="c">You installed enough plugins.</label></fieldset><div class="result"></div></div>
+          </div>
+          <div class="button-row"><button class="primary" id="gradeQuiz">Grade the check</button><button class="secondary" id="clearQuiz">Clear answers</button></div>
+          <div class="status" id="quizStatus" aria-live="polite"></div>
+
+          <div class="section-head" style="margin-top:58px"><div class="lesson-no">7-DAY TRIAL</div><div><h2>Test usefulness before you commit.</h2></div></div>
+          <div class="roadmap">
+            <div><span class="day">DAY 1</span><h3>Create</h3><p>Install, make the four folders and Home note, then add three real notes.</p></div>
+            <div><span class="day">DAYS 2–3</span><h3>Link</h3><p>Connect only relationships you can explain in a sentence. Use backlinks to find omissions.</p></div>
+            <div><span class="day">DAYS 4–6</span><h3>Retrieve</h3><p>Use search and Home to answer one real question faster than you could from scattered files.</p></div>
+            <div><span class="day">DAY 7</span><h3>Decide</h3><p>Keep it only if you found information faster or made one better, more traceable decision.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="final">
+        <div class="wrap">
+          <div class="final-box">
+            <h2>Your next step is small: install, create one vault, write three real notes.</h2>
+            <p>Do not import your whole life. Prove the loop first: capture, connect, retrieve. If those three notes help with one real decision this week, Obsidian has earned a longer trial.</p>
+            <div class="button-row" style="margin-top:24px"><a class="primary" href="https://obsidian.md/download" target="_blank" rel="noopener" style="text-decoration:none">Download Obsidian</a><button class="secondary copy" data-copy="00 Inbox&#10;10 Notes&#10;20 Sources&#10;90 Archive">Copy starter folders</button></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const copyText = async (text, button) => {
+      try {
+        await navigator.clipboard.writeText(text);
+        const old = button.textContent;
+        button.textContent = 'Copied';
+        setTimeout(() => button.textContent = old, 1400);
+      } catch {
+        button.textContent = 'Select text';
+        setTimeout(() => button.textContent = 'Copy', 1400);
+      }
+    };
+    document.querySelectorAll('[data-copy]').forEach(button => button.addEventListener('click', () => copyText(button.dataset.copy, button)));
+
+    const defaults = { type:'source', title:'A durable note title', claim:'State the one thing this note should help me remember or decide.', evidence:'Name the document, URL, date, or observation that supports it.', links:'Related topic, Active project' };
+    const type = document.getElementById('noteType');
+    const title = document.getElementById('noteTitle');
+    const claim = document.getElementById('noteClaim');
+    const evidence = document.getElementById('noteEvidence');
+    const links = document.getElementById('noteLinks');
+    const output = document.getElementById('noteOutput');
+    const copyStatus = document.getElementById('copyStatus');
+    function compileNote(){
+      const related = links.value.split(',').map(x=>x.trim()).filter(Boolean).map(x=>`- [[${x}]]`).join('\n') || '- [[Related note]]';
+      output.textContent = `---\ntype: ${type.value}\nstatus: active\ncreated: YYYY-MM-DD\n---\n\n# ${title.value.trim() || '[Title]'}\n\n## Claim or purpose\n${claim.value.trim() || '[One clear claim]'}\n\n## Evidence or source\n${evidence.value.trim() || '[Source and date]'}\n\n## Related\n${related}\n\n## Next review\nYYYY-MM-DD`;
+      copyStatus.textContent='Note rebuilt from your current fields.';
+      setTimeout(()=>copyStatus.textContent='',1800);
+    }
+    document.getElementById('buildNote').addEventListener('click',compileNote);
+    document.getElementById('resetNote').addEventListener('click',()=>{type.value=defaults.type;title.value=defaults.title;claim.value=defaults.claim;evidence.value=defaults.evidence;links.value=defaults.links;compileNote();});
+    document.getElementById('copyNote').addEventListener('click',()=>copyText(output.textContent,document.getElementById('copyNote')));
+    compileNote();
+
+    const explanations = [
+      'A vault is a normal local folder. The Markdown files are the durable source of truth.',
+      'Structure should answer a real retrieval need. Premature fields create maintenance without value.',
+      'Selected context plus explicit citation rules keeps the first AI experiment narrow and inspectable.',
+      'Usefulness is behavioral: faster retrieval and better decisions, not visual complexity.'
+    ];
+    document.getElementById('gradeQuiz').addEventListener('click',()=>{
+      let score=0;
+      document.querySelectorAll('.question').forEach((question,index)=>{
+        const selected=question.querySelector('input:checked');
+        const result=question.querySelector('.result');
+        const correct=selected&&selected.value===question.dataset.answer;
+        if(correct)score++;
+        result.className=`result show ${correct?'good':'bad'}`;
+        result.textContent=`${correct?'Correct. ':'Not yet. '}${explanations[index]}`;
+      });
+      document.getElementById('quizStatus').textContent=`${score}/4 correct${score===4?' — your seven-day trial can start.':' — review the explanations and try again.'}`;
+    });
+    document.getElementById('clearQuiz').addEventListener('click',()=>{
+      document.querySelectorAll('.question input').forEach(input=>input.checked=false);
+      document.querySelectorAll('.result').forEach(result=>{result.className='result';result.textContent='';});
+      document.getElementById('quizStatus').textContent='';
+    });
+
+    const courseLinks=[...document.querySelectorAll('.rail nav a, .mobile-nav a')];
+    const sections=[...new Set(courseLinks.map(link=>document.querySelector(link.getAttribute('href'))).filter(Boolean))];
+    function setActiveLesson(id){courseLinks.forEach(link=>{const active=link.getAttribute('href')===`#${id}`;link.classList.toggle('active',active);if(active)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');});}
+    courseLinks.forEach(link=>link.addEventListener('click',event=>{const target=document.querySelector(link.getAttribute('href'));if(!target)return;event.preventDefault();const stickyOffset=window.matchMedia('(max-width: 900px)').matches?58:0;const top=Math.max(0,target.getBoundingClientRect().top+window.scrollY-stickyOffset);const previousBehavior=document.documentElement.style.scrollBehavior;document.documentElement.style.scrollBehavior='auto';window.scrollTo(0,top);document.documentElement.style.scrollBehavior=previousBehavior;setActiveLesson(target.id);}));
+    const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting)setActiveLesson(entry.target.id);}),{rootMargin:'-20% 0px -70% 0px'});
+    sections.forEach(section=>observer.observe(section));
+  </script>
+
+<script>
+(function () {
+  var STORAGE_KEY = 'obsidian-course-v1';
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail nav a'));
+  var ids = links.map(function (a) { return a.getAttribute('href'); })
+    .filter(function (x) { return x && x.charAt(0) === '#'; })
+    .map(function (x) { return x.slice(1); });
+  var sections = ids.map(function (id) { return document.getElementById(id); }).filter(Boolean);
+  if (!sections.length) return;
+
+  function stickyOffset() {
+    return window.matchMedia('(max-width: 900px)').matches ? 58 : 0;
+  }
+  function sectionFromScroll() {
+    var probe = window.scrollY + Math.min(200, Math.floor(window.innerHeight * 0.3));
+    var cur = sections[0];
+    for (var i = 0; i < sections.length; i++) {
+      if (sections[i].offsetTop <= probe) cur = sections[i];
+      else break;
+    }
+    return cur;
+  }
+  function scrollToSection(el) {
+    var top = Math.max(0, el.getBoundingClientRect().top + window.scrollY - stickyOffset());
+    var prev = document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior = 'smooth';
+    window.scrollTo(0, top);
+    document.documentElement.style.scrollBehavior = prev;
+  }
+
+  // Persist the visible lesson so a return visit picks up where you left off.
+  var saveTimer = null;
+  window.addEventListener('scroll', function () {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      try {
+        var cur = sectionFromScroll();
+        if (cur) localStorage.setItem(STORAGE_KEY, cur.id);
+      } catch (e) {}
+    }, 400);
+  }, { passive: true });
+
+  // Restore the saved lesson on a fresh load (explicit # links always win).
+  try {
+    if (!location.hash) {
+      var saved = localStorage.getItem(STORAGE_KEY);
+      var el = saved && document.getElementById(saved);
+      if (el) {
+        var top = Math.max(0, el.getBoundingClientRect().top + window.scrollY - stickyOffset());
+        window.scrollTo(0, top);
+      }
+    }
+  } catch (e) {}
+
+  // Arrow keys move between lessons; typing stays typed.
+  window.addEventListener('keydown', function (e) {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    var t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+    e.preventDefault();
+    var i = sections.indexOf(sectionFromScroll());
+    var next = sections[i + (e.key === 'ArrowRight' ? 1 : -1)];
+    if (next) scrollToSection(next);
+  });
+})();
+</script>
+</body>
+</html>
