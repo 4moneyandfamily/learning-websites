@@ -50,5 +50,12 @@ window.SITES = [
     blurb: "A one-lecture masterclass on preparing for and running a negotiation.",
     topic: "Sales",
     added: "2026-09-20"
+  },
+  {
+    file: "qwen-model-picker.html",
+    title: "Qwen Model Picker",
+    blurb: "Three models, one picker: route every prompt to Plus, Max, or Omni-Flash at the right price.",
+    topic: "AI tools",
+    added: "2026-09-21"
   }
 ];
