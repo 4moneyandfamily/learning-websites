@@ -1,6 +1,6 @@
 # Learning Websites
 
-Static site on GitHub Pages. Repo: `4moneyandfamily/learning-websites`, branch `main`, served from the root.
+Static site. Repo: `4moneyandfamily/learning-websites`, branch `main`, served from the root. Live at https://123learnquickly.netlify.app/
 
 - `index.html` is the landing page. It renders cards from `sites.js`; do not hardcode cards in the HTML.
 - Each learning site is one standalone `.html` file in this folder.
