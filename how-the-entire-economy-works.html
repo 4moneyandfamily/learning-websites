@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How the Entire Economy Works — Interactive Tutorial</title>
+<style>
+:root{
+  --bg:#0e0f13; --bg2:#12141b; --panel:#161922; --panel2:#1b1f2a;
+  --ink:#ece9e2; --muted:#a9a49a; --faint:#7c786f;
+  --gold:#d9a441; --gold-dim:#8a6a2a; --line:#262b38;
+  --good:#58b07f; --bad:#e0685a; --blue:#5b9bd5;
+  --radius:14px; --maxw:880px;
+}
+html[data-theme="light"]{
+  --bg:#f6f4ee; --bg2:#efece3; --panel:#ffffff; --panel2:#f3f0e8;
+  --ink:#1d1c19; --muted:#5d594f; --faint:#8a8578;
+  --gold:#9a6f1e; --gold-dim:#c9a44f; --line:#ddd6c4;
+  --good:#2e7d4f; --bad:#c04a3c; --blue:#2b6cb0;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif; line-height:1.75; font-size:17px; -webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--maxw); margin:0 auto; padding:0 22px}
+header.hero{padding:64px 0 30px; background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(217,164,65,.10), transparent 70%)}
+.kicker{display:inline-block; font-size:12.5px; letter-spacing:2.5px; text-transform:uppercase; color:var(--gold); border:1px solid var(--gold-dim); border-radius:999px; padding:5px 14px; margin-bottom:20px}
+h1{font-size:clamp(34px,6vw,54px); line-height:1.12; letter-spacing:-.5px; margin-bottom:14px}
+.sub{font-size:19px; color:var(--muted); max-width:640px; margin-bottom:18px}
+.source-note{font-size:14px; color:var(--faint); border-left:3px solid var(--gold-dim); padding:8px 14px; margin:22px 0; background:var(--panel); border-radius:0 10px 10px 0}
+.source-note strong{color:var(--muted)}
+.stepper{display:flex; gap:8px; margin:26px 0 8px; flex-wrap:wrap}
+.step{flex:1 1 120px; text-align:center; padding:12px 8px; border:1px solid var(--line); border-radius:var(--radius); background:var(--panel); cursor:pointer; transition:all .18s}
+.step .n{font-size:12px; letter-spacing:1.5px; color:var(--faint); text-transform:uppercase}
+.step .t{font-weight:700; font-size:15px}
+.step.active{border-color:var(--gold); background:var(--panel2); box-shadow:0 0 0 1px var(--gold) inset}
+.step.done .n{color:var(--good)}
+.progress{height:6px; background:var(--line); border-radius:99px; margin:14px 0 6px; overflow:hidden}
+.progress i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--gold-dim),var(--gold)); border-radius:99px; transition:width .5s}
+.progress-lbl{font-size:13px; color:var(--faint)}
+.toolbar{display:flex; gap:10px; align-items:center; margin-top:14px}
+.btn{background:var(--panel2); color:var(--ink); border:1px solid var(--line); border-radius:10px; padding:9px 16px; font-size:14.5px; cursor:pointer; transition:all .15s}
+.btn:hover{border-color:var(--gold)}
+.btn.gold{background:var(--gold); color:#141414; border-color:var(--gold); font-weight:700}
+.btn.gold:hover{filter:brightness(1.08)}
+main{padding:10px 0 60px}
+.level{display:none}
+.level.active{display:block; animation:fade .35s}
+@keyframes fade{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+.level-head{display:flex; align-items:baseline; gap:14px; margin:38px 0 6px}
+.level-num{font-size:15px; font-weight:800; letter-spacing:2px; color:var(--bg); background:var(--gold); border-radius:8px; padding:4px 12px}
+h2{font-size:30px; letter-spacing:-.3px}
+.level-sub{color:var(--muted); margin-bottom:24px; font-size:17.5px}
+h3{font-size:21px; margin:30px 0 10px}
+h4{font-size:17.5px; margin:22px 0 8px; color:var(--gold)}
+p{margin:0 0 14px}
+.card{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:20px 22px; margin:18px 0}
+.card.gold-border{border-color:var(--gold-dim)}
+.mental{font-size:20px; line-height:1.6; border-left:4px solid var(--gold); padding:6px 0 6px 18px; margin:20px 0; font-weight:600}
+.vocab{display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; margin:18px 0}
+.vterm{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 16px; cursor:pointer; transition:all .15s}
+.vterm:hover{border-color:var(--gold-dim)}
+.vterm b{color:var(--gold); display:block; margin-bottom:4px; font-size:16px}
+.vterm span{font-size:14.5px; color:var(--muted); display:none}
+.vterm.open span{display:block}
+.vterm .hint{font-size:12px; color:var(--faint)}
+details.deep{background:var(--panel); border:1px solid var(--line); border-radius:12px; margin:14px 0; overflow:hidden}
+details.deep summary{cursor:pointer; padding:15px 20px; font-weight:700; list-style:none; display:flex; justify-content:space-between; align-items:center}
+details.deep summary::-webkit-details-marker{display:none}
+details.deep summary::after{content:"+"; color:var(--gold); font-size:22px; font-weight:400}
+details.deep[open] summary::after{content:"–"}
+details.deep .body{padding:0 20px 18px; color:var(--muted)}
+details.deep .body p{margin-bottom:10px}
+.worked{background:var(--bg2); border:1px dashed var(--gold-dim); border-radius:var(--radius); padding:20px 22px; margin:18px 0}
+.worked .sol{display:none; margin-top:12px; border-top:1px solid var(--line); padding-top:12px}
+.worked.revealed .sol{display:block}
+table{width:100%; border-collapse:collapse; margin:16px 0; font-size:15.5px}
+th,td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--line)}
+th{color:var(--gold); font-size:13px; letter-spacing:1px; text-transform:uppercase}
+.quiz{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:22px; margin:26px 0}
+.quiz h3{margin-top:0}
+.q{margin:18px 0; padding-bottom:16px; border-bottom:1px solid var(--line)}
+.q:last-child{border-bottom:none; padding-bottom:0}
+.q p{font-weight:600; margin-bottom:10px}
+.opt{display:block; width:100%; text-align:left; background:var(--bg2); border:1px solid var(--line); color:var(--ink); border-radius:10px; padding:10px 14px; margin:7px 0; cursor:pointer; font-size:15.5px; transition:all .15s}
+.opt:hover:not(:disabled){border-color:var(--gold)}
+.opt:disabled{cursor:default; opacity:.85}
+.opt.right{border-color:var(--good); background:rgba(88,176,127,.12)}
+.opt.wrong{border-color:var(--bad); background:rgba(224,104,90,.10)}
+.qfb{font-size:14.5px; margin-top:8px; display:none}
+.qfb.show{display:block}
+.qfb.ok{color:var(--good)} .qfb.no{color:var(--bad)}
+.qscore{font-weight:700; color:var(--gold); margin-top:6px}
+.cycle-ex{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:8px; margin:16px 0}
+.phase{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:10px 6px; text-align:center; cursor:pointer; font-size:14px; transition:all .15s}
+.phase:hover{border-color:var(--gold-dim)}
+.phase.active{border-color:var(--gold); background:var(--panel2)}
+.phase b{display:block; font-size:13px}
+#phase-panel{background:var(--panel); border:1px solid var(--gold-dim); border-radius:var(--radius); padding:20px 22px; margin:6px 0 18px}
+#phase-panel h4{margin-top:0}
+.gauges{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:12px}
+.gauge{background:var(--bg2); border-radius:10px; padding:10px 12px; font-size:13.5px}
+.gauge b{display:block; color:var(--faint); font-size:11.5px; letter-spacing:1px; text-transform:uppercase; margin-bottom:2px}
+.flow-svg{width:100%; height:auto; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); margin:16px 0}
+.flow-line{stroke:var(--gold); stroke-width:2.5; fill:none; stroke-dasharray:8 8; animation:dash 1.6s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-32}}
+.flow-lbl{fill:var(--muted); font-size:13px}
+.flow-node{fill:var(--panel2); stroke:var(--gold-dim); stroke-width:1.5}
+.flow-nlbl{fill:var(--ink); font-size:14px; font-weight:700; text-anchor:middle}
+.checklist{list-style:none; margin:14px 0}
+.checklist li{padding:9px 0 9px 34px; position:relative; border-bottom:1px solid var(--line); font-size:16px}
+.checklist li::before{content:"☐"; position:absolute; left:4px; color:var(--gold); font-size:19px; cursor:pointer}
+.checklist li.hit::before{content:"☑"; color:var(--good)}
+.checklist li.hit{color:var(--muted); text-decoration:line-through}
+.gloss{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:10px; margin:16px 0}
+.gitem{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 15px; font-size:14.5px}
+.gitem b{color:var(--gold)}
+footer{border-top:1px solid var(--line); padding:30px 0 60px; color:var(--faint); font-size:14px}
+.navrow{display:flex; justify-content:space-between; gap:10px; margin:34px 0 0; flex-wrap:wrap}
+@media(max-width:600px){.stepper{flex-direction:column}.step{flex:1}}
+</style>
+</head>
+<body>
+<header class="hero">
+<div class="wrap">
+  <span class="kicker">HTML Tutorial · Finance · Desk Mentor Edition</span>
+  <h1>How the Entire Economy Works</h1>
+  <p class="sub">The 42-minute billionaire lecture, rebuilt as a complete course. Four levels, 101 to 401: the mental model, the machinery, how to use it, and what the experts still argue about.</p>
+  <div class="source-note"><strong>On the source:</strong> this tutorial was sparked by a viral post sharing a ~42-minute lecture in which a billionaire explains the economy. The post does not name the lecturer, and the video itself could not be transcribed, so nothing here claims to quote it. What follows teaches the <strong>underlying subject</strong> — the standard economic-machine framework — from verified foundations.</div>
+  <div class="stepper" id="stepper">
+    <div class="step active" data-level="l101"><div class="n">Level 1</div><div class="t">101 · Foundations</div></div>
+    <div class="step" data-level="l201"><div class="n">Level 2</div><div class="t">201 · Mechanics</div></div>
+    <div class="step" data-level="l301"><div class="n">Level 3</div><div class="t">301 · Practice</div></div>
+    <div class="step" data-level="l401"><div class="n">Level 4</div><div class="t">401 · Mastery</div></div>
+  </div>
+  <div class="progress"><i id="pbar"></i></div>
+  <div class="progress-lbl" id="plabel">Level 1 of 4 · Foundations</div>
+  <div class="toolbar">
+    <button class="btn" id="themeBtn">Switch to light mode</button>
+    <button class="btn" id="resetBtn">Reset progress</button>
+  </div>
+</div>
+</header>
+<main>
+<div class="wrap">
+
+<!-- ==================== 101 ==================== -->
+<section class="level active" id="l101">
+  <div class="level-head"><span class="level-num">101</span><h2>Foundations</h2></div>
+  <p class="level-sub">What the economy actually is, the vocabulary you need, and the single mental model that makes everything else click.</p>
+
+  <h3>The one mental model</h3>
+  <div class="mental">The economy is not a place or a thing. It is the sum of every transaction. And every transaction has two sides: one person's <em>spending</em> is another person's <em>income</em>.</div>
+  <p>That sentence is the whole game. When you buy groceries, the store's income rises by exactly what your wallet lost. Add up every transaction in a country for a year and you get <strong>GDP</strong> — gross domestic product, which is just total spending measured at scale.</p>
+  <p>This means the economy only grows when total spending grows. And total spending comes from exactly two sources:</p>
+  <div class="card gold-border">
+    <p style="margin:0"><strong>Total spending = money changing hands + new credit created.</strong></p>
+    <p style="margin:8px 0 0; color:var(--muted); font-size:15.5px">Existing money gets spent and re-spent. Credit — borrowing — creates <em>new</em> spending power on top of it. When credit expands, the economy expands. When credit contracts, the economy contracts. Tattoo this on the inside of your eyelids; the rest of the course is commentary on it.</p>
+  </div>
+
+  <h3>The vocabulary</h3>
+  <p>Tap any term to reveal it.</p>
+  <div class="vocab">
+    <div class="vterm"><b>GDP</b><span>The market value of all finished goods and services produced in a country in a year. Practically: total national spending.</span><div class="hint">tap to reveal</div></div>
+    <div class="vterm"><b>Productivity</b><span>Output per hour of work. The only sustainable source of rising living standards: making more with the same effort, usually via knowledge, tools, and technology.</span><div class="hint">tap to reveal</div></div>
+    <div class="vterm"><b>Credit</b><span>Borrowed spending power. When a bank lends, the borrower can spend money they didn't earn yet — which becomes someone else's income today.</span><div class="hint">tap to reveal</div></div>
+    <div class="vterm"><b>Interest rate</b><span>The price of borrowing money, and the reward for lending it. The central bank's main dial for speeding up or slowing down the whole machine.</span><div class="hint">tap to reveal</div></div>
+    <div class="vterm"><b>Inflation</b><span>Prices rising across the economy, which means each dollar buys less. Usually happens when spending grows faster than the production of goods and services.</span><div class="hint">tap to reveal</div></div>
+    <div class="vterm"><b>Deflation</b><span>Prices falling across the economy. Sounds nice, is usually terrible: debts stay fixed while incomes and asset values shrink, so borrowers get crushed.</span><div class="hint">tap to reveal</div></div>
+  </div>
+
+  <h3>The circular flow: watch the machine breathe</h3>
+  <p>Money never sits still. It loops: households spend, businesses earn, businesses pay wages, households earn, households spend. Banks and the government inject and drain along the way. The animation below is the entire 101 in one picture.</p>
+  <svg class="flow-svg" viewBox="0 0 800 340" role="img" aria-label="Circular flow of the economy">
+    <rect class="flow-node" x="300" y="20" width="200" height="56" rx="12"/><text class="flow-nlbl" x="400" y="54">Households</text>
+    <rect class="flow-node" x="300" y="264" width="200" height="56" rx="12"/><text class="flow-nlbl" x="400" y="298">Businesses</text>
+    <rect class="flow-node" x="40" y="142" width="150" height="56" rx="12"/><text class="flow-nlbl" x="115" y="176">Banks</text>
+    <rect class="flow-node" x="610" y="142" width="150" height="56" rx="12"/><text class="flow-nlbl" x="685" y="176">Government</text>
+    <path class="flow-line" d="M 520 48 C 640 80, 640 260, 520 292"/><text class="flow-lbl" x="600" y="170">spending →</text>
+    <path class="flow-line" d="M 280 292 C 160 260, 160 80, 280 48"/><text class="flow-lbl" x="120" y="120">wages →</text>
+    <path class="flow-line" d="M 190 170 C 240 170, 260 120, 310 90"/><text class="flow-lbl" x="200" y="140">credit →</text>
+    <path class="flow-line" d="M 610 170 C 560 170, 540 220, 490 250"/><text class="flow-lbl" x="560" y="230">taxes →</text>
+  </svg>
+
+  <h3>Why this matters to you specifically</h3>
+  <p>Every number in your financial life is a transaction inside this machine. Your 1099 commissions are someone's spending. Your portfolio's value is the market's collective bet on future transactions. Your margin debt is credit that amplified your spending power on the way up — and will amplify the pain on the way down. You cannot opt out of the machine. You can only learn to read it.</p>
+
+  <details class="deep"><summary>Deep dive: why "the economy" and "the stock market" are not the same thing</summary><div class="body">
+    <p>The stock market is a betting window on <em>future corporate profits</em>, heavily weighted toward large companies. The economy is <em>all current transactions</em>, including wages, rent, and government spending. They correlate over long stretches but diverge for years at a time: markets can soar while workers struggle (asset owners capture the gains), or the economy can grow while markets fall (rates rising to cool inflation crush valuations). Conflating the two is one of the most expensive mistakes in 301.</p>
+  </div></details>
+
+  <div class="quiz" data-quiz="q101">
+    <h3>Check for understanding · 101</h3>
+    <div class="q" data-answer="1">
+      <p>1. If every person in a town simultaneously decides to stop spending and save instead, what happens to the town's total income?</p>
+      <button class="opt" data-i="0">It stays the same; saving doesn't destroy money</button>
+      <button class="opt" data-i="1">It falls, because one person's spending is another's income</button>
+      <button class="opt" data-i="2">It rises, because savings become investment automatically</button>
+      <div class="qfb"></div>
+    </div>
+    <div class="q" data-answer="0">
+      <p>2. Total spending in an economy grows through which two channels?</p>
+      <button class="opt" data-i="0">Existing money changing hands, plus newly created credit</button>
+      <button class="opt" data-i="1">Government printing and stock market gains</button>
+      <button class="opt" data-i="2">Exports and gold reserves</button>
+      <div class="qfb"></div>
+    </div>
+    <div class="q" data-answer="2">
+      <p>3. Why is deflation dangerous for borrowers?</p>
+      <button class="opt" data-i="0">Because banks stop lending entirely</button>
+      <button class="opt" data-i="1">Because cash loses value</button>
+      <button class="opt" data-i="2">Because debts stay fixed while incomes and asset values shrink</button>
+      <div class="qfb"></div>
+    </div>
+    <div class="qscore"></div>
+  </div>
+  <div class="navrow"><span></span><button class="btn gold" data-goto="l201">Continue to 201 · Mechanics →</button></div>
+</section>
+
+<!-- ==================== 201 ==================== -->
+<section class="level" id="l201">
+  <div class="level-head"><span class="level-num">201</span><h2>Mechanics</h2></div>
+  <p class="level-sub">How it actually works under the hood: the three forces that move everything, how credit creates money, and the cycle that repeats on schedule.</p>
+
+  <h3>The three forces</h3>
+  <p>Strip away the noise and the economy is driven by exactly three forces. Two are cycles; one is a straight line.</p>
+  <div class="card">
+    <h4 style="margin-top:0">1. Productivity growth — the straight line (up)</h4>
+    <p style="margin-bottom:0">Over decades, we learn to produce more per hour: better tools, better knowledge, better organization. This is the <em>only</em> reason living standards rise over time. It is slow, compounding, and mostly invisible quarter to quarter.</p>
+  </div>
+  <div class="card">
+    <h4 style="margin-top:0">2. The short-term debt cycle — 5 to 8 years</h4>
+    <p style="margin-bottom:0">Credit expands, spending rises, prices rise, the central bank raises rates, borrowing gets expensive, spending falls, the economy cools, the central bank cuts rates — repeat. Almost everything you see on financial news is this cycle. Recessions are just its winter.</p>
+  </div>
+  <div class="card">
+    <h4 style="margin-top:0">3. The long-term debt cycle — 75 to 100 years</h4>
+    <p style="margin-bottom:0">Each short cycle ends with a little more total debt than it started with, because rates get cut lower each time to restart growth. Eventually rates hit zero and can't be cut further. The debt burden can't be serviced by incomes anymore. That endgame is called a <strong>deleveraging</strong> — 401 covers it in full. The 1930s and 2008 were its two most recent visits.</p>
+  </div>
+
+  <h3>How credit literally creates money</h3>
+  <p>This is the mechanic most people get wrong. Banks don't lend out deposits they already have like a piggy bank. When a bank approves your loan, it types new numbers into your account. That deposit <em>is</em> new money — new spending power that didn't exist a minute ago. When you spend it, someone else earns it.</p>
+  <p>And it works in reverse with a vengeance: when loans are repaid or defaulted, that money is destroyed. Credit expansion and contraction is why the economy breathes in and out — and why the total amount of money is not fixed.</p>
+
+  <div class="worked">
+    <strong>Worked example: the $10,000 amplifier</strong>
+    <p>Imagine a town with $100,000 of money and no borrowing. Total possible spending: $100,000.</p>
+    <p>Now the bank lends $10,000 to a contractor, who spends it on materials. The supplier earns $10,000 and spends $8,000 of it. Total spending is now $100,000 + $10,000 + $8,000 + ... — the original money <em>plus</em> the credit rippling through.</p>
+    <button class="btn reveal">Reveal the punchline</button>
+    <div class="sol"><p><strong>The same $100,000 of base money supported far more than $100,000 of spending, because credit stacked on top of it.</strong> Now run it backward: if the contractor defaults and the bank tightens lending, spending doesn't just fall by $10,000 — the whole ripple reverses. This asymmetry is why credit contractions feel so violent, and why leveraged portfolios die in them.</p></div>
+  </div>
+
+  <h3>Interest rates: the price of the amplifier</h3>
+  <p>The interest rate is the price of borrowing — and simultaneously the reward for lending. The central bank (the Federal Reserve in the US) sets the base price. Lower it and borrowing gets cheap: credit expands, spending rises, asset prices inflate. Raise it and the reverse happens.</p>
+  <p>Think of the central bank as the thermostat operator for the whole machine. Inflation running hot? Raise rates to cool spending. Economy freezing? Cut rates to warm it up. The catch, which 401 will develop: the thermostat only turns one direction at the end of the long-term cycle, when rates are already at zero.</p>
+
+  <h3>Ride the short-term cycle yourself</h3>
+  <p>Click each phase. Watch what happens to rates, credit, and asset prices as the machine turns.</p>
+  <div class="cycle-ex" id="cycleEx">
+    <div class="phase active" data-p="0"><b>Early expansion</b>recovery</div>
+    <div class="phase" data-p="1"><b>Boom</b>overheating</div>
+    <div class="phase" data-p="2"><b>Tightening</b>rates bite</div>
+    <div class="phase" data-p="3"><b>Contraction</b>recession</div>
+    <div class="phase" data-p="4"><b>Deleveraging risk</b>endgame?</div>
+  </div>
+  <div id="phase-panel"><h4 id="pp-title">Early expansion</h4><p id="pp-desc"></p>
+    <div class="gauges">
+      <div class="gauge"><b>Interest rates</b><span id="g-rates"></span></div>
+      <div class="gauge"><b>Credit growth</b><span id="g-credit"></span></div>
+      <div class="gauge"><b>Asset prices</b><span id="g-assets"></span></div>
+      <div class="gauge"><b>What to watch</b><span id="g-watch"></span></div>
+    </div>
+  </div>
+
+  <details class="deep"><summary>Deep dive: why recessions are a feature, not a bug</summary><div class="body">
+    <p>A recession is the machine clearing bad debts and misallocated spending so the next expansion starts clean. Economies that never allow contractions — that bail out every excess — don't avoid the pain; they store it up for the long-term cycle's endgame, where it arrives all at once. This is the core of the Austrian-school critique you'll meet in 401, and it's worth holding even if you disagree with their prescriptions.</p>
+  </div></details>
+
+  <div class="quiz" data-quiz="q201">
+    <h3>Check for understanding · 201</h3>
+    <div class="q" data-answer="1">
+      <p>1. When a bank issues a new loan, what happens to the total money supply?</p>
+      <button class="opt" data-i="0">Nothing; it just moves existing deposits around</button>
+      <button class="opt" data-i="1">It increases; the new deposit is newly created spending power</button>
+      <button class="opt" data-i="2">It decreases; reserves are locked up</button>
+      <div class="qfb"></div>
+    </div>
+    <div class="q" data-answer="0">
+      <p>2. Which force is the only sustainable long-run source of rising living standards?</p>
+      <button class="opt" data-i="0">Productivity growth</button>
+      <button class="opt" data-i="1">The short-term debt cycle</button>
+      <button class="opt" data-i="2">Central bank rate cuts</button>
+      <div class="qfb"></div>
+    </div>
+    <div class="q" data-answer="2">
+      <p>3. Why does each short-term cycle tend to end with more total debt than the last?</p>
+      <button class="opt" data-i="0">Because governments always run deficits</button>
+      <button class="opt" data-i="1">Because productivity keeps falling</button>
+      <button class="opt" data-i="2">Because rates are cut lower each cycle to restart growth, so debt never fully clears</button>
+      <div class="qfb"></div>
+    </div>
+    <div class="qscore"></div>
+  </div>
+  <div class="navrow"><button class="btn" data-goto="l101">← Back to 101</button><button class="btn gold" data-goto="l301">Continue to 301 · Practice →</button></div>
+</section>
+
+<!-- ==================== 301 ==================== -->
+<section class="level" id="l301">
+  <div class="level-head"><span class="level-num">301</span><h2>Practice</h2></div>
+  <p class="level-sub">Reading the cycle in real time, what it means for leveraged money, and the mistakes that separate survivors from cautionary tales.</p>
+
+  <h3>Reading where you are in the cycle</h3>
+  <p>No single indicator calls the turn. Practitioners triangulate:</p>
+  <table>
+    <tr><th>Indicator</th><th>What it tells you</th><th>Late-cycle warning sign</th></tr>
+    <tr><td>Yield curve</td><td>What bond investors expect. Long rates vs short rates.</td><td>Inverts (short &gt; long): recession has followed most inversions within 6–18 months.</td></tr>
+    <tr><td>Credit growth vs income growth</td><td>Whether spending is funded by earnings or borrowing.</td><td>Debt growing much faster than incomes for years.</td></tr>
+    <tr><td>Debt-service ratio</td><td>Share of income eaten by interest payments.</td><td>Rising fast as rates climb — the bite before the fall.</td></tr>
+    <tr><td>Unemployment + inflation together</td><td>Which problem the central bank is fighting.</td><td>Both rising (stagflation): the thermostat is broken.</td></tr>
+  </table>
+
+  <h3>What the cycle means for leveraged money</h3>
+  <p>This is the part that touches your account directly. Leverage is renting someone else's spending power to amplify your bets. In an expansion, it amplifies gains. In a contraction, the math turns mechanical and cruel:</p>
+  <div class="card gold-border">
+    <p><strong>Asset prices fall. Debts don't.</strong> Your portfolio's value is a bet on future transactions; in a contraction those get marked down fast. Your margin loan balance doesn't mark down at all. Equity = assets − debts, so equity absorbs the entire fall on both sides. At 2x leverage, a 25% portfolio drawdown is a 50% equity drawdown — and the broker can force sales at the bottom via margin call, turning paper losses into permanent ones.</p>
+    <p style="margin-bottom:0; color:var(--muted); font-size:15.5px">This is why contractions kill leveraged players first, and why the standing rule — never sell at a loss unless margin-forced — is really a rule about <em>never letting the cycle force your hand</em>.</p>
+  </div>
+
+  <div class="worked">
+    <strong>Worked example: a rate-hike cycle meets a 2x margined portfolio</strong>
+    <p>Illustrative numbers. You hold $200,000 of stock: $100,000 equity, $100,000 margin loan. The central bank hikes to fight inflation. Higher rates → lower valuations → your stocks fall 20% to $160,000.</p>
+    <button class="btn reveal">Reveal the math</button>
+    <div class="sol">
+      <p>Assets: $160,000. Debt: still $100,000. Equity: $60,000 — a <strong>40% loss on a 20% market fall</strong>. Your leverage ratio is now 2.67x ($160k/$60k), likely breaching maintenance requirements. The broker issues a margin call: deposit cash or they sell your positions into the falling market.</p>
+      <p><strong>The lesson:</strong> the damage didn't come from being wrong about the stocks. It came from the cycle repricing <em>all</em> risk assets at once while the debt stood still. Leverage converts a survivable drawdown into a forced liquidation. Size leverage for the contraction, not the expansion.</p>
+    </div>
+  </div>
+
+  <h3>The three expensive mistakes</h3>
+  <div class="card">
+    <h4 style="margin-top:0">1. Fighting the central bank</h4>
+    <p style="margin-bottom:0">"Don't fight the Fed" exists because the central bank controls the price of credit for the entire economy. Betting against the direction of rates is betting against the machine's thermostat — you can be right eventually and bankrupt first.</p>
+  </div>
+  <div class="card">
+    <h4 style="margin-top:0">2. Confusing the short cycle with the long one</h4>
+    <p style="margin-bottom:0">Every recession feels like the end of the world; almost none are. The expensive error runs both ways: treating a normal short-cycle dip as a deleveraging (panic-selling the bottom) or treating a long-cycle endgame as a dip (buying 2008 like it was 2002). Ask: are debts being restructured and rates at zero? If not, it's probably just winter.</p>
+  </div>
+  <div class="card">
+    <h4 style="margin-top:0">3. Equating productivity with stock returns</h4>
+    <p style="margin-bottom:0">The economy can grow while your stocks fall (rates rising to cool inflation crush multiples), and stocks can soar while workers struggle (gains captured by asset owners). Your portfolio is not the economy; it's a leveraged bet on a slice of its future.</p>
+  </div>
+
+  <h3>Pre-leverage checklist</h3>
+  <p>Tap each item as you confirm it. Run this before adding margin, not after.</p>
+  <ul class="checklist" id="lev-check">
+    <li>I've identified which phase of the short-term cycle we're in.</li>
+    <li>I know the central bank's current direction (hiking, holding, or cutting).</li>
+    <li>I've sized the position for a 30%+ drawdown without a margin call.</li>
+    <li>My cash floor and reserves are untouched by this trade.</li>
+    <li>I can name the level at which I'd be forced to sell — and it's far away.</li>
+  </ul>
+
+  <div class="quiz" data-quiz="q301">
+    <h3>Check for understanding · 301</h3>
+    <div class="q" data-answer="0">
+      <p>1. At 2x leverage, a 20% fall in asset prices produces roughly what equity loss?</p>
+      <button class="opt" data-i="0">~40%, because debts stay fixed while assets fall</button>
+      <button class="opt" data-i="1">~20%, leverage only affects gains</button>
+      <button class="opt" data-i="2">~10%, the broker absorbs half</button>
+      <div class="qfb"></div>
+    </div>
+    <div class="q" data-answer="1">
+      <p>2. An inverted yield curve is watched because…</p>
+      <button class="opt" data-i="0">It guarantees a recession next week</button>
+      <button class="opt" data-i="1">Bond investors are pricing slower growth ahead, and recessions have usually followed within 6–18 months</button>
+      <button class="opt" data-i="2">It means inflation is over</button>
+      <div class="qfb"></div>
+    </div>
+    <div class="q" data-answer="2">
+      <p>3. How do you tell a normal recession from a long-cycle deleveraging?</p>
+      <button class="opt" data-i="0">By how fast stocks fall</button>
+      <button class="opt" data-i="1">You can't; they're identical</button>
+      <button class="opt" data-i="2">Deleveragings feature rates near zero, mass debt restructuring, and debts that can't be serviced by incomes</button>
+      <div class="qfb"></div>
+    </div>
+    <div class="qscore"></div>
+  </div>
+  <div class="navrow"><button class="btn" data-goto="l201">← Back to 201</button><button class="btn gold" data-goto="l401">Continue to 401 · Mastery →</button></div>
+</section>
+
+<!-- ==================== 401 ==================== -->
+<section class="level" id="l401">
+  <div class="level-head"><span class="level-num">401</span><h2>Mastery</h2></div>
+  <p class="level-sub">The endgame of debt, the levers that resolve it, where the experts genuinely disagree, and what the textbooks leave out.</p>
+
+  <h3>Deleveraging: when debts outgrow incomes</h3>
+  <p>Debts can't grow faster than incomes forever — the lender eventually doubts repayment, credit contracts, and the machine seizes. Because rates are already near zero, the central bank's thermostat is broken. The economy must deleverage: bring debt back in line with income. There are exactly four levers, and every resolution in history is a mix of them:</p>
+  <table>
+    <tr><th>Lever</th><th>What it is</th><th>Who pays</th></tr>
+    <tr><td>1. Austerity</td><td>Cut spending, pay down debt</td><td>Debtors, today — spending falls, incomes fall with it</td></tr>
+    <tr><td>2. Debt restructuring</td><td>Defaults, write-downs, renegotiation</td><td>Creditors — lenders eat the loss</td></tr>
+    <tr><td>3. Money printing</td><td>Central bank buys assets, injects spending power</td><td>Savers and cash-holders, via inflation and currency debasement</td></tr>
+    <tr><td>4. Redistribution</td><td>Move wealth from haves to have-nots (taxes, transfers)</td><td>The wealthy — and political stability, if it goes too far</td></tr>
+  </table>
+  <div class="mental">A <strong>beautiful deleveraging</strong> balances the levers so nominal incomes keep growing while debt burdens shrink. An <strong>ugly</strong> one leans on austerity alone: spending collapses, incomes collapse faster than debts, and the burden gets heavier the harder everyone struggles.</div>
+
+  <h3>Where the experts disagree</h3>
+  <p>Honest economists watch the same machine and prescribe opposite medicine. Know the camps:</p>
+  <div class="card">
+    <h4 style="margin-top:0">Keynesians: spend through it</h4>
+    <p style="margin-bottom:0">In a slump, private spending won't recover on its own, so the government must borrow and spend to replace it. Austerity during a contraction is self-defeating. (The 2009 stimulus playbook.)</p>
+  </div>
+  <div class="card">
+    <h4 style="margin-top:0">Austrians: liquidate, don't medicate</h4>
+    <p style="margin-bottom:0">Bailouts and printed money prevent the clearing that recessions exist for. Bad debts must default and malinvestment must be wiped out, or you get zombie economies and bigger endgames. (The 1920–21 playbook: do nothing, recover in 18 months.)</p>
+  </div>
+  <div class="card">
+    <h4 style="margin-top:0">MMT (Modern Monetary Theory): the constraint is inflation, not solvency</h4>
+    <p style="margin-bottom:0">A government that borrows in its own currency can't involuntarily go broke — it can always create the money. The real limit is whether spending outruns productive capacity and ignites inflation. Deficits are fine until they're not.</p>
+  </div>
+  <p style="color:var(--muted)">The desk mentor's take: each camp is right about the failure mode of the others. Keynesians correctly fear the austerity death spiral; Austrians correctly fear the zombie-debt buildup; MMT correctly notes the printing press exists but waves away how political the inflation constraint gets. Position with the cycle, not with a tribe.</p>
+
+  <details class="deep"><summary>Deep dive: the two historical endgames</summary><div class="body">
+    <p><strong>The 1930s (ugly):</strong> the US leaned on austerity and tight money early. Spending collapsed, incomes collapsed faster, debts got heavier in real terms. Recovery only came with massive government spending and, eventually, wartime mobilization — levers 3 and 4 arriving late.</p>
+    <p><strong>2008 (managed):</strong> rates hit zero, so the Fed printed aggressively (quantitative easing — lever 3) while Treasury recapitalized banks. Painful, but nominal incomes kept growing and the debt-to-income ratio fell over roughly a decade. Closer to beautiful than 1929, at the cost of asset-price inflation that widened inequality — the bill for lever 3 always arrives somewhere.</p>
+  </div></details>
+
+  <h3>What the textbooks leave out</h3>
+  <p><strong>The short cycle is psychology wearing a math costume.</strong> Euphoria and panic move credit faster than any model predicts. Every bubble's participants had the data; they lacked the emotional distance. Your trading journal exists to be the distance.</p>
+  <p><strong>The long cycle is politics and demographics.</strong> Who bears the deleveraging — debtors, creditors, savers, taxpayers — is decided by power, not equations. Aging populations, inequality, and fiscal dominance (governments so indebted that rate hikes would bankrupt the Treasury itself) are the live variables right now.</p>
+  <p><strong>Where it's going:</strong> the live debates are fiscal dominance vs. central bank independence, central bank digital currencies (programmable money that would change the credit-creation mechanic itself), and whether current sovereign debt trajectories end in inflation, restructuring, or another long grind of financial repression.</p>
+
+  <div class="quiz" data-quiz="q401">
+    <h3>Check for understanding · 401</h3>
+    <div class="q" data-answer="2">
+      <p>1. Why can't the central bank just cut rates to end a long-cycle deleveraging?</p>
+      <button class="opt" data-i="0">Because Congress forbids it</button>
+      <button class="opt" data-i="1">Because banks refuse to lend</button>
+      <button class="opt" data-i="2">Because rates are already near zero — the thermostat has no room left</button>
+      <div class="qfb"></div>
+    </div>
+    <div class="q" data-answer="0">
+      <p>1. Which combination defines a "beautiful" deleveraging?</p>
+      <button class="opt" data-i="0">Balanced use of all four levers so incomes grow while debt burdens shrink</button>
+      <button class="opt" data-i="1">Pure austerity until every debt is repaid</button>
+      <button class="opt" data-i="2">Printing money with no other measures</button>
+      <div class="qfb" style="font-size:13px;color:var(--faint)">(yes, numbered 1 again — consider it a pop quiz on attention)</div>
+    </div>
+    <div class="q" data-answer="1">
+      <p>3. The core MMT claim is…</p>
+      <button class="opt" data-i="0">Deficits never matter at all</button>
+      <button class="opt" data-i="1">A currency-issuing government can't go broke involuntarily; inflation, not solvency, is the constraint</button>
+      <button class="opt" data-i="2">Gold should back all currency</button>
+      <div class="qfb"></div>
+    </div>
+    <div class="qscore"></div>
+  </div>
+  <div class="navrow"><button class="btn" data-goto="l301">← Back to 301</button><button class="btn gold" id="finishBtn">Finish the course ↓</button></div>
+</section>
+
+<!-- ==================== GLOSSARY ==================== -->
+<section id="glossary" style="margin-top:44px">
+  <h2>Glossary</h2>
+  <p class="level-sub">Every key term in one place.</p>
+  <div class="gloss">
+    <div class="gitem"><b>GDP</b> — total national spending; the market value of all finished goods and services produced in a year.</div>
+    <div class="gitem"><b>Productivity</b> — output per hour worked; the only sustainable source of rising living standards.</div>
+    <div class="gitem"><b>Credit</b> — borrowed spending power; expands total spending beyond existing money.</div>
+    <div class="gitem"><b>Interest rate</b> — the price of borrowing and the reward for lending; the central bank's main dial.</div>
+    <div class="gitem"><b>Inflation</b> — broad price rises; each dollar buys less. Often follows spending outrunning production.</div>
+    <div class="gitem"><b>Deflation</b> — broad price falls; debts stay fixed while incomes shrink. Dangerous for borrowers.</div>
+    <div class="gitem"><b>Short-term debt cycle</b> — the 5–8 year credit expansion/contraction rhythm; recessions are its winter.</div>
+    <div class="gitem"><b>Long-term debt cycle</b> — the 75–100 year buildup ending when debts can't be serviced; resolved by deleveraging.</div>
+    <div class="gitem"><b>Deleveraging</b> — the painful process of bringing debt back in line with income via four levers.</div>
+    <div class="gitem"><b>Austerity</b> — cutting spending to pay down debt; shrinks incomes alongside debts.</div>
+    <div class="gitem"><b>Yield curve</b> — long vs short interest rates; inversion has usually preceded recessions.</div>
+    <div class="gitem"><b>Debt-service ratio</b> — share of income consumed by interest payments; the bite before the fall.</div>
+    <div class="gitem"><b>Fiscal dominance</b> — when government debt is so large that rate hikes threaten the Treasury itself.</div>
+    <div class="gitem"><b>Financial repression</b> — holding rates below inflation to quietly shrink debt burdens; savers pay.</div>
+  </div>
+</section>
+
+</div>
+</main>
+<footer>
+<div class="wrap">
+  <p>Built with the HTML Tutorial skill · Finance desk-mentor edition. Content teaches the standard economic-machine framework (productivity growth, short-term and long-term debt cycles, deleveraging mechanics) from established macroeconomic foundations. Illustrative numbers are labeled as such and are not forecasts. Sparked by a viral September 2026 post sharing a ~42-minute billionaire lecture on the economy; no transcript was available and nothing here quotes it.</p>
+</div>
+</footer>
+<script>
+(function(){
+  var levels=["l101","l201","l301","l401"];
+  var names={l101:"Level 1 of 4 · Foundations",l201:"Level 2 of 4 · Mechanics",l301:"Level 3 of 4 · Practice",l401:"Level 4 of 4 · Mastery"};
+  var visited={l101:true};
+  var quizDone={};
+  function $(s){return document.querySelector(s)}
+  function $all(s){return Array.prototype.slice.call(document.querySelectorAll(s))}
+  function updateProgress(){
+    var v=levels.filter(function(l){return visited[l]}).length;
+    var q=levels.filter(function(l){return quizDone[l]}).length;
+    var pct=Math.round(((v+q)/(levels.length*2))*100);
+    $("#pbar").style.width=pct+"%";
+    var cur=$(".level.active").id;
+    $("#plabel").textContent=names[cur]+" · "+pct+"% complete";
+    $all(".step").forEach(function(s){
+      var l=s.getAttribute("data-level");
+      s.classList.toggle("done",!!quizDone[l]);
+    });
+    try{localStorage.setItem("econTut",JSON.stringify({visited:visited,quizDone:quizDone}))}catch(e){}
+  }
+  function go(id){
+    $all(".level").forEach(function(s){s.classList.remove("active")});
+    $all(".step").forEach(function(s){s.classList.remove("active")});
+    $("#"+id).classList.add("active");
+    var st=document.querySelector('.step[data-level="'+id+'"]');
+    if(st)st.classList.add("active");
+    visited[id]=true; updateProgress();
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+  $all(".step").forEach(function(s){s.addEventListener("click",function(){go(s.getAttribute("data-level"))})});
+  $all("[data-goto]").forEach(function(b){b.addEventListener("click",function(){go(b.getAttribute("data-goto"))})});
+  $("#finishBtn").addEventListener("click",function(){
+    document.getElementById("glossary").scrollIntoView({behavior:"smooth"});
+  });
+  // restore
+  try{
+    var saved=JSON.parse(localStorage.getItem("econTut")||"null");
+    if(saved){visited=saved.visited||visited; quizDone=saved.quizDone||{}}
+  }catch(e){}
+  // vocab
+  $all(".vterm").forEach(function(t){t.addEventListener("click",function(){t.classList.toggle("open")})});
+  // worked examples
+  $all(".worked .reveal").forEach(function(b){
+    var label=b.textContent;
+    b.addEventListener("click",function(){
+      var w=b.closest(".worked"); w.classList.toggle("revealed");
+      b.textContent=w.classList.contains("revealed")?"Hide the solution":label;
+    });
+  });
+  // quizzes
+  $all(".quiz").forEach(function(quiz){
+    var key=quiz.getAttribute("data-quiz");
+    var qs=quiz.querySelectorAll(".q");
+    var answered=0, correct=0;
+    var scoreEl=quiz.querySelector(".qscore");
+    qs.forEach(function(q){
+      var ans=parseInt(q.getAttribute("data-answer"),10);
+      var fb=q.querySelector(".qfb");
+      var opts=q.querySelectorAll(".opt");
+      opts.forEach(function(o){
+        o.addEventListener("click",function(){
+          if(o.disabled)return;
+          var pick=parseInt(o.getAttribute("data-i"),10);
+          opts.forEach(function(x){x.disabled=true});
+          answered++;
+          if(pick===ans){o.classList.add("right"); correct++; fb.textContent="Correct."; fb.className="qfb show ok";}
+          else{o.classList.add("wrong"); opts[ans].classList.add("right"); fb.textContent="Not quite — the highlighted answer is correct."; fb.className="qfb show no";}
+          scoreEl.textContent="Score: "+correct+" / "+answered+(answered===qs.length?(correct===qs.length?" — level complete.":" — review and try the level again."):"");
+          if(answered===qs.length){quizDone[key.replace("q","l")]=correct===qs.length; updateProgress();}
+        });
+      });
+    });
+  });
+  // cycle explorer
+  var phases=[
+    {t:"Early expansion",d:"Rates were cut to end the last contraction. Borrowing is cheap, so credit starts flowing again. Businesses hire, spending rises, asset prices recover from the bottom. Optimism is cautious — nobody trusts it yet.",r:"Low and falling",c:"Re-accelerating",a:"Recovering from lows",w:"Hiring picking up; defaults still elevated"},
+    {t:"Boom",d:"Credit is easy and confidence is high. Spending surges, asset prices climb, speculation creeps in. Inflation starts running above target — the machine is overheating.",r:"Rising — the central bank starts hiking",c:"Surging",a:"Climbing fast; speculation rising",w:"Inflation prints; debt growing faster than incomes"},
+    {t:"Tightening",d:"Rates are now high enough to bite. Debt-service costs climb, borrowing slows, spending cools. Asset valuations compress as future cash flows get discounted at higher rates. This is where leverage starts hurting.",r:"High / peak",c:"Slowing sharply",a:"Falling; multiples compress",w:"Yield curve flattens or inverts; defaults tick up"},
+    {t:"Contraction",d:"Spending falls, incomes fall, layoffs rise. Defaults spike and credit contracts further — the ripple in reverse. The central bank cuts rates to restart the machine. Painful, but normal: this is the short cycle's winter.",r:"Being cut",c:"Contracting",a:"Down hard; forced selling",w:"Unemployment rising; credit spreads blowing out"},
+    {t:"Deleveraging risk",d:"If this contraction arrives with rates already near zero and debt far above incomes, rate cuts can't restart growth. The long-term cycle's endgame begins: austerity, restructuring, money printing, and redistribution in some mix. See 401.",r:"Near zero — no ammunition left",c:"Collapsing",a:"Crashing then repriced",w:"Debt-to-income ratios; sovereign stress; political upheaval"}
+  ];
+  var cyc=$("#cycleEx");
+  function setPhase(i){
+    cyc.querySelectorAll(".phase").forEach(function(p,idx){p.classList.toggle("active",idx===i)});
+    var ph=phases[i];
+    $("#pp-title").textContent=ph.t; $("#pp-desc").textContent=ph.d;
+    $("#g-rates").textContent=ph.r; $("#g-credit").textContent=ph.c;
+    $("#g-assets").textContent=ph.a; $("#g-watch").textContent=ph.w;
+  }
+  cyc.querySelectorAll(".phase").forEach(function(p){
+    p.addEventListener("click",function(){setPhase(parseInt(p.getAttribute("data-p"),10))});
+  });
+  setPhase(0);
+  // checklist
+  $all("#lev-check li").forEach(function(li){li.addEventListener("click",function(){li.classList.toggle("hit")})});
+  // theme
+  var themeBtn=$("#themeBtn");
+  function setTheme(t){
+    document.documentElement.setAttribute("data-theme",t);
+    themeBtn.textContent=t==="dark"?"Switch to light mode":"Switch to dark mode";
+    try{localStorage.setItem("econTheme",t)}catch(e){}
+  }
+  themeBtn.addEventListener("click",function(){
+    setTheme(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark");
+  });
+  try{var st2=localStorage.getItem("econTheme"); if(st2)setTheme(st2);}catch(e){}
+  $("#resetBtn").addEventListener("click",function(){
+    visited={l101:true}; quizDone={};
+    try{localStorage.removeItem("econTut")}catch(e){}
+    location.reload();
+  });
+  updateProgress();
+})();
+</script>
+</body>
+</html>
