@@ -99,5 +99,12 @@ window.SITES = [
     blurb: "Greene's model of influence taught straight, with manipulation red flags kept front and center.",
     topic: "Strategy",
     added: "2026-09-26"
+  },
+  {
+    file: "the-laws-of-human-nature.html",
+    title: "The Laws of Human Nature",
+    blurb: "All 18 laws through four practical lenses, with bias checks, case labs, and an ethical field card.",
+    topic: "Strategy",
+    added: "2026-09-26"
   }
 ];
