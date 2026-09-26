@@ -57,7 +57,7 @@ window.SITES = [
     blurb: "Three models, one picker: route every prompt to Plus, Max, or Omni-Flash at the right price.",
     topic: "AI tools",
     added: "2026-09-21"
-  }
+  },
   {
     file: "how-the-entire-economy-works.html",
     title: "How the Entire Economy Works",
@@ -66,3 +66,4 @@ window.SITES = [
     added: "2026-09-26"
   }
 ];
+
