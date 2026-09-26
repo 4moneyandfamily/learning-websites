@@ -92,5 +92,12 @@ window.SITES = [
     blurb: "Musashi's five scrolls on perception, rhythm, and initiative, translated into modern scenarios and field practice.",
     topic: "Strategy",
     added: "2026-09-26"
+  },
+  {
+    file: "the-art-of-seduction.html",
+    title: "The Art of Seduction",
+    blurb: "Greene's model of influence taught straight, with manipulation red flags kept front and center.",
+    topic: "Strategy",
+    added: "2026-09-26"
   }
 ];
