@@ -120,5 +120,12 @@ window.SITES = [
     blurb: "Tactical empathy, calibrated questions, and the Ackerman method, drilled through scenarios and quizzes.",
     topic: "Communication",
     added: "2026-09-26"
+  },
+  {
+    file: "think-and-grow-rich.html",
+    title: "Think and Grow Rich",
+    blurb: "The thirteen principles' useful execution discipline, separated from the book's unsupported metaphysical claims.",
+    topic: "Strategy",
+    added: "2026-09-26"
   }
 ];
