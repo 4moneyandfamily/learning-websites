@@ -71,5 +71,12 @@ window.SITES = [
     blurb: "All 48 laws, searchable and filterable, with ethical translations and an honest critique of the evidence.",
     topic: "Strategy",
     added: "2026-09-26"
+  },
+  {
+    file: "understanding-the-catholic-faith.html",
+    title: "Understanding the Catholic Faith",
+    blurb: "Salvation history to the sacraments: a 101-to-401 course in what the Church teaches and why, with primary sources.",
+    topic: "Faith",
+    added: "2026-09-26"
   }
 ];
