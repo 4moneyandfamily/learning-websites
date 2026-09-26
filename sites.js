@@ -58,4 +58,11 @@ window.SITES = [
     topic: "AI tools",
     added: "2026-09-21"
   }
+  {
+    file: "how-the-entire-economy-works.html",
+    title: "How the Entire Economy Works",
+    blurb: "The viral 42-minute billionaire lecture rebuilt as an interactive course: transactions, credit, debt cycles, and deleveraging, 101 to 401.",
+    topic: "Finance",
+    added: "2026-09-26"
+  }
 ];
