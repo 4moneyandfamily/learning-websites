@@ -78,5 +78,12 @@ window.SITES = [
     blurb: "Salvation history to the sacraments: a 101-to-401 course in what the Church teaches and why, with primary sources.",
     topic: "Faith",
     added: "2026-09-26"
+  },
+  {
+    file: "the-rosary.html",
+    title: "The Rosary",
+    blurb: "Bead by bead: the prayers, all twenty mysteries with Scripture and fruits, and how to meditate with them.",
+    topic: "Faith",
+    added: "2026-09-26"
   }
 ];
