@@ -64,6 +64,12 @@ window.SITES = [
     blurb: "The viral 42-minute billionaire lecture rebuilt as an interactive course: transactions, credit, debt cycles, and deleveraging, 101 to 401.",
     topic: "Finance",
     added: "2026-09-26"
+  },
+  {
+    file: "the-48-laws-of-power.html",
+    title: "The 48 Laws of Power",
+    blurb: "All 48 laws, searchable and filterable, with ethical translations and an honest critique of the evidence.",
+    topic: "Strategy",
+    added: "2026-09-26"
   }
 ];
-
