@@ -113,5 +113,12 @@ window.SITES = [
     blurb: "Jefferson Fisher's framework for hard conversations: control, confidence, connection, and framing.",
     topic: "Communication",
     added: "2026-09-26"
+  },
+  {
+    file: "never-split-the-difference.html",
+    title: "Never Split the Difference",
+    blurb: "Tactical empathy, calibrated questions, and the Ackerman method, drilled through scenarios and quizzes.",
+    topic: "Communication",
+    added: "2026-09-26"
   }
 ];
