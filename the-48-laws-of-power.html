@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <link rel="icon" href="data:," />
+  <title>The 48 Laws of Power</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --paper: #f5f1e8;
+      --paper-2: #ebe4d6;
+      --ink: #171514;
+      --muted: #625b53;
+      --line: #cfc4b2;
+      --red: #b72e2a;
+      --red-dark: #7f1f1d;
+      --gold: #a4762e;
+      --card: #fffdf8;
+      --soft: #e7dfd2;
+      --good: #245e48;
+      --warn: #8e541f;
+      --shadow: 0 18px 50px rgba(44, 35, 27, .12);
+      --serif: "Libre Baskerville", Georgia, serif;
+      --sans: "IBM Plex Sans", sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #141210;
+        --paper-2: #1d1916;
+        --ink: #f1eadf;
+        --muted: #bcb1a4;
+        --line: #403832;
+        --red: #e0524c;
+        --red-dark: #ff746d;
+        --gold: #d0a65d;
+        --card: #1b1815;
+        --soft: #28231f;
+        --good: #6ec09a;
+        --warn: #dfa266;
+        --shadow: 0 18px 55px rgba(0,0,0,.35);
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.6;
+      text-rendering: optimizeLegibility;
+    }
+    button, input { font: inherit; }
+    a { color: var(--red); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    a:hover { color: var(--red-dark); }
+    .page { max-width: 1180px; margin: 0 auto; padding: 24px clamp(18px, 4vw, 54px) 64px; }
+    .hero {
+      min-height: 74vh;
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(230px, .75fr);
+      gap: clamp(34px, 7vw, 90px);
+      align-items: center;
+      padding: clamp(40px, 7vw, 86px) 0 56px;
+      border-bottom: 1px solid var(--line);
+      position: relative;
+    }
+    .hero::before {
+      content: "48";
+      position: absolute;
+      right: 27%;
+      top: 3%;
+      font: 700 clamp(150px, 24vw, 330px)/.8 var(--serif);
+      color: var(--soft);
+      z-index: -1;
+      letter-spacing: -.08em;
+    }
+    .kicker { margin: 0 0 14px; color: var(--red); font-weight: 700; letter-spacing: .06em; }
+    h1, h2, h3 { font-family: var(--serif); line-height: 1.12; }
+    h1 { margin: 0 0 22px; font-size: clamp(44px, 7vw, 88px); letter-spacing: -.045em; max-width: 760px; }
+    .hero-copy { font-family: var(--serif); font-size: clamp(18px, 2vw, 24px); max-width: 690px; margin: 0 0 28px; color: var(--muted); }
+    .hero-note { border-left: 4px solid var(--red); padding: 2px 0 2px 18px; max-width: 660px; }
+    .hero-note strong { color: var(--ink); }
+    .hero-note p { margin: 0; color: var(--muted); }
+    .cover-wrap { justify-self: center; width: min(270px, 72vw); }
+    .cover-frame { background: #ddd; padding: 10px; box-shadow: var(--shadow); transform: rotate(1.4deg); }
+    .cover-frame img { display: block; width: 100%; height: auto; aspect-ratio: 5/8; object-fit: cover; }
+    .cover-caption { margin: 15px 0 0; color: var(--muted); font-size: 13px; text-align: center; }
+    .lesson-nav {
+      position: sticky; top: 0; z-index: 30;
+      margin: 0 calc(clamp(18px, 4vw, 54px) * -1);
+      padding: 10px clamp(18px, 4vw, 54px);
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      background: color-mix(in srgb, var(--paper) 92%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    .lesson-nav button {
+      border: 0; border-right: 1px solid var(--line); background: transparent; color: var(--muted);
+      padding: 11px 8px; cursor: pointer; font-weight: 700;
+    }
+    .lesson-nav button:last-child { border-right: 0; }
+    .lesson-nav button[aria-selected="true"] { color: var(--red); }
+    .lesson { padding: clamp(58px, 8vw, 100px) 0 10px; scroll-margin-top: 76px; }
+    .lesson-head { display: grid; grid-template-columns: 130px 1fr; gap: 26px; align-items: start; margin-bottom: 42px; }
+    .level-number { font: 700 56px/1 var(--serif); color: var(--red); letter-spacing: -.05em; }
+    .lesson h2 { margin: 0 0 12px; font-size: clamp(32px, 5vw, 58px); letter-spacing: -.035em; }
+    .lead { font-family: var(--serif); color: var(--muted); font-size: clamp(17px, 1.8vw, 22px); max-width: 820px; margin: 0; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+    .panel { background: var(--card); border: 1px solid var(--line); padding: clamp(22px, 3vw, 34px); box-shadow: 0 8px 25px rgba(44,35,27,.05); }
+    .panel h3 { margin: 0 0 12px; font-size: 24px; }
+    .panel p:last-child { margin-bottom: 0; }
+    .mental-model { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); margin: 28px 0; }
+    .mental-step { padding: 24px; border-right: 1px solid var(--line); background: var(--card); }
+    .mental-step:last-child { border-right: 0; }
+    .mental-step b { display: block; font-family: var(--serif); font-size: 20px; color: var(--red); margin-bottom: 6px; }
+    .mental-step span { color: var(--muted); }
+    .key-idea { margin: 28px 0; padding: 26px 28px; background: var(--ink); color: var(--paper); }
+    .key-idea p { margin: 0; font: 400 clamp(19px, 2.5vw, 28px)/1.45 var(--serif); }
+    .key-idea em { color: #e8b1a8; }
+    .terms { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    .term { position: relative; }
+    .term button { border: 1px solid var(--line); background: var(--card); color: var(--ink); padding: 9px 13px; cursor: pointer; font-weight: 600; }
+    .term button:hover, .term button:focus-visible { border-color: var(--red); outline: none; }
+    .term .definition { display: none; position: absolute; z-index: 12; left: 0; top: calc(100% + 8px); width: min(300px, 78vw); padding: 14px; background: var(--ink); color: var(--paper); box-shadow: var(--shadow); font-size: 14px; }
+    .term.open .definition { display: block; }
+    .bridge { margin: 30px 0 0; padding: 18px 22px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-family: var(--serif); }
+    .bridge b { color: var(--red); }
+    .library-tools { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
+    .search-box { flex: 1 1 260px; min-width: 0; border: 1px solid var(--line); background: var(--card); color: var(--ink); padding: 12px 14px; border-radius: 0; }
+    .filters { display: flex; flex-wrap: wrap; gap: 8px; }
+    .filter { border: 1px solid var(--line); background: transparent; color: var(--ink); padding: 10px 12px; cursor: pointer; }
+    .filter.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+    .law-count { color: var(--muted); font-size: 14px; margin: 0 0 14px; }
+    .law-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .law-card { border: 1px solid var(--line); background: var(--card); padding: 0; min-width: 0; }
+    .law-card[hidden] { display: none; }
+    .law-toggle { width: 100%; border: 0; background: transparent; color: inherit; cursor: pointer; padding: 18px; text-align: left; display: grid; grid-template-columns: 38px 1fr 18px; gap: 10px; align-items: start; }
+    .law-num { font: 700 24px/1 var(--serif); color: var(--red); }
+    .law-title { font-weight: 700; line-height: 1.35; }
+    .law-plus { color: var(--muted); font-size: 21px; line-height: 1; transition: transform .18s ease; }
+    .law-card.open .law-plus { transform: rotate(45deg); }
+    .law-detail { display: none; padding: 0 18px 20px 66px; }
+    .law-card.open .law-detail { display: block; }
+    .law-detail p { margin: 0 0 11px; font-size: 14px; color: var(--muted); }
+    .law-detail p:last-child { margin-bottom: 0; }
+    .law-detail strong { color: var(--ink); }
+    .risk { display: inline-block; margin-top: 3px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--warn); }
+    .risk.low { color: var(--good); }
+    .case { border-top: 1px solid var(--line); padding: 28px 0; display: grid; grid-template-columns: 140px 1fr; gap: 24px; }
+    .case:last-child { border-bottom: 1px solid var(--line); }
+    .case-label { color: var(--red); font-weight: 700; }
+    .case h3 { margin: 0 0 10px; font-size: 24px; }
+    .case p { margin: 0 0 11px; }
+    .decision-lens { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); margin: 30px 0; }
+    .lens { padding: 20px; border-right: 1px solid var(--line); }
+    .lens:last-child { border-right: 0; }
+    .lens b { display: block; color: var(--red); font-family: var(--serif); font-size: 20px; margin-bottom: 6px; }
+    .do-dont { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 24px; }
+    .do-dont > div { padding: 22px; border: 1px solid var(--line); }
+    .do-dont h3 { margin: 0 0 10px; }
+    .do h3 { color: var(--good); }
+    .dont h3 { color: var(--warn); }
+    .checklist { list-style: none; padding: 0; margin: 0; }
+    .checklist li { padding: 10px 0 10px 28px; border-bottom: 1px solid var(--line); position: relative; }
+    .checklist li::before { content: "—"; position: absolute; left: 0; color: var(--red); font-weight: 700; }
+    .quiz { margin-top: 34px; background: var(--paper-2); border-top: 3px solid var(--red); padding: 26px; }
+    .quiz h3 { margin: 0 0 16px; font-size: 23px; }
+    .question { margin: 0 0 20px; }
+    .question p { font-weight: 700; margin: 0 0 10px; }
+    .answers { display: grid; gap: 8px; }
+    .answers button { border: 1px solid var(--line); background: var(--card); color: var(--ink); padding: 11px 13px; text-align: left; cursor: pointer; }
+    .answers button.correct { border-color: var(--good); color: var(--good); font-weight: 700; }
+    .answers button.wrong { border-color: var(--warn); color: var(--warn); }
+    .feedback { min-height: 24px; color: var(--muted); margin: 8px 0 0; font-size: 14px; }
+    .matrix { width: 100%; border-collapse: collapse; margin: 24px 0; background: var(--card); }
+    .matrix th, .matrix td { padding: 15px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    .matrix th { font-family: var(--serif); color: var(--red); }
+    details { border-top: 1px solid var(--line); padding: 15px 0; }
+    details:last-child { border-bottom: 1px solid var(--line); }
+    summary { cursor: pointer; font-weight: 700; }
+    details p { color: var(--muted); margin-bottom: 4px; }
+    .closing { margin-top: 70px; border-top: 6px solid var(--ink); padding: 32px 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 34px; }
+    .closing h2 { margin: 0; font-size: clamp(30px, 4vw, 48px); }
+    .closing p { margin-top: 0; color: var(--muted); }
+    .source { font-size: 14px; }
+    .backtop { display: inline-block; margin-top: 18px; font-weight: 700; }
+    :focus-visible { outline: 3px solid color-mix(in srgb, var(--red) 55%, transparent); outline-offset: 3px; }
+    @media (max-width: 880px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero::before { right: 0; top: 5%; }
+      .cover-wrap { justify-self: start; width: min(220px, 62vw); }
+      .law-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .decision-lens { grid-template-columns: repeat(2, 1fr); }
+      .lens:nth-child(2) { border-right: 0; }
+      .lens:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+    }
+    @media (max-width: 620px) {
+      .page { padding-top: 12px; }
+      .hero { padding-top: 36px; }
+      .lesson-nav { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .lesson-nav button { font-size: 12px; padding: 10px 2px; }
+      .lesson-head { grid-template-columns: 1fr; gap: 8px; }
+      .level-number { font-size: 35px; }
+      .grid-2, .law-grid, .do-dont, .closing { grid-template-columns: 1fr; }
+      .mental-model { grid-template-columns: 1fr; }
+      .mental-step { border-right: 0; border-bottom: 1px solid var(--line); }
+      .mental-step:last-child { border-bottom: 0; }
+      .case { grid-template-columns: 1fr; gap: 7px; }
+      .law-detail { padding-left: 18px; }
+      .decision-lens { grid-template-columns: 1fr; }
+      .lens, .lens:nth-child(2) { border-right: 0; border-bottom: 1px solid var(--line); }
+      .lens:last-child { border-bottom: 0; }
+      .matrix, .matrix tbody, .matrix tr, .matrix td { display: block; width: 100%; }
+      .matrix thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+      .matrix tr { border: 1px solid var(--line); border-bottom: 0; padding: 10px; }
+      .matrix tr:last-child { border-bottom: 1px solid var(--line); }
+      .matrix td { border: 0; padding: 8px; }
+      .matrix td::before { content: attr(data-label); display: block; font-weight: 700; color: var(--red); margin-bottom: 3px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page" id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div>
+        <p class="kicker">A critical field guide</p>
+        <h1 id="hero-title">Power is a system, not a personality trait.</h1>
+        <p class="hero-copy">Robert Greene’s 48 “laws” are best read as observations about status, incentives, perception, and conflict—not commandments and not settled science.</p>
+        <div class="hero-note">
+          <p><strong>The useful reading:</strong> recognize power dynamics, protect yourself from manipulation, and translate the sharpest insights into ethical, defensible conduct.</p>
+        </div>
+      </div>
+      <figure class="cover-wrap">
+        <div class="cover-frame"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD//gA7Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZyBJSkcgSlBFRyB2NjIpLCBxdWFsaXR5ID0gOTAK/9sAQwADAgIDAgIDAwMDBAMDBAUIBQUEBAUKBwcGCAwKDAwLCgsLDQ4SEA0OEQ4LCxAWEBETFBUVFQwPFxgWFBgSFBUU/9sAQwEDBAQFBAUJBQUJFA0LDRQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQU/8AAEQgB4AEsAwERAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/aAAwDAQACEQMRAD8A8qr4c/sAKACgAoAKACgAoAKACgAoAKAE70faQpbHA/FL72m/ST/2Wv0/g/8A5eH4l4j70jg6/TD8QCgAoAKACgAoAKACgAoAKACgAX7w+tZV/wCBL0Zthv4i9Ue8p2+lfzbV+M/tGj/Ch6IdWZsFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFACd6PtIUtjgfinw2m/ST+a1+ocHpv2lj8S8RtXSODPGcjAHc1+l2le1j8PWom78/Sq5XezQk276bBuHqMetTpe3lcLvTTcXvilL3Yc7LeiuHQc8fWqmnG/kStVcTJwDjGfWolJRg59hvQO2ccVo0lfUA3Z4AyfSlHlkr3Fe8eYAwbpg+46Gk+nLqu4O6Wwc88Uk00nfR9QFz+fpT0cOZMrlYDhlzxk96yrtOk0ne6NcPpWS80e8p0H0r+baqfOz+0qWlOC8kOrM1CgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgBO9H2kKWxwnxNkENxpMjIJFUuxQ9GAKnB9j0r9M4SUnGoouzPxPxFajKk2VPEEtpbeEPD9/HplkLjUEvPOdY8AFZFCEc8YGfrX0VH286tWHtHaD/AEPyGcYxipHQ33h3R7fxZrsMcNt5NvorXUdsI2wkggR9+emQST174rkhi8W6FGUZu8pamihH8DG1TT7Gz8K+H5Y7S3N7eWEh8kwuXmcTMgZW7FFAPvtrpwUsRKviPaTek9PJWFOEVGBS8AeDY/ErX81xsMMNvPsj89EZpBEzAkEg7QQPzr0M0xk8PTUIaepzUqEZx1ZPrPh3ToPA8N/aRo12q2xnQsRND5gkO9+xR9o246YOcY548HmGJq4+UJx0/A2q0oU6asVNa0iH/hD/AAnJZ2ai8vjdCSSJTul2SKE/IZ/WuvC1+bF141djOdK8botaN4es9Q8F6upSI6vHbpqkTjJkESthl9Nuw7/wrmxWMqUcZTUb+zk7Pt6lRoxdJJ7m74d0bQtQs/D+pXVrbxWl2kmk3A/uXpICTHn+6yt/wE152PxGLjOrTp30d1/hOmFKnzcy2MfTtO0m21O80zVo49OltLdLZrxrczRRXO8bvNUHn+JMjpjpXZia2JVCNbD7N3t1atsYxUaknEh0TwtHN461rTb23hlnsUu5VsoHJjlljViI1PUqTj3IXFdGMxk1gKdSktG9fLzOdRXM0P0mxstY8P2Go3FpDBcprUFliNdqXcTglwV9UIHI7SDPasK9arh8RKlT15o39DocEZ/j6Gy03X73T7NLXZDezANArK0aiQqImz1wFBz712ZbKpPC89S+z3B8sa8fVHqSdB9K/B5NSnJq25/Y1P8Ahwfkh1SaBQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQJiZouNK6A0AouwUc1uhK5r6i0FBQAUAJ3o+0hS2OB+KX39M/wC2n81r9Q4PdnUsfiPiOrukcXLqF1PbwQSXMrwQcxRs5Kxn/ZHav0OOHpw5nFb7n4m5ykrNk51/U2uZLg6hdGeRPLeUzMWZf7pOeR7VksHQSSUdivaS7guu6mLdYF1C5EKoY1QStgKeqjngH0pfUqCbly6sHUk7JvYpwTyWr74ZHhfaV3RsVOCMEceoJFbSoU5/ErkqTjoiWbULq4tYraW4kkt4vuRMxKrjpge2Tj0yatUoKbqJajc5S0ZLHrWpRwLBHf3KQqpVUWVgAD1AGeM5rF4WjJuTjq9yvazta4qa7qUVyLhNQuUnCeV5qzMG2dNuc9PanLC0ZJJx2J55XvcqefIIvK8xhHv8zbnjd03Y9fetHRg2m1toCnKKsmWLbVr2zuZbiC7mimlJMjq5Bck559eeaToU27tCjJwd4kCXM0c4nWaRZw28ShzuDZzkHrn3qnTg4uLWjDmd7li51m/u7qK5mvJ5J4jujkLnKHOcr6HPpWccPShfljuV7SXcrzXM15cGaeV5pWYFndiST7k0TpxpYeUYKyszSg3OqnLuj3VOg+lfzhNcsrI/tCj/AAoeiHVBqFABQAUAFABQAUAFABQAUAFABQAUAFABQAlNpqPM9g2HIjSuqICzsQAo6knpSkuVXYXS1exq6H4V1HxBfvaW8DLJGCZGlUhUx2J7Z6VzTqRp/Ezy6+YUKD96aNrTfhTr19DcvJbC1aJcokhB8w/3R6fU+1czx0Iuy1PJqcQ4aEtJqxQuvAOt2WmTX1zaNCkRG6NiC5B/ix3ArWGOpS6nZRzzC19ITTMFoZEjSRo3VHJCsVIDEdcetdl024rc9mnVhVdoO7I88470J8y5lsaXQUXGtVdB3p/aQpbHA/FL72m/ST/2Wv0/g/8A5eH4l4j70jg6/TD8QCgAoAKAsFAWCgLBQAUAFABQAUAC/eH1rKv/AAJejNsN/EXqj3lO30r+bavxn9o0f4UPRDqzNgoAKACgAoAKACgAoAKACgAoAKACgAoAKAJ7PTbvUW22ttNcHOMRIWwfwrGU6dJ+0lKzOTE14YaHPNnftpeieDLzS4RZXOu+KniEq6RbOG2tx87nGEUHufTjNc8KNXFJzrS9nS/mfXyPyXNuJJ1G6FF7nTDw34w8SHztZ8QrokT8jT9EQFgPRrh8lj7hQK5njcry/wB2jR533n19LHxjp1sQ/en9wp+EOkS/6/U9cupR1kk1WbP6MBWT4iqRVlRil2Qlg4w92U9wPw2v9NBbQ/F+s2DjkRXji8hJ91fn8iKcM7oVP4mFi/vF9TnB3pTMDxNfzrbwWPj/AE9ba1V9sGv6WxNvk8YkUgmLPvke4rvp4OhODnl9T951g936HsYLPMVldZ+01Ry/jPwg+g6mRZwzTaY6K8M4G9WGOTuAxWeHrxS5Jb9T9eyfOaOOoc7erOXBr0dLXR9G3yvTYWp6oqatocD8Uvvab9JP/Za/UOD/APl4fiHiPvSODr9MPxAKACgAzQUJkUALnFABmglhQAUAFABQAL94fWsq/wDAl6M2w38ReqPeU7fSv5tq/Gf2jR/hQ9EOrM2CgAoAKACgAoAKACgAoAKACgAoAKAENVFXdg/MB1wSB7npSjFpy59kTKSjTb6o9Nt7S++HGnJZadLFfeJNfYRWkeD5USKMmV+5VA2T+ArzKEIYtyxFdfu4b+fkfjHEebTxDdKmzu/B3gy18HWMqRu13f3LeZeahccy3Mn95j6ei9AOlePmGZTxVqSfuLZdEfJYejGEby1Zv4/ya8TnT+PU7NLWM+50drqZ5P7QvYg38EcuFH0GKuNTpYjli1Zl6KLyYlTcz7Rjc5yT9altrZhGKjsJPbxXUMkM0aSwyKUeNwCGU9Qc0UansWpQ+KOxTUZRakr3PNDYP8OtQXQZJX/4RDWy1raOTzps7AgR5/55tn5fQjHevuoy/tfDPExSVWO6XX/gnLg8S8tmtdLnn/ivw1N4U1L7JPPFM7L5gMeehJxn0NTgayxEOWO5+/5fjqeYUYyiYwOa60pRaUtz1HqtTgfil97TfpJ/7LX6hwf/AMvD8T8R96Rwdfph+IBQAUgNvwbb+HrjWCvia7vLTTPLJ82yQO4fjA57da8rMquKpUVPBRUpeZ04dUqkmqjse1eBvgT4E+Itjc3mi+INYeG2kEUqyxohDEZHVfrX5fm3Fub5VONOrSim1fqe7hcuoYmN1JnJ+IPDfwt8M63d6Vdal4kkubWUwytHFFtDDrjufyr6PB5jnuOoRrUqcNVfqcksPhadVwnJ6GxoHwT8FfESGQeFPGc630a7jaX9uu/HrtBBx7jNeTjeKMzyiV8fQXKt2rmtLA4fEr9zJ3PNvH3w31v4cahHbatbgRy7vJuYjuilx1wfUdwea+4yjPMLndLnw263TPMxOEqYZ2mjl6+gXmcIUlfqMKoAX7w+tZV/4EvRm2G/iL1R7ynb6V/NtX4z+0aP8KHoh1ZmwUAFABQAUAFABQAUAFABQAUAFABQAhqZJtXiD203Og8CaPZa94kt7K/80xyZKrH/ABMOcH269PWuPHzmoRS6ng51WlQwbcPi6npXgOJde8VeIfEsgDJHJ/ZOngdI4Yj85X/ek/RawzSosJhKWEp9fel69j8Cot4mrKq9i/r/AIlv7XWzb2UkLWrhbNiEDGC6f5o2Y/3cdQfUetfP06NOadvU6JSu7Iy7DxjqF/p5uoLtJfPu447eJY43ZoJJ9qSfKePkV+oHJz2rZ0qaJ5mS23inWP8AhDU1+6eOIeZF/o/lhTIhm2sFJxyVIAz3Ge9ZSpx5rRKUnYde+Mr3w49y+rXMLJbXHltBHGA7RKm+SUnPAUHA4528nLDGn1VTtYfMzHj+I2q2mm2o1GWCO9a4VLmMxqGgjWINO7gHAQF0wwydpzz22hh6ftHMhVGjuPEHhmPxR4UutHv7kXBuYdjXKqFw/VXGDgYIBGPSubLcRPC4yOIpvRPVdy6kFVpvTY8s1maDxN8PdM1/UfMi12D/AIl9wq4w00bFX3Z6cqTx619RiI/VcdKnSX7t6p+R9xwdjq9VONjhh2rq5XCSUmfrUuZr39zgfil97TfpJ/7LX6hwf/y8PxHxH3pHB1+mH4gFAAelACfTihqcrTpbAlGc3Y+n/wBkB/8AiR+JsdRdQnP/AGzavwjxHlOeMpPl6H12S602keGfFg/8XL8TjJ/5CEvf/ar9V4ccHl1NNW90+cxfK8VJSOf0jWLzQNTt9QsJ2t7y2cSRSKeQRz+XY162Kw8cXg6lOrFOCOehVnh5xdJ7n2n8QtMtviL8Hbm4liCvLp41CHPVHEYcAfqPxr+ZcmqVsrztU1PS+3l2PucVH2mF56m58QAgjI71/UMX7WiqiPg6mjsKK2bukNhSEC/eH1rKv/Al6M2w38ReqPeU7fSv5tq/Gf2jR/hQ9EOrM2CgAoAKACgAoAKACgAoAKACgAoAKAENC3LhCU5Lldj0L4M3EEWt3StaiS6WEyxXGeUx1HtnI5rysbC7Xqj4LiuNX6snCVkdf8FIgnwv0CTvPC07e5ZmY/zrk4jly5jVivL8j8gwjvRidqQuGOFGQcnHWvmY6o7LGBrGuXml6otrbWtoYjby3cskrlNkUe0FjgYGSxA/3TXbTp8yJk+Uw5viLcWVoZNQ0uISNpR1COFJTlpBtLQnK9hJH83XnGK6I4WMle5l7Vl2PxdqTpqjtpMcxsiUaOIvumcIpZUyuGw5ZdoyeM9wKmWHS6h7VnR6VcpqWnW13thInjV1aI7lZTypBIB5GD7ZrgqJxdjYukbVxjA9hU05XnFD6HkUL2lnonj+G5tftVvBrTtHEG24d1jYEH2JJ/8A1191j/iwv+H9T1eGIVXmEuSVtTzTGMA9cc10/aR+7WlGKU3dnA/FL72m/ST/ANlr9Q4P/wCXh+J+I+9I4Ov0w/EAoAD0oEJ3FD2RcN0fTn7H3/ID8T/9fEH/AKA9fhPiNy/WqPN2PqsicVRlzdzw/wCK/PxM8T46f2hN/wChV+p8N1YvLqaUbe7ueBiuT6zIzPCXhLU/G+twaXpUJmuJCN7Y+WJScF2PYAV05lmeFyzB1J152T+9mWFw0sVUiuXRH1t8Y/FFl8NvhWdKSVWup7T+z7SMn5nAUIz49AP51/P/AA3gcRmmcfXIfAnd+h9njp+ww/suY+MBxX9MUoezjY+Gn7zuLVE3uFAAv3h9ayr/AMCXozbDfxF6o95Tt9K/m2r8Z/aNH+FD0Q6szYKACgAoAKACgAoAKACgAoAKACgAoAQ0baisrpvod78H9We18QmwEKSQ3anzH2/Mm0Zzn09q8rHqSUX3dz4vijCKvhudvY1/AXiyLwb4AtrK7jLNp1/Ppb/vFTyyhd1JyehUD8xRnWHeJxMsQtFJXX5H4vhqiUFDsdXaeP4rq9uII7C58yGCO5aPK+bsaLzMiPOTjhSB3IFfNPCzjZX3OxTuZ03iHTNajivItFTVItVAsBOtyjLMNrv5bYPA+U5BwctzW8aNSK3sLmT3RDe+IvDhgu45tLimFtcx2twk0iBomkcD5gTlVOxWz0YKCM4pxp1krpi5o9i9p0uk3r6qP7DWN7O3S8fcyuH80PJ8pBPJ8skn6HvWbjU7jvHsWrrxpbaVpGgXP2QpBqiqIYzIiCPMXmKpJ4zgY474rP2EpylFP4SnNIdpfji31LxBJo/2SWC7R3RgXRihRUY7wD8oPmAAngkECtFhZR5ZXCM00zgLHWzbeBvEGspBHOmt6xcGPzRlPKzsVsd+I+PqK+uxyvWpUftU46o9rhPDU8TipVuay3PPBxgenFdH2kfufLGEVGLujgfil97TfpJ/7LX6fwf/AMvD8U8R96Rwdfph+IBQAHpQITuKHqkXDdH07+x+pGheJ/T7TAP/ACG9fg3iM+bE0l5H1eQycaUmknr1OL+IvxN0qz8c67a3XgTQtQkt7ySP7RJvWSTB+82Dya+qyTJsVWy+jUhi5xTWyscOIxUI4iV6aKcX7SGr6Vp7Wnh/QtH8PRNyTawlmJ9ck8n611S4No4mp7XG1pVGu5hDMpwjywikeZ694g1LxRqUl/qt5LfXcn3pJmzwOgHoPpX22DwVDBUvZUoKKW1jy6s5VnzTepn13ama2CgSVgpjBfvD61lX/gS9GbYb+IvVHvKdvpX821fjP7Ro/wAKHoh1ZmwUAFABQAUAFABQAUAFABQAUAFABQAhpOLloHQv6JrV9oV8txYTGKbgYHRhn7pHoayxFP28HFdDz8dh/rOGcT0bW9Og8P8Aj2zvrmZ4dE16SJmlt5MLb36IyqSemHViv1UVnCo8fgHTf8Snp6x/4c/njHYSWBxDb2udlY+BtM0tGjtPtFtCY4oTDHMVAWJPLQDuMLjvzgelfISxFSUpQq7o6bJpNFo+F7IzQS7X8yG6N6G34LS7Su5vXgkVj7eWxVkRXvhLT9RnE8rTNMHjdZfMJYbJDIFB5+UMScdK0jWmloZzimxF8GWZe7kFxd7rtESc+eTvCbgoz7b2/wAioeIkug1ARfBdlFFYqtxdAWIUW5MufLCxmNRj0Cswx3zW1OvyNtfaGqMbXbOO8e6Xb6H9nsdEaZfFGtSS29tIZiXVHVFlkfuUVUVuf4sY5NfQ5JFz/wBrxS9yD+88+vJRtGCu2YnxFuJfDVtp3hiwP2fRra1RVjX/AJaY4+b8unua6KMHiMVLFVH70j9c4Wy6nRpc8o2vocCOMV3L4kfoL5be7scD8Uvvab9JP/Za/UOD/wDl4fiXiPvSODr9MPxAKAA9KBCd6a2iXDdH1D+yAM+G/Ejet3CP/Ibf41+B+In+9UvQ+qyL+DL1PCvi0MfEzxOP+n+X+dfrHDf/ACKcP6Hh4v8A3mRyY6V9GzzVsLQUFABQAUAC/eH1rKv/AAJejNsN/EXqj3lO30r+bavxn9o0f4UPRDqzNgoAKACgAoAKACgAoAKACgAoAKACgBMZpptaoAIBpR91trqHSx13hHXdHTRNV0XxCJLjTb7aPK27gvXc2c8H7pGOeK4HGtSrKvQVnH8T4PiHI1i6fPTWp2Om+Lbz4epBYeJ5mvtEIH2HxGgypTHyrcAZ2NgjD9D7GorYKlmsXPCaVVq49/Q/Ir1cFL2VVfeeiwXEV3Ck0EqSwuNySIwZXHqCOo/Gvka1GeHlyzjqdSnzFK40K3upmleW7DNydl3Iq/kDxUKcEtGzZpx05dy/EnlRqgZiAMDcxY/meTQ4uWqYuWUfiOV8UfEW00G8XTLGFta1+Qfu9LtDlx/tSN0jX3P5V9BgckxFSCxVX3aUd5fovM4quJjSvTiuZnIG6g8INqt7reofa/GeoW21pYIyYrRcHbFHn7oHr1bGT2r162KWISpYaPLTXTv5s+kyDJatdLEVFuzzN2MjszEszHJJPJPrWtKkqcV5H7euWlBQhoIO1bfaRpJWVjgfil97TfpJ/wCy1+ocH/8ALw/EfEfekcHX6YfiAUAFIRr+EtEs/EGtw2V/q8Gh27hi15cruRcDjPI6mvOzPEzweEjXoxc32RtRVOUtZH0r8HtX8D/CnRL2xk8b2GozXc6zPKsZQKAu0DGTnvX4XxLhs0z2qsRHDyiktNj63Byw2Fg0p7nn/jvwN4P8U+J9X1uz+ImmQLdyNcC1lhYsGIyV3Z9R6d6+1yjMM0wWFo4SphXZaXPMxVCjOTqKe54kpyoPqK/Un6WPCklF2ixaRIUAFABQAL94fWsq/wDAl6M2w38ReqPeU7fSv5tq/Gf2jR/hQ9EOrM2CgAoAKACgAoAKACgAoAKACgAoAKACgAoATFJxcvienYHFNanW+H/iHqNhcWsF3N9o0tVEMlu6AqY8Y9PT61x18NzWlB2kuqPmcxyGjjqclHSTNXRrXwxqWqXC+HdQ1PwdOcyf6NKq28mOpMTZXp7Ct443FqPJiKcaq89z83xPCWJo/wAOX3GvYvr95b3Etl8R7Ka2txmSSfSE3KPU4cfyrmlWwPNephLPyPHeSZjS92zbKN7FDdaTJe6x4+1HVbRWEZtdMjSzDse2FyxH/AhW0MVFfwcNFeu500eG8fX/AIrsZdz4x0vw/pEFn4Osho4lJe6bywZGPbcxyWPJOSaylTxGKnfFzulsj7jKeFqeHquVbU5LVNTuNavpby7bzLiXlmxjPb+ldVJNU7v7j77D0oYeHJBaFXpWl2zZRT1Yd6PtIctUcD8Uvvab9JP/AGWv0/g//l4fiPiPvSODr9MPxAKACgBKjlUXyvVFJwf2bBVuzei0ZnyRk9Qpycl7jd0Vo9GLQ1y6XCyWiCkAUAFABQAL94fWsq/8CXozbDfxF6o95Tt9K/m2r8Z/aNH+FD0Q6szYKACgAoAKACgAoAKACgAoAKACgAoAKACgAoASjcL2AjII9RijlJcFLVih2UOFJAfhueCPTFLljvIl0IPVjcDPpQnFdCrQ2SHUygoAKAE70faQpbHA/FL72m/ST/2Wv0/g/wD5eH4l4j70jg6/TD8QCgAoAKACgAoAKACgAoAKACgAX7w+tZV/4EvRm2G/iL1R7ynb6V/NtX4z+0aP8KHoh1ZmwUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUCEp3GFAR91WDFO67AtBakAoAKAE70faQpbHA/FL72m/ST/2Wv0/g/8A5eH4l4j70jg6/TD8QCgAoAKACgAoAKACgAoAKACgAX7w+tZV/wCBL0Zthv4i9Ue8p2+lfzbV+M/tGj/Ch6IdWZsFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFACd6PtIUtjgfil97TfpJ/7LX6fwf/y8PxLxH3pHB1+mH4gFABQAUAFABgnpSbS3CzDpxQAUxBQMKACgAX7w+tZV/wCBL0Zthv4i9Ue8p2+lfzbV+M/tGj/Ch6IdWZsFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFACd6PtIUtjgfil97TfpJ/7LX6fwf/y8PxLxH3pHB1+mH4gFABQBNYWFxql9BZ2kL3F1O4jjhjGWZj0AFc9WrThCVScuWMS4wdd/3j23/hUXhf4WaFBq3j+7kvb+cbodHsj972LZyfc8Ae9flzz/ADPPsRKllUbQj17HvQwlGhT58Qrswf8Ahcfh21kKWfw00MWo4C3LtJIR7tjH6V6q4ex1Rc1bGTc/K1kcn1+jGXLCkdb4Xk+FnxckXTZ9EPhPWZMLEbebCOx6bW6E/wCyVH1rwsZT4hyR+1VT2kF3/NnfSjh8a+Re7I8/+K/wW1b4X3CzO/8AaGkSsVivUTGD2WRf4T6djX12Q8VUM5XJL3ai6d/M8/F4B4V6annlfZtzj7zPJu07MWjToMKABfvD61lX/gS9GbYb+IvVHvKdvpX821fjP7Ro/wAKHoh1ZmwUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAJ3o+0hS2OB+KX3tN+kn/stfp/B/wDy8PxLxH3pHB1+mH4gFAWCgdj6g/Zr8A2nhvwzc+NNVVVllRmt2deIYFzuce7YPPoPevwXjTN6mPxscqotqN+nU+sy3DwhSdaotT5/8e+NLv4geKLzWLtmxKxEERORFF/Co/DH1Oa/Xcly2OT4VUKKXn5nz2LrzrVHdnPYr3eZrRI5E+XVCqSrAgkEcgjrmlOnGdN0pbMTm0+bqfX3wP8AG0Hxc8B32ha+ovbq1UW9yrnmaJgdr/7wwefUA1/OvEWW/wCr+Np4vC7N7dj7LAz+s0HD8z5k+IngybwF4vv9GlYyLC2YpSMb4zyrfiP1zX7VkGZ/2nl8asj5vGUvZTsc5X0NraHBe4UDBfvD61lX/gS9GbYb+IvVHvKdvpX821fjP7Ro/wAKHoh1ZmwUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAJ3o+0hS2OB+KX3tN+kn/stfp/B/wDy8PxLxH3pHB1+mH4gFA0CqZHVF+8xAFZVXanJ+TLjuj7X+LcA8LfA/VLG0GyO3sY7VccYXKofzr+Ysin9e4gpSrdZM+4xkfZ4b3D4nz82K/qB6tNbWPg07rUWqAQ0lfmuPRqx61+zFq8mm/FGCBSRFe28sLjscDcP/Qa/OeOsLGtlftVuj2spquFVROo/a+0lLfW/DuoqMPcW8sLn+9sZSP8A0M/nXieHeJdelUodnf5HXnMFC0j59FfsV+bU+Z6Ji0AC/eH1rKv/AAJejNsN/EXqj3lO30r+bavxn9o0f4UPRDqzNgoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoATvR9pClscD8Uvvab9JP/Za/T+D/APl4fiXiPvSODr9MPxAKABZDEyuvVDuH1HNZVVzQkvJlReqPur4h2w8cfCTVTaYl+2aeLiEDuQA4H44r+Vcsl/ZmfwjV6P7j76unUwtlu9j4UUhsEdMfnX9WxfNCLXY/P9m49ULVAJTvy7ii0rnqf7NOmte/FawkUErbQTTMfQbdo/Vq/P8AjetHDZS7/b2R7GVwc6yZ137X2rxXGveH9NjbLWtvLO/qPMZQP0jr5vw3oOGGqYtL+6dudS5rRPn4V+wQXLFI+bWyQtWAL94fWsq/8CXozbDfxF6o95Tt9K/m2r8Z/aNH+FD0Q6szYKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKAE70faQpbHA/FL72m/ST/ANlr9P4P/wCXh+JeI+9I4Ov0w/EAoAKQH1b+zD8SotZ8PjwxeSBNR08Ztwx/18PJwPdTxj0I9K/njjfI54XEfXqCupavyZ9jleKjVg41HtseP/HT4Vz/AA98TTXNtETod65kt5FHERPWM+mDnHqPpX6Zwtn8M1wqhOXvx3/zPGzDCSo1OeK0Z5kTgc8V90mpK6PHExyeOnX2qU1OlN9mDSei3Pp/4A+HIPhh4J1Xxn4gJsTdxqYg4+dYRkrwf4nJ4HfAr8O4pxc85x1PL8N70Y9j6vLqXsKLqz0sfP3jrxdceOfFV/rNwNjXD/JFnIjQcKufYV+t5JlsMpwccLDsfO4mvKtVb6GEK9nZWOdhTEC/eH1rKv8AwJejNsN/EXqj3lO30r+bavxn9o0f4UPRDqzNgoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoATvR9pClscD8Uvvab9JP/AGWv0/g//l4fiXiPvSODr9MPxAKACgCaxv7rTLyG6s53trmFt0c0ZwyH1Brnr0I4qm8NUhdMca0qErxPdfDn7Tseo6U2j+NdEj1azkUI88AGWH+1GeCfcEGvyrF8C1sPW9vllbkl2Po6WYxlC1VXMXUvDHwj1uZrnT/FmoaCG5NvPaNKB7DOD+pr06GZcRYNKhUoKp5mE6OCxGspWF029+E/gKZbyEal4z1CL5o0niEMCkeoP9c/SniKfEWcL2MmsPDrbqVTlhMvXNT945D4k/FjW/iZdxtfstrYxMTDYQE+Wnv/ALR9/wBBX0OUZBhMpXue9N7s8/EYyeLd1ouxxlfUHAFABQAL94fWsq/8CXozbDfxF6o95Tt9K/m2r8Z/aNH+FD0Q6szYKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKAE70faQpbHA/FL72m/ST/2Wv0/g/8A5eH4l4j70jg6/TD8QCgAoATGaak0rJiWgYz16VHLHqrisAUCq0WkdCnZqzQYoXKlsKyWwtK0VshhTAKACgAX7w+tZV/4EvRm2G/iL1R7ynb6V/NtX4z+0aP8KHoh1ZmwUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAJ3o+0hS2OB+KX3tN+kn/stfp/B/8Ay8PxLxH3pHB1+mH4gFABQAUAFABQAUAFABQAUAFAAv3h9ayr/wACXozbDfxF6o95Tt9K/m2r8Z/aNH+FD0Q6szYKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKAE70faQpbHA/FL72m/ST/2Wv0/g/wD5eH4l4j70jg6/TD8QCgAoAKACgAoAKACgAoAKACgAX7w+tZV/4EvRm2G/iL1R7ynb6V/NtX4z+0aP8KHoh1ZmwUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAJ3o+0hS2OB+KX3tN+kn/ALLX6fwf/wAvD8S8R96Rwdfph+ICE7Rk9KmUlFXYLWXKG4eo/OpVSm5RjzK7Cz5uWwBg2cEHHoc1V1Lm5He3YJKUdWgJx2qnpBzfTUI+9sNEqnkMpHqDWaq02l7y1CUZxduUdvHHIyfem6lNRu5K/YfLO9uUM8A1b0dmKwb1zjcue4zUOcVonqU4StdITev95fzFWnF6cyuJwmlflFzRu7ImPvCr94fWsq/8CXozfDfxF6o95Tt9K/m2r8Z/aNH+FD0Q6szYKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKAE70faQpbHA/FL72m/ST/2Wv0/g/8A5eH4l4j70jg6/TD8QN/wX4xn8EarJf29jY37tEYjHqEAljAJByB2PH615WY5X/adJQ9py2OmhVdJ81ro+u/hVdeHfiN4NtdXbw9pUFyWaKeJLWMhXXrjjp0P41/OPESx+U432Dqv2b2Z9thuXEQ51BHzT8bfFVzrHim40ifSdP0tNJuZ4olsYfLLKSuC5/i4UY+pr9t4ZwtHD4GFaFVy5j5HH1n7X2djhdJ1JtH1Wzvkjjme2lWVY5l3IxU5wR3FfW4yhLE05U1Kyatc4U/ZSufVnwL8W6b8VrPVE1LwxpEN9YNHmWGzQJIr7scEHBGw9/SvwHizDYjIKkFhazkmfX4F08VHbU574++Mj8P9ZXRtM8NaKlle2RYXElmpckllJXGMFePxNexwdgYZxRqYmtXfNB7HJmVVYf3Uj5pzgV+30bRSk9dD5qp0kj3n9nvxmdc1rTvCd5oGkXljFDI32l7VTMAAWyzHOfTp3r8j4swDwVF5hSruM+iPoMrnGq7SRJ8c/iZY6PrOq+FtF0DSIoFiNvc3f2VfM3kchCMYxn86OGMjr16ccdja753ql5E5hi4wnyQR4FX6zzW9yWiPnpXm7ir94fWpr/wJejN8N/EXqj3lO30r+bavxn9o0f4UPRDqzNgoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoATvR9pClscD8Uvvab9JP/Za/T+D/wDl4fiXiPvSODr9MPxAQ0lG8romS5lZn0B+yT4r+ya3qvh+Vx5d5GLqEE9HThh+Kn/x2vxrxBwPtcNTxqWzsz6bJKijLllsZX7Vnhj+yfHNpqqL+51S3yTj/lpHhW/Qofxr1+AMe8ZgPqrfvQZlm9P97zo8UxnqAfb1r9Rf7y8n1PAld+8fR/wq1+3+D/w10PUbkAy+JNVVW3nBWBfl3fgOf+BV+F5/h5Z5j6tKjtSj+J9Tg5RwlOM+50X7WPhn+0vBthq6Lul0242t/wBc5MA/+PKv615nAGOlRx8sJUekvzOrOqXtKcWj5O/Cv6Ijbn5Znxb29D3n9miCDw3pPi7xpeLmDT7YQRZ/iOCzAfUhB/wKvyHjOc8XVoZbB3lJ/gfTZZFR567+Gx4dqOoTavqN1fXL77i5laaRvVmOT/Ov1HB0I4ShGlTVrI+eqVHUm5EGK6nq7szBfvD61lX/AIEvRm2G/iL1R7ynb6V/NtX4z+0aP8KHoh1ZmwUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAJ3o+0hS2OB+KX3tN+kn/stfp/B//Lw/EvEfekcHX6YfiAlC0uu6F1N3wN4lfwf4u0rWEyRazqzqO6Hhx+Irxs2wccfgK2Gkt1odOGqOlUufVP7Svh5PEvwxOoW+JH091u43HOYyMNj6gg/8BFfgPBWLeX51LDSdlPT5n1+Y0vaUPaR10PkTSNLn1nVbPT7Ubrm6mSGMf7TEAfzr+jMZWWFw86r0srnxuHi5tR7npP7RGq28niqy8N2bH+zfD9otjGo7tgbz9eAPwr47hLDf7PUx01rUd/VbHpZhO3JRh9k+g/Cdynxe+CMdvM4a4urJrSVjyRMgAB/MA/jX4vmMJZDnylDS0rr0Pp4Sji8KmtXY+KpYmhleKRSjqxVlPGCOD+Vf1FGaqU4109z4KUWptHt3j2c+AfgT4Y8OL8t9rZOoXKnqEzu5+pKD/gJr8ryeKzbP62MnrClon5nv4iTw2EhSju9zw/ua/V3rqfPuyk0haQAv3h9ayr/wJejNsN/EXqj3lO30r+bavxn9o0f4UPRDqzNgoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoATvR9pClscD8Uvvab9JP8A2Wv0/g//AJeH4l4j70jg6/TD8QCgApPYD7M+B+tQ/EL4QxadeNvMMT6bc55IXbhT/wB8kflX80cUYd5Nm/tqKtzu6PuMDV+s4RxfoeH/AAZ8Nf8ACNeO9e1PVExD4UgmmlDd5RuWNfqTn8q/UeIMbLHYGhRw796tZfI8DCUPY1Zc20UeV6nqM+sajdX1yxa4uZWmkP8AtMST/OvvsHQjhIxow+FKyPKrVees59D6G/ZF8UlJNa8PSvgOFvLcE+g2yD/0E/nX434gYFWp42C12PpcqrJN02ct43+GJuv2gxoiIUtNTuUvDgdI2+aTH5MK93K869pw37dv3oq3zOOthWsZFdGc38d/Fg8WfEjUnhI+yWR+xQBfuhUyDj/gW6vd4VwH1XK41JfHPVnFmFbnqWjsjz0V9rK19DgaW66i1IgX7w+tZV/4EvRm2G/iL1R7ynb6V/NtX4z+0aP8KHoh1ZmwUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAJ3o+0hS2OB+KX3tN+kn/stfp/B/8Ay8PxLxH3pHB1+mH4gFABQI9y/ZQ8WHSvF2oaLK2IdSh8yMHtLGCR+alvyFfkviBl/tsIsUl8L+5H0OUVkm6T3Z1P7SL2XgvQr+1sf3d94pvFnuv+ucSqD+BJH5mvD4KjWzLERq1fhpKy9Ttza1KLtvI+Y+pr93v70Zdj5C3u8p1vwp8U/wDCG+PtG1Jn2QLMI5z/ANM3O1vyzmvmM/wUcdl1Sm1r0O/A1fZ1lzbH1r8V2svCVldeNmx/athYS2dscdWkZQp/A5/76Nfz5w8quJxCyy/uc12fYYxqnTdZ/I+HiSzEsxZupY8k5PJr+o6EFTiorZHwbV736hWtrCtZWCmAL94fWsq/8CXozbDfxF6o95Tt9K/m2r8Z/aNH+FD0Q6szYKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKAE70faQpbHA/FL72m/ST/ANlr9P4P/wCXh+JeI+9I4Ov0w/EAoAKANPwtr03hbxFpurQZMlnOk23ONwB5H4jI/GvOx+B/tGhUwc9pI2w8nSr+2Wx0/wAZPiMnxL8YNqNuksVhFCsFsk2N20ckkDgZJ/zivD4ayZ5Lg3Rl8Td2dGMxbxVTmOFr604RCAQR2NTJKT5X1RLi3JJHp/xI+Mj+OvA/hrRFjljmskBvpHIxM6rtQjv0yTnufavhcm4chgcwrYrvse1i8c8RTjRX2TzGvu2eSFU1YTCkIF+8PrWVf+BL0Zthv4i9Ue8p2+lfzbV+M/tGj/Ch6IdWZsFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFACd6PtIUtjgfil97TfpJ/wCy1+n8H/8ALw/EvEfekcHX6YfiAUAFABQAUCCgYUAFABQAUAFAAv3h9ayr/wACXozbDfxF6o95Tt9K/m2r8Z/aNH+FD0Q6szYKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKAE70faQpbHA/FL72m/ST/2Wv0/g/wD5eH4l4j70jg6/TD8QCgAoAKACgAoAKACgAoAKACgAX7w+tZV/4EvRm2G/iL1R7ynb6V/NtX4z+0aP8KHoh1ZmwUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAJ3o+0hS2OB+KX3tN+kn/ALLX6fwf/wAvD8S8R96Rwdfph+IBQAUAFABQAUAFABQAUAFABQAL94fWsq/8CXozbDfxF6o95Tt9K/m2r8Z/aNH+FD0Q6szYKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKAE70faQpbHA/FL72m/ST/2Wv0/g/8A5eH4l4j70jg6/TD8QCgAoEW9P0bUNVWRrKwub0REBzbRM+3PTOAetYV8RSwjgq8lqjaEKtWN4xLB8La0Dg6PqA/7dJP/AImuCGaYa3xplfVq6jeURP8AhF9aJwNI1DP/AF6Sf/E1rPMcHH46liXRnLYd/wAInrv/AEBtQ/8AAST/AAqJZlg4/DUTK9hUjqlcqX2l3ulsi3tpPZs4JQTxshYDuMgZrpoYqji/4b2M3GUfjVitXWQFABQAL94fWsq/8CXozbDfxF6o95Tt9K/m2r8Z/aNH+FD0Q6szYKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKAE70faQpbHA/FL72m/ST/ANlr9P4P/wCXh+JeI+9I4Ov0w/EAoAKBG/4U8fa/4JW5XQ9Tm04XJUy+VjDbc4JyD/eNeRjMmwmY2deCbRvSxFWjZJn2V4M8Vaj4g+D9vrVzORqD6bLK0qjHzqr/ADAcYPFfzXj8GsLnUsNH4ObbU+4o1KjwntIvU+TYvjl48RV/4qi+bgfeYH+Yr9/jwvl1SjGU6ab+Z8pHHYqLacjd8NftK+NND1BJby+/ti2yPMt7pQNw9mABU/n9K8zH8HZdiElQi4SKw+Y1KU1Oav3PQvj/AHNh8TvhbpHjDSWMqWU5WQNy8avgOrehDBPzr43hZV8kzOeBxP2/huetmEoY6n7amtj5pzX7ifKBQAUAC/eH1rKv/Al6M2w38ReqPeU7fSv5tq/Gf2jR/hQ9EOrM2CgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgBO9H2kKWxwPxS+9pv0k/9lr9P4P/AOXh+JeI+9I4Ov0w/EAoAKBCCqW43svQ+0fhYc/s/WuT0025H6SV/MOeS5eIpf4j7nC/7gj4sj+4v0H8q/pqnT5oN3tsfDVOb2jsdJfeB73T/A+m+KJZYfsV/cvbRRAnzMqCSTxjHHrXjYbNqc8ZPALWUdToeGnGmqj6lXSfFup6JpWqabaThLHUkVLmFlDK+05BGeh9x2/TaeAoYmtCu178dSIVZ04uF9GY4GDXqmQtABQAL94fWsq/8CXozbDfxF6o95Tt9K/m2r8Z/aNH+FD0Q6szYKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKAE70faQpbHA/FL72m/ST/ANlr9P4P/wCXh+JeI+9I4Ov0w/EAoAKBCe1UtweyPtX4QiI/AmwWcusBsZxIYxlgvz5wPXFfy5xBKUeIJuCu+Y+9wai8ElNnz5Z2Pwfwvm6l4m24/jhQZ/IZr9exE+JeRyjTjy/M8FUsLzu8jtv2gE0UfCLwaPDrK+jLdOIGUnkFD1zznINfM8IVK6zvFVMUvfcf1N8xUXhoRhsfO/Sv2luOijt/Wh8zG9rMWgqwUCYUAC/eH1rKv/Al6M2w38ReqPeU7fSv5tq/Gf2jR/hQ9EOrM2CgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgBO9H2kKWxwPxS+9pv0k/wDZa/T+D/8Al4fiXiPvSODr9MPxAKACgQ09TTW4PY+0vhUN3wAtR66dc/yev5izx24ikn/MfdYZJ4HU+LUXai47AdK/pmMZU1pK+x8NLWo7HR3Xji8vPAln4WkhhNnaXTXccxJ8zJGCvpjn9a8mjllPD46pjWtZKx1VcT+7jT7HPRo0rqkal3Y4VQMknsK9bnhCHI+jOe21gIKsQQVI4IPBH+eapO+wwpksKBAv3h9ayr/wJejNsN/EXqj3lO30r+bavxn9o0f4UPRDqzNgoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoATvR9pClscD8Uvvab9JP8A2Wv0/g//AJeH4l4j70jg6/TD8QCgAoAazhfvMq59TipcqcbuVl6jv7VrlifbnwYs2vPgnpNsBh57SWNc+rFwP51/L+f1OXiCpWcrx5j7zC831VxlE+Kr6xuNIu5LO9ia2uoW2SRyjaVYdeDX9J0MTTxWHUo1ErJHxc6Uqcpe6QopkYKgLMeAq8k/hXXWr0aT55ST7nPGnN/ZPof4I/Cv/hErG88deKbdrdNPhaa0s5lww2gnzGB6Hso98+lfkHEnEMMxxEMuwTupuzaPo8Lg1Th9YktjwLVtUn1vVbvUbk5nu5WmkP8AtMcn/PtX6vg6Dw9Gkn0R4M5c1ZyKorqvzSkzFqzYtUAL94fWsq/8CXozbDfxF6o95Tt9K/m2r8Z/aNH+FD0Q6szYKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKAE70faQpbHA/FL72m/ST/2Wv0/g/8A5eH4l4j70jg6/TD8QCgAoA67wJ8TdS+H8F5Fp9rYTi6dXZry2EpUqCPl5GOtfO5pktLNpqVWbjZdDupYqVJWSOxH7UnjRVCr/ZyqBgKtrgfTr0r5ipwHltTm5pNt9TtjnGJS5dLFa7/aS8Vajg3dto90QMfv9PVz+ZNdlPg7BxjKLqy1MZ5jUm7tISz/AGj/ABLYOHtrDRLdx0aHT1Qj8QRRLg7CNcqrTsVHMZJ7FTxf+0D4p8a6BPo9+bRLScr5nkRFWKg5xkk8E4rbAcI5fl9eNendtdya+Z16sHTWzPNOa+36WPJewtA/UKABfvD61lX/AIEvRm2G/iL1R7ynb6V/NtX4z+0aP8KHoh1ZmwUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAJ3o+0hS2OB+KX3tN+kn/stfp/B//Lw/EvEfekcHX6YfiAUAFABQAUAFABQAUAFABQAUAC/eH1rKv/Al6M2w38ReqPeU7fSv5tq/Gf2jR/hQ9EOrM2CgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgBO9H2kKWxwPxS+9pv0k/wDZa/T+D/8Al4fiXiPvSODr9MPxAKACgAoAKACgAoAKACgAoAKABfvD61lX/gS9GbYb+IvVHvKdvpX821fjP7Ro/wAKHoh1ZmwUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAJ3o+0hS2OB+KX3tN+kn/stfp/B/wDy8PxLxH3pHB1+mH4gFABQAUWJcktwpN8quwTT2EyKG0o872HdBmn0TKSvsLVOLSuxPTcKkAoAKABfvD61lX/gS9GbYb+IvVHvKdvpX821fjP7Ro/woeiHVmbBQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAnej7SFLY4H4pfe036Sf8Astfp/B//AC8PxLxH3pHB1+mH4gFABQB0Xg74d+IPHq3baFp5vvsgUzYdV27s46kf3TXi5hm+Dy//AHqpy+h1UaVWpujoT+z74+B/5AEmeR/rk/xrx48X5I1ywqrXubvL8U3eMdB8f7PPjyQHGiZx2+0R/wDxVKfFmV02qftPwdi3gK9rcmpgeI/hh4q8JwGfU9Eure2X704XfGv1ZcgfjXq4TP8ALcbN8lVXfQwnhKtNbWZy+fcV7ShBvml8jhtJP3xa0GFABQAL94fWsq/8CXozbDfxF6o95Tt9K/m2r8Z/aNH+FD0Q6szYKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKAE70faQpbHA/FL72m/ST/2Wv0/g/8A5eH4l4j70jg6/TD8QCgAoAmtb65s3Jt7ia3JIJMUhTOM46H3rlxGHo4inKFaKehrTqVISTUj7N1XV7u5/Z3k1BriT7a+hq7ThsOWKAZz69fzr+aKWGo/6xKio6KVj7ZzlLB87Z8ZW17c2U3mW1zNbyKeHikKEfiDX9MPC0JxUJwTXofE+1mv3lz6J/Z7+Nmp6vrSeGfEE51BbhCLW6m5kDAElGP8QIHf0r8Z4t4cpYWl9fwfutaux9HgMb7SXs6q06HM/tL/AAzs/Bus2WsaXCtvYamzrJboMLFMuCSPQMDnHsa+g4JzytmdGdCu/eh+RzZthvZTUlseLV+nngBQAUAC/eH1rKv/AAJejNsN/EXqj3lO30r+bavxn9o0f4UPRDqzNgoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoATvR9pClscD8Uvvab9JP/Za/T+D/APl4fiXiPvSODr9MPxAKACgAH3ql7S9Cl0Pse7H/ABjI3/YBX/0AV/NNL/kqP+3z7b/mBZ8cH7x+pr+mFuj4b7B6Z+zv4Zudf+J2m3EKt9n00/aZ5ccKMEKM9snj86+C4wx0KGVVKL3krHrYGjLEVVb7Op6V+19rMIsfDukK4a4Msl06A8qoUKM/Uk/98mvh/DnCyVStint8J7Gd1lPlpr1Pmmv3U+SCgAoAF+8PrWVf+BL0Zthv4i9Ue8p2+lfzbV+M/tGj/Ch6IdWZsFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFACd6PtIUtjgfil97TfpJ/7LX6fwf/AMvD8S8R96Rwdfph+IBQAUAC/fqJfFL0LXQ+1dPtrK8/Z6toNRumsbF9FRZrlI95jXYMnb3r+Yq06tPiZzorVSPu6UYSwTUzyDwD8E/AXjK+eK08bXGpyxjc1olqtvIy9z8xJ/Kv0XM+J83yynzywy16nhUcDhqyV2dl498aj9nuwh0bw74US3t7kEx6lPNuSRx13ADJYejEe1fM5Rln+tsvrWYYj4fsno4yv/Za5Ka0PmjxF4i1HxVq8+p6pctdXkxG927ewHYewr9xwODoYKkoYZe5+p8pWqOb5u5nV6BgFABQAL94fWsq/wDAl6M2w38ReqPeU7fSv5tq/Gf2jR/hQ9EOrM2CgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgBO9H2kKWxwPxS+9pv0k/8AZa/T+D/+Xh+JeI+9I4Ov0w/EAoAKABfvCs5vlTm+o09j7HvVI/ZkI/6gK/8AoAr+a6SU+K1FrRyPt7XwDPkHTdTu9F1KC/sZmt7y3cPFKh5Ujn/P1r+i8RhaONw8qNS3KfFU5ypx5kfZGkXuk/tEfC54rlVhnceXMEGTbXC4w6j05zj0JHav5uxUcRwpm16cfcv96PtqSp5hQtJanx/4l8PXvhPXLzSdQj8u7tZDG4HIPoQfQ9RX9IYLHU8dhYV6Hwvc+NrU3Qm4SRnV3qzV7mAVIBTAF+8PrWVf+BL0Zthv4i9Ue8p2+lfzbV+M/tGj/Ch6IdWZsFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFACd6PtIUtjgfil97TfpJ/7LX6fwf/AMvD8S8R96Rwdfph+IBQAUgL+keHtV17zDpmm3WoeUQHNtEz7Sc4BwOOhrgxOPw2FioYl2bRvRpVK+sUfZt34cv/APhQ50XyG/tEaIIvII+beIxlfrxiv5leMjDiKGKj8HNc+3tJYN07HxpqvhrVtDjSTUdMvLCORtqNdQNHuPUgZHNf03QxeDxtRqhLVanwtejUw6V0dt8CPiR/wr7xjH9qkC6Vf7YLsE8Jz8r/AIEn8Ca+W4tydZzgZKCtOGqf6HqYDFujVtLZnvfx8+Dx+IOmRatpKqdbtFwACALqM9Fz0yOoPvj0r8o4Oz2pk2IlhsW/clv5M93HYWNeHPDc+Tta8Nat4ceNNV02605pCQguYim7GM4J64yOlf0Dhsbhcauaiz4+pTqUX7yM4V3vQzcnLcKQgX7w+tZV/wCBL0Zthv4i9Ue8p2+lfzbV+M/tGj/Ch6IdWZsFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFACd6PtIUtjgfil97TfpJ/7LX6fwf/y8PxLxH3pHB1+mH4gFABQBt+G/G+veD0uV0XVLjTluCplEDY3lc7c/TJ/OvMxuW4TMJKWJhzNHRTxFWjpB2NX/AIXJ43HA8T6iP+23/wBavJXDGUL/AJcI6P7QxNrc5m+IfH3iLxbbRW+s6vc6jDE/mIkzZCtjGfrivTwmVYPAzdTD0+Vs56uIq1lao7mDivWeqszC+tzrLL4seMdOs4LW28RX8NvAgSNFk+6o6AV8xV4aymvJyqUE29ztjjsRFWUjM8ReMtb8Wi2Gs6ncaiLYMIfPbOzdjOPrgflXp4TLMJgVbDw5TCpXqVfjdzGr1DAKABfvD61lX/gS9GbYb+IvVHvKdvpX821fjP7Ro/woeiHVmbBQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAnej7SFLY4H4p/e036SfzWv1Dg//l4fiXiPvSODzX6W9L3Pw8M1XK07FWEyKVgsLmpbtowsGc0PTRisFJyS0YBVCCk9B2Cqas1F7gGaT0u30CwZpbK47Av3h9ayr/wJehrhv4sfNo95ToPpX83VfjP7Ro/woeiHVmbBQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAnej7SFLY4D4qddN+kn81r9O4Q2qH4l4jb0jg8jtyOvAzX6VzQknd7n4l7NvUO31z0oupavUTUugmV5O4Y+tVFRn0FyyAkAE5HAzzxTd5R59AtIUkc4OaXO+XmdilGXUA2Rnt61UHzx5tB8rAN68ds1MeeVmrahyiBg3Qg/Q0JuSSutRckh3UihylL39NEPlY0OG7j39qLy525WsS4yAnAPbFOV4vW1hWkKrAlccjI6VlUlGVGVux04eNqtP1R70vb6V/N1b4z+zaH8OPoh1ZG4UAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAJ3o+0hS2OB+KWS+mAdT5gH5rX6Xwo7Qqn4n4i/FSNfVZrOaxeO4k+0gLpsl3DK65jhVF8ySHHJfJIYdeR15I9X2tR1o2vbb5n5I+SMPMx7qSeDUPEiahLHNpjxS/ZtjhomfOYPKA6Y46dBnNeg71IxcN1uZJpXuanieXzbKQCfZcRTac8LyTK5lPk4cR45TByW6g4GcY548L7RxutlGz+80lyrYsyzzH4mWz+ayabHrMhzcXCMrbmfLR46IUAyOg465pQjfAzUvjt+oScVPlOf1S/uIoPDzadcOySRC3muGcC4ZxLuZJcdApxj279QOnC0HKNSFVe8n+gqjinaJQ8Vaktz47uI9QlkuNLg1OVgmc4gMoLBT6FRXp4ejBYa6WpjKaUrF3Wo9Qkm8SSz36RacATAoUNBOnmDy0i5wCAVIwOgIrhpuCp09Nb6+Q1H3tdjX8Uy/atKvY7aX7TfhbGV45pFzEoiA8yEjqd2VfnjA45OPOwybqR5lZWfc6ZNKPuok8QS3D/EKJ43ddPj1xJC006MjkyHDR46LsBz29TWtKKlgpzb1t59yaqUJRUVuZ09/qlhrqXUDOIrdrvyUvJUm3NtJYAcboyAvHT0611SoRrUJQ79iZ2hJItaDNYnxJ4VuNMuFi0+e/lmayMo/0Q7UDoSeq91Y9jXNiKc50JxatZWQQcZK7OQ8RNdyJp73PniMIUiS6lWSUEbd+SOcZY4yBXu0Eo4Z8z6GUJJVY8nRo9eXoPpX4BVadTQ/sih/Cj6IdWZuFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFACd6PtIUtjgfimcHTT7SfzWv1Dg+XJ7Ro/E/EVNypJHFvpbwqSQiqFDnHGAfw9/1r9BpYyLkly9NPU/IZ4CrKPMJJZFIvNZkMZ3DcGyM5HH6ipjWTSg07sTwlRxHNpsqFfuZcblH97jJH6ilGvRTTje1rh9TqNv1BNKlkLIER+zp1I4Jwf1pKtS9pbW7X3jlgKjjzXGLZNJC82V2q21ifz9Ola/WKXOm92iHhKkKftGOGnyJJMu5R5BAY9B3x29qzhiKdGCHPAVFOX90cNIkUsAYwyLliOwPHp05rOnilCFlHSRu8BOU3DTQUaRKWjU7F83pk9SQD6e9bfXI1I2tawLL5xkoO2pDHY+bHLIpQIgXcwPHIPt/s0lWhDmpXOeng6lTmemhKmkySOFj8sSZAZem0kZUH8qx9vTUXLfQ3hgKk+VjfsEhiLsUVRgMG/h788e1aSxNGrVjTtuiJYCpFLXqMmtDZyCM7Qd5GE6cHrU80KtGVhuh9WqRv3R7onQfSv55quPPyo/sOi70oPyQ6sjYKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKAE70faQpbHAfFQZ/s4dciQfqtfqHB/wDy8PxTxE0lSaOMkv5JA2QuHXawK9R7/lX36wiUWn1Px1Y+ppHuNmvZbgOXIO9/MbHXOMfyq1Q5bVFutCXi5ct31HyajIzDbhQv+rB5KjGOD+ApLCOb9ozX681AQ38zZbgkkFiF6kdCffk1Sw0Y1E+ysTLG1JafMb9skCOpwwd95DL/ABd+9L6rHnXkZPGTqRs+os1/LMk33R5o+Ygdf1qFhlK0X0N3j3r5jn1KZpJGbazSBQQR1AOemaHhbLkXTUmOOlzuQralPuiZtpaI/uxt9gP6CmsJ7vK+uo3jpOakhlteSWkcqIFZHxuUjOcZGD7c0TwsZqxFHHVITbCS+kIcMVO4YZmGN+BjJ+mapYSLRP1+rGTCW9mmEgkbezhQxPUhen5VSw0YjljakyKSaSeRGkOSuFB9hwKmVNRoy9BxqupUj6o93ToPpX85VvjP7Ko/wYeiHVkahQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAnej7SFLY4H4pjLaZ6/vP5rX6hwdq5n4j4j3vSsYukeHoL/w1qNyzAX6obi2TfzsQjf8AL3yCf+/Zr7DFYuaxCstD8djD3WyW10G21HwrZzLIIL1GvHyI8+asYhIUndxgM2ODWeIxkqNeF37sghSU00y3N8PktIrhGu5nucQCJEgOdzzPEVYbs9V7c+1czzZtpx2vY0eHjaxJ/wAITF/ZNzEsscsqPFcJchBvERtpZGUAMQeUHQ9utSszvWS8i1RstyuvgGHyPNbVMI4LRAW+7cotxON3zcfKcfWtp5le8UtYrUj2KjK72K9h4WgfxdbadJdedasYJSzERO6SBSAATgNhuxPSuqpjubD+2gnqYQpRur9C7q3hWysvD13PH/x9xuWMPmchPPaMOMHay4G3jnI9K8+jja0q6pvr1/Q2nRgkPsfBNpM9sscocXYtYFM6EbJpo3YH5W+78vX9K1eYVFUnFr4BwoxktChb+C7e6aG3j1PddSWaXhi+zYARtpYbt/O1SzcAD5TWlPHyXNJp6OxMqfREz+ELZbeBW1BI5fIe8cCAl3i8rzEON2OgIx2LHr2yeYSU+WzNPYq25KfhwXuo4LbUhMz3ItAWhKhZG8sxhvmP3lcn2KHrQs10Xuva5kqDXU5jUrOCxu1S2uBdRFVbeF27Seqntke1epGs6tCXoKklCor90e3L2+gr+e63xn9l0f4UH5IdWRsFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFACd6PtIUtjgfin1036SfzWv0/g//l4fiPiPvSONTVr6FomjvJ0aJDHGVkI2Ieqj0Bz0r9JdGnLV7n4mpNKwkWqX0EAgivJ4oQrKESQgAMMNge+Bn1rF4ehNp1FsOE3EsSeI9WlkMj6nds5GNxmbP3t3r68/Ws/qeESXu9bmntZCS+ItVnYGXUruQhg43zMfmAIz168n86mOGw6lz8pHtJEQ1nUFBAvbhckscSHqRtJ/EcfStXQoT5uVbidSRGdQumuUuGuZWuIwAkpc7lxjGD2xgVp9XgqSpdgu1qLNqd3cxNFLdTSxli5V3JBJOST+PNKNCnTlzW16A6jkh66xfqgQXlwECCPb5hxtGcD8Mn8zWawtNt+er9Rqo0iKS/upWVnuZWZU8oFnJITGNo9sZ4960nQpJSS66kOUm7k39s6gIo4hfXAiiRkjj8w7VVvvAD0PeksLTUuZo1VWQ641q4uLeONpJGmWXzmnaRi7MAAmTn+EZxj1NZfVKaXyH7WRWu7y41K8NzdzyXM7tlpJW3MfxNauMYUJW7Doy56i9Ue6L0H0FfzhV/iH9oUf4UPRDqzNQoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoATvR9pClscD8U/vab9JP5rX6fwf8A8vD8S8R96Rwdfpdj8QCmFwoAKfM7WC4YpBuFG7uAVLSbuw2CqvrcAxU2QXCqAKVkAL94fWsqySoSt2NsN/EXqj3le30r+bqvxn9o0f4UPRDqzNgoAKACgAoAKACgAoAKACgAoAKAP//Z" alt="Cover of The 48 Laws of Power by Robert Greene"></div>
+        <figcaption class="cover-caption">Robert Greene’s original framework, examined rather than obeyed.</figcaption>
+      </figure>
+    </section>
+
+    <nav class="lesson-nav" aria-label="Tutorial levels">
+      <button data-target="level-101" aria-selected="true">101 · Read</button>
+      <button data-target="level-201" aria-selected="false">201 · Map</button>
+      <button data-target="level-301" aria-selected="false">301 · Apply</button>
+      <button data-target="level-401" aria-selected="false">401 · Judge</button>
+    </nav>
+
+    <section class="lesson" id="level-101">
+      <div class="lesson-head">
+        <div class="level-number">101</div>
+        <div><h2>How to read the book</h2><p class="lead">Start by separating description, prescription, and defense. Greene often moves between the three without warning.</p></div>
+      </div>
+
+      <div class="mental-model" aria-label="Three modes of reading">
+        <div class="mental-step"><b>Notice</b><span>What social pattern is the story pointing to?</span></div>
+        <div class="mental-step"><b>Test</b><span>Does the pattern fit the present facts, or only the anecdote?</span></div>
+        <div class="mental-step"><b>Translate</b><span>What honest action preserves the insight without the manipulation?</span></div>
+      </div>
+
+      <div class="key-idea"><p>A “law” is a <em>conditional heuristic</em>: a prompt to investigate, not a rule that overrides context, ethics, or evidence.</p></div>
+
+      <div class="grid-2">
+        <article class="panel">
+          <h3>What the book is doing</h3>
+          <p>It collects historical anecdotes and turns them into memorable rules about hierarchy, reputation, concealment, attention, timing, alliances, and conflict. Its strength is pattern recognition. Its weakness is that vivid stories can feel like proof even when they are not.</p>
+        </article>
+        <article class="panel">
+          <h3>Why readers misread it</h3>
+          <p>The laws are phrased as absolutes, while the book’s own reversals repeatedly show that context changes the answer. A sophisticated reader asks, “Under what conditions might this help—and what does it cost?”</p>
+        </article>
+      </div>
+
+      <h3 style="margin-top:36px">Working vocabulary</h3>
+      <div class="terms" aria-label="Clickable glossary">
+        <div class="term"><button aria-expanded="false">Power</button><div class="definition">The practical ability to shape outcomes, constrain choices, or withstand pressure.</div></div>
+        <div class="term"><button aria-expanded="false">Status</button><div class="definition">A group’s relative ranking of credibility, importance, or prestige.</div></div>
+        <div class="term"><button aria-expanded="false">Leverage</button><div class="definition">A fact, option, resource, or relationship that improves your alternatives.</div></div>
+        <div class="term"><button aria-expanded="false">Reputation</button><div class="definition">A compressed public prediction about how you are likely to behave.</div></div>
+        <div class="term"><button aria-expanded="false">Incentive</button><div class="definition">A consequence that makes one course of action more attractive than another.</div></div>
+        <div class="term"><button aria-expanded="false">Heuristic</button><div class="definition">A useful shortcut for thinking—not a universal law and not a substitute for evidence.</div></div>
+      </div>
+
+      <div class="quiz" data-quiz="101">
+        <h3>Check your reading</h3>
+        <div class="question">
+          <p>When a historical anecdote seems to prove a law, what is the strongest next move?</p>
+          <div class="answers">
+            <button data-correct="false">Memorize the rule because the story is memorable</button>
+            <button data-correct="true">Test competing explanations and present-day conditions</button>
+            <button data-correct="false">Reject every observation in the book</button>
+          </div>
+          <p class="feedback" aria-live="polite"></p>
+        </div>
+      </div>
+      <p class="bridge"><b>Next:</b> build a map of all 48 laws so they become patterns you can compare—not isolated slogans.</p>
+    </section>
+
+    <section class="lesson" id="level-201">
+      <div class="lesson-head">
+        <div class="level-number">201</div>
+        <div><h2>The complete law map</h2><p class="lead">Search, filter, and open any law. Each entry gives the book’s claim, the usable signal, and the main risk.</p></div>
+      </div>
+
+      <div class="library-tools">
+        <input class="search-box" id="law-search" type="search" placeholder="Search a law, pattern, or idea…" aria-label="Search laws">
+        <div class="filters" aria-label="Filter laws">
+          <button class="filter active" data-filter="all">All</button>
+          <button class="filter" data-filter="perception">Perception</button>
+          <button class="filter" data-filter="information">Information</button>
+          <button class="filter" data-filter="position">Position</button>
+          <button class="filter" data-filter="timing">Timing</button>
+          <button class="filter" data-filter="conflict">Conflict</button>
+        </div>
+      </div>
+      <p class="law-count" id="law-count">Showing all 48 laws</p>
+      <div class="law-grid" id="law-grid"></div>
+
+      <div class="quiz" data-quiz="201">
+        <h3>Check your map</h3>
+        <div class="question">
+          <p>Which pair is most directly in tension?</p>
+          <div class="answers">
+            <button data-correct="false">Law 5 (reputation) and Law 23 (concentration)</button>
+            <button data-correct="true">Law 6 (court attention) and Law 16 (use absence)</button>
+            <button data-correct="false">Law 29 (plan to the end) and Law 35 (timing)</button>
+          </div>
+          <p class="feedback" aria-live="polite"></p>
+        </div>
+      </div>
+      <p class="bridge"><b>Next:</b> convert the map into a decision process you can use without becoming theatrical, deceptive, or cruel.</p>
+    </section>
+
+    <section class="lesson" id="level-301">
+      <div class="lesson-head">
+        <div class="level-number">301</div>
+        <div><h2>Use the insight without becoming the tactic</h2><p class="lead">The mature application is usually quieter: better preparation, cleaner incentives, better timing, and fewer avoidable enemies.</p></div>
+      </div>
+
+      <div class="decision-lens" aria-label="Four-question decision lens">
+        <div class="lens"><b>Facts</b><span>What can you actually prove?</span></div>
+        <div class="lens"><b>Interests</b><span>What does each person legitimately need?</span></div>
+        <div class="lens"><b>Options</b><span>What happens if no agreement occurs?</span></div>
+        <div class="lens"><b>Aftermath</b><span>Can you defend the method tomorrow?</span></div>
+      </div>
+
+      <div class="case">
+        <div class="case-label">Workplace</div>
+        <div><h3>You have a strong idea—and an insecure manager.</h3><p><strong>Greene signal:</strong> hierarchy shapes how credit is received (Law 1).</p><p><strong>Ethical move:</strong> pre-wire the idea privately, show how it advances the manager’s stated goals, and document your contribution without staged flattery. You are managing context, not shrinking yourself.</p></div>
+      </div>
+      <div class="case">
+        <div class="case-label">Negotiation</div>
+        <div><h3>The other side demands an immediate answer.</h3><p><strong>Greene signal:</strong> timing changes leverage (Law 35), and offered choices may be rigged (Law 31).</p><p><strong>Ethical move:</strong> verify whether the deadline is real, name what you need to decide, and propose genuine alternatives. Refuse manufactured urgency without manufacturing urgency of your own.</p></div>
+      </div>
+      <div class="case">
+        <div class="case-label">Conflict</div>
+        <div><h3>A public argument is pulling you off the substantive issue.</h3><p><strong>Greene signal:</strong> argument can entrench identity (Law 9), while provocation can be a trap (Law 39).</p><p><strong>Ethical move:</strong> move the dispute to verifiable facts, state one clear ask, and decline the bait. Silence is useful only when no answer is owed.</p></div>
+      </div>
+      <div class="case">
+        <div class="case-label">Reputation</div>
+        <div><h3>A visible mistake threatens trust.</h3><p><strong>Greene signal:</strong> reputation compounds (Law 5).</p><p><strong>Ethical move:</strong> correct the record quickly, own the error, explain the fix, and then perform reliably. Rumor, counterattack, and image theater multiply the damage.</p></div>
+      </div>
+
+      <div class="do-dont">
+        <div class="do"><h3>Defensible practice</h3><ul class="checklist"><li>Research authority, incentives, and constraints.</li><li>Make one evidence-backed ask.</li><li>Offer materially different options.</li><li>Use real deadlines and accurate uncertainty.</li><li>Stop when the legitimate objective is reached.</li></ul></div>
+        <div class="dont"><h3>Manipulative drift</h3><ul class="checklist"><li>Creating false scarcity or urgency.</li><li>Targeting insecurity, grief, fear, or isolation.</li><li>Withholding material facts or inventing alternatives.</li><li>Using people as disposable intermediaries.</li><li>Confusing humiliation with resolution.</li></ul></div>
+      </div>
+
+      <div class="quiz" data-quiz="301">
+        <h3>Check your practice</h3>
+        <div class="question">
+          <p>A vendor offers two options, but both hide the same costly lock-in. Which principle matters most?</p>
+          <div class="answers">
+            <button data-correct="true">Demand genuine options with disclosed consequences</button>
+            <button data-correct="false">Mirror the tactic with a hidden deadline</button>
+            <button data-correct="false">Commit quickly to look decisive</button>
+          </div>
+          <p class="feedback" aria-live="polite"></p>
+        </div>
+      </div>
+      <p class="bridge"><b>Next:</b> judge the framework itself—its evidence, contradictions, ethical costs, and the situations where it should not guide you at all.</p>
+    </section>
+
+    <section class="lesson" id="level-401">
+      <div class="lesson-head">
+        <div class="level-number">401</div>
+        <div><h2>Mastery means knowing when not to play</h2><p class="lead">The advanced reader is not the person who can quote all 48 laws. It is the person who can diagnose a power dynamic without becoming trapped inside Greene’s worldview.</p></div>
+      </div>
+
+      <table class="matrix">
+        <thead><tr><th>Claim type</th><th>What it can reveal</th><th>What to challenge</th></tr></thead>
+        <tbody>
+          <tr><td data-label="Claim type">Historical anecdote</td><td data-label="What it can reveal">A vivid mechanism or failure mode</td><td data-label="What to challenge">Selection bias, missing context, competing causes</td></tr>
+          <tr><td data-label="Claim type">Universal “law”</td><td data-label="What it can reveal">A memorable question to ask</td><td data-label="What to challenge">Exceptions, reversals, culture, changing institutions</td></tr>
+          <tr><td data-label="Claim type">Psychological claim</td><td data-label="What it can reveal">A hypothesis about motives</td><td data-label="What to challenge">Armchair diagnosis and unfalsifiable storytelling</td></tr>
+          <tr><td data-label="Claim type">Tactical prescription</td><td data-label="What it can reveal">Possible leverage or vulnerability</td><td data-label="What to challenge">Legality, ethics, reciprocity, long-run trust</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Four hard limits</h3>
+      <details open><summary>1. Stories are not experiments</summary><p>The book’s examples are chosen after the outcome is known. That creates survivorship bias: successful uses of a tactic are memorable, while failed uses and quieter alternatives disappear.</p></details>
+      <details><summary>2. The laws contradict one another</summary><p>Seek attention, but use absence. Conceal, but build reputation. Act boldly, but master timing. These tensions are not bugs if you treat the laws as a diagnostic menu; they are fatal if you treat them as commands.</p></details>
+      <details><summary>3. Short-term leverage can destroy long-term power</summary><p>Trust, expertise, networks, and legitimacy compound. A tactic that wins a single exchange can make every future exchange more expensive.</p></details>
+      <details><summary>4. Some arenas impose duties, not games</summary><p>Courts, regulators, fiduciary roles, medical decisions, and safety-critical work require candor and compliance. “Strategy” cannot excuse concealment, false claims, or exploitation.</p></details>
+
+      <div class="key-idea" style="margin-top:34px"><p>The deepest inversion of the book is this: durable power often comes from being <em>easy to trust, hard to coerce, and willing to walk away</em>.</p></div>
+
+      <div class="grid-2">
+        <article class="panel"><h3>Use the framework when…</h3><p>You need to read hierarchy, anticipate incentives, protect a reputation, choose a forum, pace an escalation, or recognize that someone else may be controlling information or options.</p></article>
+        <article class="panel"><h3>Leave it behind when…</h3><p>The facts are uncertain, candor is owed, the other party is vulnerable, the relationship matters beyond one transaction, or the tactic only works if the other person cannot give informed consent.</p></article>
+      </div>
+
+      <div class="quiz" data-quiz="401">
+        <h3>Final check</h3>
+        <div class="question">
+          <p>What is the most rigorous way to use the 48 Laws?</p>
+          <div class="answers">
+            <button data-correct="false">Treat every law as timeless and universal</button>
+            <button data-correct="false">Use only the laws that make you feel bold</button>
+            <button data-correct="true">Use them as hypotheses, test context, and choose defensible conduct</button>
+          </div>
+          <p class="feedback" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing">
+      <div><h2>The final law is judgment.</h2></div>
+      <div>
+        <p>Read power clearly. Keep your alternatives strong. Tell the truth. Build value. Protect boundaries. And never confuse another person’s loss of agency with your own gain in power.</p>
+        <p class="source">Primary text: Robert Greene, <em>The 48 Laws of Power</em>. Edition details and publisher description: <a href="https://www.penguinrandomhouse.com/books/330912/the-48-laws-of-power-by-robert-greene/9780140280197/" target="_blank" rel="noopener noreferrer">Penguin Random House</a>. This tutorial is an independent critical synthesis.</p>
+        <a class="backtop" href="#top">Return to the beginning ↑</a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var laws = [
+        [1,"Never outshine the master","perception","Hierarchy changes how achievement is received.","Respect roles and share context; never use false modesty or flattery.","high"],
+        [2,"Never put too much trust in friends; learn how to use enemies","position","Personal loyalty and professional reliability are not the same thing.","Choose collaborators by conduct and incentives, not intimacy or hostility.","high"],
+        [3,"Conceal your intentions","information","Premature disclosure can weaken a plan.","Protect private strategy, but never hide material facts or mislead.","high"],
+        [4,"Always say less than necessary","information","Brevity reduces accidental commitments and reactive language.","Be concise, not evasive; disclose what is owed.","medium"],
+        [5,"Guard your reputation with your life","perception","Reputation is a shortcut others use to predict conduct.","Build it through accuracy, reliability, and prompt correction.","low"],
+        [6,"Court attention at all costs","perception","Invisible work is often undervalued.","Make value legible; reject scandal, hoaxes, and attention without substance.","high"],
+        [7,"Get others to do the work, but always take the credit","position","Leverage comes from coordinating expertise.","Delegate transparently and share credit with the people who earned it.","high"],
+        [8,"Make other people come to you—use bait if necessary","position","The party that sets the forum and pace may gain leverage.","Improve your alternatives; never use traps or false premises.","high"],
+        [9,"Win through actions, never through argument","perception","Evidence and results often persuade better than verbal combat.","Demonstrate the claim and answer necessary objections directly.","low"],
+        [10,"Avoid the unhappy and unlucky","position","Repeated destructive conduct can spread cost through a group.","Set boundaries around behavior; do not stigmatize distress or misfortune.","high"],
+        [11,"Learn to keep people dependent on you","position","Scarce, reliable value creates bargaining power.","Become valuable through competence—never by withholding knowledge.","high"],
+        [12,"Use selective honesty and generosity to disarm","information","A sincere good-faith act can reset a tense exchange.","Let honesty be consistent, not a Trojan horse.","high"],
+        [13,"Appeal to self-interest, never mercy or gratitude","position","Requests work better when legitimate benefits are visible.","Frame mutual benefit accurately; do not inflate, guilt, or exploit.","medium"],
+        [14,"Pose as a friend, work as a spy","information","Good decisions require understanding incentives and constraints.","Research public facts and ask candid questions; reject spying and false confidence.","high"],
+        [15,"Crush your enemy totally","conflict","Half-resolved conflicts can recur.","Resolve root causes and enforce clear boundaries; reject annihilation.","high"],
+        [16,"Use absence to increase respect and honor","timing","Overexposure can dilute attention and invite friction.","Use healthy cadence and space, not manufactured scarcity.","medium"],
+        [17,"Cultivate an air of unpredictability","perception","Predictability can make a weak position easier to exploit.","Keep options open, but remain reliable and do not destabilize others.","high"],
+        [18,"Do not build fortresses; isolation is dangerous","position","Isolation narrows information and support.","Stay connected to stakeholders, dissent, and reality checks.","low"],
+        [19,"Know who you are dealing with","information","People differ in authority, incentives, risk, and memory.","Research the audience without stereotyping or probing vulnerabilities.","medium"],
+        [20,"Do not commit to anyone","position","Independence can preserve options in factional conflict.","Avoid irrelevant camps, but honor real commitments and alliances.","high"],
+        [21,"Play a sucker to catch a sucker","perception","Understatement may keep attention on substance.","Never counterfeit ignorance or create a deceptive persona.","high"],
+        [22,"Use the surrender tactic","conflict","When materially weaker, pause or de-escalation can preserve resources.","Withdraw or settle truthfully—not as fake obedience before betrayal.","medium"],
+        [23,"Concentrate your forces","position","Focus multiplies effect at the decisive point.","Prioritize without creating a single point of failure.","low"],
+        [24,"Play the perfect courtier","perception","Diplomacy, self-control, and social awareness matter.","Adapt register and show courtesy without fake agreement or flattery.","high"],
+        [25,"Re-create yourself","perception","Identity is partly shaped through deliberate choices and presentation.","Develop an authentic professional identity; never fabricate credentials.","medium"],
+        [26,"Keep your hands clean","conflict","Visible responsibility affects legitimacy.","Maintain clean conduct by owning accountability—not by using scapegoats.","high"],
+        [27,"Create a cultlike following","perception","Belonging, ritual, and shared meaning can mobilize groups.","Build transparent community; reject pseudoscience, dependency, and manufactured enemies.","high"],
+        [28,"Enter action with boldness","timing","Hesitant execution can compound uncertainty.","Prepare, then make a confident evidence-backed move.","medium"],
+        [29,"Plan all the way to the end","timing","Second-order effects and implementation decide outcomes.","Map consequences, fallbacks, and a stopping point—without pretending certainty.","low"],
+        [30,"Make accomplishments seem effortless","perception","Clean presentation builds confidence.","Prepare thoroughly, but do not conceal methods to preserve dependence.","medium"],
+        [31,"Control the options","position","Choice architecture shapes decisions.","Offer genuine, materially different options and disclose constraints.","high"],
+        [32,"Play to people’s fantasies","perception","People respond to a vivid desired future.","Use aspirational framing only when outcomes and uncertainty stay accurate.","high"],
+        [33,"Discover each person’s thumbscrew","information","Every negotiation has priorities and pressure points.","Address legitimate interests; never exploit wounds, secrets, or insecurity.","high"],
+        [34,"Be royal in your own fashion","perception","Self-respect and confidence influence treatment.","Carry yourself with dignity grounded in real value, not invented status.","medium"],
+        [35,"Master the art of timing","timing","A good move at the wrong moment can fail.","Wait for readiness, use real deadlines, and avoid artificial pressure.","low"],
+        [36,"Disdain things you cannot have","conflict","Attention can reward provocation and magnify trivial losses.","Ignore low-value bait while monitoring genuine obligations and risk.","medium"],
+        [37,"Create compelling spectacles","perception","Visuals and symbols can make ideas memorable.","Use presentation to clarify evidence, never to distract from its absence.","high"],
+        [38,"Think as you like, but behave like others","perception","Unnecessary norm violations can obscure the substantive goal.","Adapt style respectfully without faking beliefs or hiding material truth.","medium"],
+        [39,"Stir up waters to catch fish","conflict","Emotion can impair judgment and reveal priorities.","Regulate your own emotion; never provoke someone into a mistake.","high"],
+        [40,"Despise the free lunch","position","Free offers can carry hidden obligations.","Inspect incentives, pay fairly, and avoid favors that buy control.","low"],
+        [41,"Avoid stepping into a great person’s shoes","position","Inherited comparison can trap a successor.","Build from current facts instead of copying or disparaging a predecessor.","medium"],
+        [42,"Strike the shepherd and the sheep will scatter","conflict","A central decision-maker or bottleneck may drive the whole dispute.","Address the responsible authority; do not isolate or target people coercively.","high"],
+        [43,"Work on the hearts and minds of others","position","Durable agreement requires concerns to be understood.","Engage interests and reasons—never fear, despair, or dependency.","high"],
+        [44,"Disarm with the mirror effect","perception","Accurate reflection can make behavior visible.","Use fair paraphrase and analogy; reject mockery, mimicry, and deception.","high"],
+        [45,"Preach change, but never reform too much at once","timing","Change creates loss, uncertainty, and identity threat.","Sequence change, preserve what works, and explain the transition.","low"],
+        [46,"Never appear too perfect","perception","Flaunted success can trigger distance and resentment.","Share credit and admit limits; do not plant fake flaws.","medium"],
+        [47,"In victory, know when to stop","conflict","Overreach can turn a win into new risk.","Define the legitimate objective beforehand and close when it is met.","low"],
+        [48,"Assume formlessness","timing","Rigid positions break when conditions change.","Stay adaptable and revise with new facts while remaining candid.","medium"]
+      ];
+
+      var grid = document.getElementById('law-grid');
+      laws.forEach(function (law) {
+        var card = document.createElement('article');
+        card.className = 'law-card';
+        card.dataset.category = law[2];
+        card.dataset.search = (law[1] + ' ' + law[3] + ' ' + law[4]).toLowerCase();
+        card.innerHTML = '<button class="law-toggle" aria-expanded="false"><span class="law-num">' + law[0] + '</span><span class="law-title">' + law[1] + '</span><span class="law-plus" aria-hidden="true">+</span></button>' +
+          '<div class="law-detail"><p><strong>Signal:</strong> ' + law[3] + '</p><p><strong>Defensible translation:</strong> ' + law[4] + '</p><span class="risk ' + (law[5] === 'low' ? 'low' : '') + '">' + law[5] + ' misuse risk</span></div>';
+        grid.appendChild(card);
+      });
+
+      grid.addEventListener('click', function (e) {
+        var button = e.target.closest('.law-toggle');
+        if (!button) return;
+        var card = button.closest('.law-card');
+        var open = card.classList.toggle('open');
+        button.setAttribute('aria-expanded', String(open));
+      });
+
+      var activeFilter = 'all';
+      var search = document.getElementById('law-search');
+      var count = document.getElementById('law-count');
+      function updateLaws() {
+        var q = search.value.trim().toLowerCase();
+        var visible = 0;
+        Array.prototype.forEach.call(grid.children, function (card) {
+          var matchFilter = activeFilter === 'all' || card.dataset.category === activeFilter;
+          var matchSearch = !q || card.dataset.search.indexOf(q) !== -1;
+          card.hidden = !(matchFilter && matchSearch);
+          if (!card.hidden) visible += 1;
+        });
+        count.textContent = visible === 48 ? 'Showing all 48 laws' : 'Showing ' + visible + ' of 48 laws';
+      }
+      search.addEventListener('input', updateLaws);
+      document.querySelector('.filters').addEventListener('click', function (e) {
+        var button = e.target.closest('.filter');
+        if (!button) return;
+        document.querySelectorAll('.filter').forEach(function (b) { b.classList.remove('active'); });
+        button.classList.add('active');
+        activeFilter = button.dataset.filter;
+        updateLaws();
+      });
+
+      document.querySelectorAll('.term button').forEach(function (button) {
+        button.addEventListener('click', function () {
+          var term = button.parentElement;
+          var willOpen = !term.classList.contains('open');
+          document.querySelectorAll('.term.open').forEach(function (item) {
+            item.classList.remove('open');
+            item.querySelector('button').setAttribute('aria-expanded', 'false');
+          });
+          if (willOpen) {
+            term.classList.add('open');
+            button.setAttribute('aria-expanded', 'true');
+          }
+        });
+      });
+
+      document.querySelectorAll('.quiz').forEach(function (quiz) {
+        quiz.addEventListener('click', function (e) {
+          var answer = e.target.closest('.answers button');
+          if (!answer) return;
+          var answerWrap = answer.parentElement;
+          answerWrap.querySelectorAll('button').forEach(function (b) { b.classList.remove('correct', 'wrong'); });
+          var correct = answer.dataset.correct === 'true';
+          answer.classList.add(correct ? 'correct' : 'wrong');
+          var feedback = answerWrap.nextElementSibling;
+          feedback.textContent = correct ? 'Correct. Context and defensibility are the discipline.' : 'Not quite. Try the answer that preserves the insight without treating the slogan as proof.';
+        });
+      });
+
+      document.querySelectorAll('.lesson-nav button').forEach(function (button) {
+        button.addEventListener('click', function () {
+          var target = document.getElementById(button.dataset.target);
+          target.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+        });
+      });
+
+      var sections = Array.prototype.slice.call(document.querySelectorAll('.lesson'));
+      var navButtons = Array.prototype.slice.call(document.querySelectorAll('.lesson-nav button'));
+      if ('IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            navButtons.forEach(function (button) {
+              button.setAttribute('aria-selected', String(button.dataset.target === entry.target.id));
+            });
+          });
+        }, { rootMargin: '-20% 0px -68% 0px', threshold: 0 });
+        sections.forEach(function (section) { observer.observe(section); });
+      }
+    })();
+  </script>
+</body>
+</html>
