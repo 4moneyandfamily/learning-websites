@@ -85,5 +85,12 @@ window.SITES = [
     blurb: "Bead by bead: the prayers, all twenty mysteries with Scripture and fruits, and how to meditate with them.",
     topic: "Faith",
     added: "2026-09-26"
+  },
+  {
+    file: "the-book-of-five-rings.html",
+    title: "The Book of Five Rings",
+    blurb: "Musashi's five scrolls on perception, rhythm, and initiative, translated into modern scenarios and field practice.",
+    topic: "Strategy",
+    added: "2026-09-26"
   }
 ];
