@@ -127,5 +127,12 @@ window.SITES = [
     blurb: "The thirteen principles' useful execution discipline, separated from the book's unsupported metaphysical claims.",
     topic: "Strategy",
     added: "2026-09-26"
+  },
+  {
+    file: "writing.html",
+    title: "Writing",
+    blurb: "Clarity to voice: sentence architecture, argument, revision, and deliberate practice across six books.",
+    topic: "Writing",
+    added: "2026-09-26"
   }
 ];
