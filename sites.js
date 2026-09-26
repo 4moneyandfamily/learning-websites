@@ -106,5 +106,12 @@ window.SITES = [
     blurb: "All 18 laws through four practical lenses, with bias checks, case labs, and an ethical field card.",
     topic: "Strategy",
     added: "2026-09-26"
+  },
+  {
+    file: "the-next-conversation.html",
+    title: "The Next Conversation",
+    blurb: "Jefferson Fisher's framework for hard conversations: control, confidence, connection, and framing.",
+    topic: "Communication",
+    added: "2026-09-26"
   }
 ];
